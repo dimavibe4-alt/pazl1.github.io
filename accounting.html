@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПАЗЛ — Блок учета</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Все стили остаются без изменений, только добавлю стили для сортировки */
+        .truck-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .truck-table th.sortable:hover {
+            background-color: #e9ecef;
+        }
+
+        .truck-table th.sortable::after {
+            content: "⏷";
+            opacity: 0.5;
+            margin-left: 5px;
+            font-size: 0.8rem;
+        }
+
+        .truck-table th.sortable.asc::after {
+            content: "▲";
+            opacity: 0.8;
+        }
+
+        .truck-table th.sortable.desc::after {
+            content: "▼";
+            opacity: 0.8;
+        }
+
+        /* Остальные стили без изменений */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a2b47, #2c3e50);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-title-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            height: 100px;
+            width: auto;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            border-radius: 8px;
+            filter: brightness(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            animation: logoEntrance 1s ease-out;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: brightness(1.2) drop-shadow(0 5px 15px rgba(0,0,0,0.4));
+            animation: pulse 1.5s infinite;
+        }
+
+        .logo:active {
+            transform: scale(0.95) rotate(-5deg);
+            transition: all 0.1s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            50% {
+                transform: scale(1.15) rotate(5deg);
+            }
+            100% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        @keyframes logoEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-180deg);
+            }
+            70% {
+                transform: scale(1.1) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .title-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:hover, button:hover {
+            border-color: #1a2b47;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        button.export { background: #28a745; color: white; border-color: #218838; }
+        button.print { background: #17a2b8; color: white; border-color: #138496; }
+        button.settings { background: #6c757d; color: white; border-color: #545b62; }
+
+       .container {
+            max-width: 1600px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .menu-button {
+            background-color: #1a2b47;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .menu-button:hover {
+            background-color: #2c4061;
+            transform: translateY(-1px);
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-radius: 6px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+            border: 1px solid #ddd;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.95rem;
+        }
+
+        .menu-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .menu-item.active {
+            background-color: #e3f2fd;
+            color: #1a2b47;
+            font-weight: bold;
+        }
+
+        .damage-green {
+            background-color: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .damage-yellow {
+            background-color: #fff3cd !important;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .damage-orange {
+            background-color: #ffe0b2 !important;
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        .damage-gray {
+            background-color: #e9ecef !important;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .warning-indicator {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.1rem;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .accounting-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .trucks-section {
+            flex: 0 0 40%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .warehouse-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .trucks-list-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .trucks-list-container.expanded {
+            overflow: hidden;
+        }
+
+        .trucks-list-container.expanded .truck-row:not(.active) {
+            display: none;
+        }
+
+        .trucks-list-container.expanded .tires-details-container:not(.expanded) {
+            display: none;
+        }
+
+        .truck-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+            font-size: 0.85rem;
+        }
+
+        .truck-table th, .truck-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .truck-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            font-size: 0.85rem;
+        }
+
+        .truck-table th:nth-child(1),
+        .truck-table td:nth-child(1) {
+            width: 15%;
+        }
+        
+        .truck-table th:nth-child(2),
+        .truck-table td:nth-child(2) {
+            width: 25%;
+        }
+        
+        .truck-table th:nth-child(3),
+        .truck-table td:nth-child(3) {
+            width: 20%;
+        }
+        
+        .truck-table th:nth-child(4),
+        .truck-table td:nth-child(4) {
+            width: 25%;
+        }
+        
+        .truck-table th:nth-child(5),
+        .truck-table td:nth-child(5) {
+            width: 15%;
+        }
+
+        .truck-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .truck-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .truck-row.active {
+            background-color: #e3f2fd;
+            position: sticky;
+            top: 42px;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tires-details-container {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 0;
+        }
+
+        .tires-details-container.expanded {
+            display: table-row;
+        }
+
+        .tire-details-cell {
+            padding: 0 !important;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tire-details-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .tire-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        .tire-details-table th, .tire-details-table td {
+            padding: 0.2rem 0.4rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        .tire-details-table th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+        }
+
+        .tire-details-table tr.tire-block-even {
+            background-color: #ffffff;
+        }
+
+        .tire-details-table tr.tire-block-odd {
+            background-color: #f8f9fa;
+        }
+
+        .tire-details-table tr.tire-block {
+            border-bottom: 2px solid #1a2b47 !important;
+        }
+
+        .empty-tire {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .tire-draggable {
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .tire-draggable:hover {
+            background-color: #e3f2fd !important;
+        }
+
+        .tire-draggable.dragging {
+            opacity: 0.5;
+            background-color: #d1ecf1 !important;
+        }
+
+        .drop-zone {
+            transition: all 0.3s ease;
+            min-height: 20px;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #d4edda !important;
+            box-shadow: inset 0 0 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .position-drop-zone {
+            position: relative;
+        }
+
+        .position-drop-zone::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 2px dashed #28a745;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .position-drop-zone.drag-over::after {
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            background: #1a2b47;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #1a2b47;
+            color: white;
+            border-color: #1a2b47;
+        }
+
+        .btn-primary:hover {
+            background: #2c4061;
+            border-color: #2c4061;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            border-color: #545b62;
+        }
+
+        .warehouse-tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .warehouse-tab {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .warehouse-tab:hover {
+            background: #e9ecef;
+        }
+
+        .warehouse-tab.active {
+            background: #1a2b47;
+            color: white;
+            border-color: #1a2b47;
+        }
+
+        .warehouse-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .warehouse-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+            font-size: 0.7rem;
+        }
+
+        .warehouse-table th, .warehouse-table td {
+            padding: 0.2rem 0.4rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        .warehouse-table th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .warehouse-table th.sortable:hover {
+            background-color: #dde1e5;
+        }
+
+        .warehouse-table th.sortable::after {
+            content: "⏷";
+            opacity: 0.5;
+            margin-left: 5px;
+            font-size: 0.7rem;
+        }
+
+        .warehouse-table th.sortable.asc::after {
+            content: "▲";
+            opacity: 0.8;
+        }
+
+        .warehouse-table th.sortable.desc::after {
+            content: "▼";
+            opacity: 0.8;
+        }
+
+        .warehouse-table td[rowspan] {
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .warehouse-table tr.tire-block {
+            border-bottom: 2px solid #1a2b47 !important;
+        }
+
+        .warehouse-table tr.tire-block-even {
+            background-color: #ffffff;
+        }
+
+        .warehouse-table tr.tire-block-odd {
+            background-color: #f8f9fa;
+        }
+
+        .repair-tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .repair-tooltip .tooltip-text {
+            visibility: hidden;
+            width: auto;
+            min-width: 200px;
+            max-width: 400px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            white-space: normal;
+        }
+
+        .repair-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 15px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent #555 transparent;
+        }
+
+        .repair-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .repair-yes {
+            color: #8B0000 !important;
+            font-weight: bold;
+        }
+
+        .repair-no {
+            color: #6c757d;
+        }
+
+        .stats-section {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-card {
+            flex: 0 0 auto;
+            width: 108px;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            margin-bottom: 0.3rem;
+            color: #1a2b47;
+            font-size: 0.8rem;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1a2b47;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-warning {
+            color: #dc3545;
+            font-size: 0.7rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            min-height: 150px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #1a2b47;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .empty-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        @media (max-width: 1200px) {
+            .accounting-container {
+                flex-direction: column;
+            }
+           
+            .trucks-section, .warehouse-section {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1rem;
+            }
+           
+            .header-title h1 {
+                font-size: 1.3rem;
+            }
+            
+            .header-title p {
+                font-size: 0.8rem;
+            }
+           
+            .controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+           
+            .header-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+           
+            .logo-title-container {
+                margin-bottom: 5px;
+            }
+           
+            .container {
+                padding: 0 0.8rem;
+            }
+           
+            .tire-details-table {
+                font-size: 0.7rem;
+            }
+           
+            .tire-details-table th, .tire-details-table td {
+                padding: 0.3rem;
+            }
+           
+            .stat-card {
+                width: 150px;
+            }
+           
+            .card {
+                padding: 0.8rem;
+            }
+        }
+       
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+           
+            .controls {
+                justify-content: space-between;
+            }
+           
+            select, button {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.8rem;
+            }
+           
+            .trucks-list-container {
+                max-height: 400px;
+            }
+           
+            .truck-table th, .truck-table td {
+                padding: 0.4rem;
+                font-size: 0.85rem;
+            }
+           
+            .stats-section {
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+           
+            .stat-card {
+                width: 130px;
+                padding: 0.6rem;
+            }
+           
+            .stat-card h4 {
+                font-size: 0.8rem;
+            }
+           
+            .stat-value {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title">
+            <div class="logo-title-container">
+                <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
+                <div class="title-text">
+                    <h1>ПАЗЛ</h1>
+                    <p>Программный Аналитический модуль Зондирования и Логистического управления СКГШ</p>
+                    <p>УК УГОЛЬНЫЙ РАЗРЕЗ</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <select id="regionSelect">
+                <option>Регион: Все</option>
+                <option>Регион 1</option>
+                <option>Регион 2</option>
+            </select>
+            <select id="enterpriseSelect">
+                <option>Предприятие: Все</option>
+                <option>Разрез 1</option>
+                <option>Разрез 2</option>
+                <option>Разрез 3</option>
+            </select>
+            <button class="export">Экспорт</button>
+            <button class="print">Печать</button>
+            <button class="settings">Настройки</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <button class="menu-button" id="menuButton">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+            Меню системы
+        </button>
+
+        <div class="menu-dropdown" id="menuDropdown">
+            <div class="menu-item" onclick="window.location.href='slide3.html'">Главный экран</div>
+            <div class="menu-item active" onclick="window.location.href='accounting.html'">Блок учета</div>
+            <div class="menu-item" onclick="navigateTo('monitoring')">Мониторинг</div>
+            <div class="menu-item" onclick="navigateTo('engineer')">Блок шинного инженера</div>
+            <div class="menu-item" onclick="navigateTo('analytics')">Аналитика</div>
+            <div class="menu-item" onclick="navigateTo('forecast')">Прогноз потребности</div>
+            <div class="menu-item" onclick="navigateTo('constructor')">Конструктор отчетов</div>
+            <div class="menu-item" onclick="navigateTo('quality')">Качество дорог</div>
+            <div class="menu-item" onclick="navigateTo('documents')">Документы и литература</div>
+        </div>
+
+        <div class="accounting-container">
+            <div class="trucks-section">
+                <div class="card">
+                    <h3 class="card-title">Перечень самосвалов</h3>
+                    <div class="trucks-list-container" id="trucksListContainer">
+                        <table class="truck-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-key="id">№ А/С</th>
+                                    <th class="sortable" data-key="model">Модель</th>
+                                    <th class="sortable" data-key="wheelbase">Колесная база</th>
+                                    <th class="sortable" data-key="tiresCount">Кол-во шин (план/факт)</th>
+                                    <th class="sortable" data-key="status">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trucks-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <h4>Всего самосвалов</h4>
+                        <div class="stat-value">30</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>БелАЗ 75131</h4>
+                        <div class="stat-value">8</div>
+                        <div class="stat-warning">Требует внимания: 3</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>БелАЗ 7513D</h4>
+                        <div class="stat-value">6</div>
+                        <div class="stat-warning">Требует внимания: 4</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>БелАЗ 75306</h4>
+                        <div class="stat-value">7</div>
+                        <div class="stat-warning">Требует внимания: 5</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>БелАЗ 7530G</h4>
+                        <div class="stat-value">9</div>
+                        <div class="stat-warning">Требует внимания: 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warehouse-section">
+                <div class="card">
+                    <h3 class="card-title">Склад</h3>
+                    
+                    <div class="warehouse-tabs" id="warehouseTabs">
+                    </div>
+                    
+                    <div class="warehouse-table-container" id="warehouseTableContainer">
+                        <table class="warehouse-table" id="warehouseTable">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-key="substock">Подсклад</th>
+                                    <th class="sortable" data-key="row">Ряд</th>
+                                    <th class="sortable" data-key="place">Место</th>
+                                    <th class="sortable" data-key="number">№ шины</th>
+                                    <th class="sortable" data-key="brand">Бренд / Модель / Рисунок</th>
+                                    <th class="sortable" data-key="size">Размер / Пробег / Состояние</th>
+                                    <th class="sortable" data-key="ogp">ОГП план / факт / % износа</th>
+                                    <th class="sortable" data-key="repair">Ремонт / Класс повреждения</th>
+                                </tr>
+                            </thead>
+                            <tbody id="warehouseTbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="moveTireModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Перемещение шины</h3>
+                <button class="modal-close" id="closeMoveModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="moveDate">Дата перемещения</label>
+                    <input type="date" id="moveDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="moveComment">Комментарий</label>
+                    <textarea id="moveComment" class="form-control" placeholder="Введите комментарий к перемещению..."></textarea>
+                </div>
+                <div id="moveDestinationInfo" class="form-group">
+                    <!-- Информация о назначении будет добавляться динамически -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelMove">Отмена</button>
+                <button class="btn btn-primary" id="confirmMove">Подтвердить перемещение</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ГЛОБАЛЬНОЕ СОСТОЯНИЕ =====
+        let truckStore = {};
+        let warehouseStore = {};
+        let currentDragData = null;
+        let currentDropTarget = null;
+        let currentWarehouse = "АТУ";
+        let truckSortState = { key: 'id', dir: 'asc' };
+        // Новый глобальный идентификатор раскрытого самосвала
+        let activeTruckId = null;
+
+        // ===== СЛУЖЕБНЫЕ ДАННЫЕ =====
+        const truckModels = ['БелАЗ 75131', 'БелАЗ 7513D', 'БелАЗ 75306', 'БелАЗ 7530G'];
+        const tireBrands = ['MICHELIN', 'BRIDGESTONE', 'GOODYEAR', 'CONTINENTAL'];
+        const tireModels = ['XDR2', 'XDR3', 'VSDL', 'G177', 'L5'];
+        const treadPatterns = ['Тяговый', 'Скальный', 'Карьерный', 'Универсальный'];
+        const tireSizes = ['33.00 R51', '40.00 R57', '46/90R57'];
+        const tireNumbers = ['V080018A5C', 'V080018A5D', 'V080018A5E', 'V080018A5F', 'V080018A5G', 'V080018A5H'];
+        const positions = ['ПП', 'ПЛ', 'ЗЛН', 'ЗЛВ', 'ЗПВ', 'ЗПН'];
+       
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+       
+        function getRandomInspectionDate() {
+            const today = new Date();
+            const pastDate = new Date();
+            pastDate.setDate(today.getDate() - getRandomInt(1, 30));
+            return pastDate.toLocaleDateString('ru-RU');
+        }
+
+        function checkWarningConditions(tireDataArray) {
+            const conditions = {
+                differentPairs: false,
+                damageClassOver2: false,
+                inspectionOver14Days: false,
+                wearOver90: false
+            };
+
+            const pairs = [
+                ['ПП', 'ПЛ'], 
+                ['ЗПН', 'ЗПВ'], 
+                ['ЗЛН', 'ЗЛВ']
+            ];
+            
+            pairs.forEach(pair => {
+                const tire1 = tireDataArray.find(t => t.position === pair[0] && t.hasTire);
+                const tire2 = tireDataArray.find(t => t.position === pair[1] && t.hasTire);
+                
+                if (tire1 && tire2) {
+                    if (tire1.brand !== tire2.brand || 
+                        tire1.model !== tire2.model || 
+                        tire1.pattern !== tire2.pattern) {
+                        conditions.differentPairs = true;
+                    }
+                }
+            });
+
+            tireDataArray.forEach(tire => {
+                if (tire.hasTire) {
+                    if (tire.damageClass > 2) {
+                        conditions.damageClassOver2 = true;
+                    }
+                    
+                    const inspectionDate = new Date(tire.inspectionDate.split('.').reverse().join('-'));
+                    const today = new Date();
+                    const diffTime = Math.abs(today - inspectionDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays > 14) {
+                        conditions.inspectionOver14Days = true;
+                    }
+                    
+                    if (tire.wearPercentage > 90) {
+                        conditions.wearOver90 = true;
+                    }
+                }
+            });
+
+            return Object.values(conditions).some(Boolean);
+        }
+
+        function getDamageClassColor(damageClass) {
+            switch(damageClass) {
+                case 0:
+                case 1:
+                    return 'damage-green';
+                case 2:
+                    return 'damage-yellow';
+                case 3:
+                    return 'damage-orange';
+                case 4:
+                    return 'damage-gray';
+                default:
+                    return '';
+            }
+        }
+        
+        // ===== ВСПОМОГАТЕЛЬНЫЕ ГЕНЕРАТОРЫ =====
+        function generateTireData(truckId) {
+            let html = '';
+            const tireDataArray = truckStore[truckId] || [];
+
+            html += `
+            <tr class="tire-position-header">
+                <th class="position-header">Позиция / Номер / Дата осмотра</th>
+                <th>Бренд / Модель / Рисунок</th>
+                <th>Размер / Пробег факт / Пробег на позиции</th>
+                <th>ОГП план / ОГП факт / % износа</th>
+                <th>Класс повреждения</th>
+            </tr>
+            `;
+
+            positions.forEach((position, index) => {
+                const tire = tireDataArray.find(t => t.position === position);
+                const hasTire = !!tire;
+                const blockClass = index % 2 === 0 ? 'tire-block-even' : 'tire-block-odd';
+                const isLastPosition = index === positions.length - 1;
+                
+                if (hasTire) {
+                    const { brand, model, pattern, size, number, inspectionDate, totalMileage, positionMileage, initialDepth, currentDepth, wearPercentage, damageClass } = tire;
+                    const damageColorClass = getDamageClassColor(damageClass);
+
+                    html += `
+                    <tr class="${blockClass} tire-draggable position-drop-zone" draggable="true" 
+                        data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
+                        <td>${position}</td>
+                        <td>${brand}</td>
+                        <td>${size}</td>
+                        <td>${initialDepth} мм</td>
+                        <td rowspan="3" class="${damageColorClass}">${damageClass}</td>
+                    </tr>
+                    <tr class="${blockClass} tire-draggable position-drop-zone" draggable="true" 
+                        data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
+                        <td>${number}</td>
+                        <td>${model}</td>
+                        <td>${totalMileage} км</td>
+                        <td>${currentDepth} мм</td>
+                    </tr>
+                    <tr class="${blockClass} tire-draggable position-drop-zone ${isLastPosition ? '' : 'tire-block'}" 
+                        draggable="true" data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
+                        <td>${inspectionDate}</td>
+                        <td>${pattern}</td>
+                        <td>${positionMileage} км</td>
+                        <td>${wearPercentage}%</td>
+                    </tr>
+                    `;
+                } else {
+                    html += `
+                    <tr class="${blockClass} empty-tire position-drop-zone" data-truck-id="${truckId}" data-position="${position}">
+                        <td>${position}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td rowspan="3">-</td>
+                    </tr>
+                    <tr class="${blockClass} empty-tire position-drop-zone" data-truck-id="${truckId}" data-position="${position}">
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="${blockClass} empty-tire position-drop-zone ${isLastPosition ? '' : 'tire-block'}" 
+                        data-truck-id="${truckId}" data-position="${position}">
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    `;
+                }
+            });
+            
+            return { html, tireDataArray };
+        }
+       
+        // ===== САМOСВАЛЫ =====
+        function generateTrucks() {
+            const tableBody = document.getElementById('trucks-table-body');
+            const container = document.getElementById('trucksListContainer');
+
+            // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: перед перерисовкой обязательно снимаем expanded,
+            // чтобы не скрыть все строки, если активной строки нет.
+            container.classList.remove('expanded');
+
+            let html = '';
+
+            // Коллекция для сортировки
+            let trucksArray = [];
+            for (let i = 1; i <= 30; i++) {
+                const truckId = 1100 + i;
+                const model = truckModels[getRandomInt(0, truckModels.length - 1)];
+                const wheelbase = '2*4';
+                const planTires = 6;
+                
+                const actualTires = truckStore[truckId] ? truckStore[truckId].length : 0;
+                const { html: tireHtml, tireDataArray } = generateTireData(truckId);
+                
+                const needsAttention = actualTires < planTires || checkWarningConditions(tireDataArray);
+                const showWarning = needsAttention && Math.random() > 0.3;
+                const status = showWarning ? '<span class="warning-indicator">!!!</span>' : '✅';
+
+                trucksArray.push({
+                    truckId,
+                    model,
+                    wheelbase,
+                    planTires,
+                    actualTires,
+                    status,
+                    statusOrder: showWarning ? 1 : 0
+                });
+            }
+
+            // Сортировка
+            trucksArray.sort((a, b) => {
+                let aVal, bVal;
+                switch (truckSortState.key) {
+                    case 'id':
+                        aVal = a.truckId; bVal = b.truckId; break;
+                    case 'model':
+                        aVal = a.model; bVal = b.model; break;
+                    case 'wheelbase':
+                        aVal = a.wheelbase; bVal = b.wheelbase; break;
+                    case 'tiresCount':
+                        aVal = a.actualTires; bVal = b.actualTires; break;
+                    case 'status':
+                        aVal = a.statusOrder; bVal = b.statusOrder; break;
+                    default:
+                        aVal = a.truckId; bVal = b.truckId;
+                }
+                if (aVal < bVal) return truckSortState.dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return truckSortState.dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Генерация HTML
+            for (const truck of trucksArray) {
+                const { truckId, model, wheelbase, planTires, actualTires } = truck;
+                const { html: tireHtml } = generateTireData(truckId);
+
+                html += `
+                <tr class="truck-row" data-truck="${truckId}">
+                    <td>${truckId}</td>
+                    <td>${model}</td>
+                    <td>${wheelbase}</td>
+                    <td>${planTires}/${actualTires}</td>
+                    <td>${truck.status}</td>
+                </tr>
+                <tr class="tires-details-container" id="tires-${truckId}">
+                    <td colspan="5" class="tire-details-cell">
+                        <div class="tire-details-table-container">
+                            <table class="tire-details-table">
+                                <tbody>
+                                    ${tireHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }
+
+            tableBody.innerHTML = html;
+
+            // Вешаем обработчики клика по строкам самосвалов
+            document.querySelectorAll('.truck-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    const truckId = this.getAttribute('data-truck');
+                    const detailsRow = document.getElementById(`tires-${truckId}`);
+                    const container = document.getElementById('trucksListContainer');
+
+                    const isExpanded = detailsRow.classList.contains('expanded');
+
+                    // Свернуть всё
+                    document.querySelectorAll('.tires-details-container').forEach(d => d.classList.remove('expanded'));
+                    document.querySelectorAll('.truck-row').forEach(r => r.classList.remove('active'));
+                    container.classList.remove('expanded');
+
+                    if (!isExpanded) {
+                        // Развернуть выбранный
+                        detailsRow.classList.add('expanded');
+                        this.classList.add('active');
+                        container.classList.add('expanded');
+                        activeTruckId = truckId; // запоминаем активный
+                    } else {
+                        // Если сворачиваем — забываем активный
+                        activeTruckId = null;
+                    }
+                });
+            });
+
+            // Восстанавливаем раскрытый самосвал после перерисовки (если был)
+            if (activeTruckId) {
+                const row = document.querySelector(`.truck-row[data-truck="${activeTruckId}"]`);
+                const detailsRow = document.getElementById(`tires-${activeTruckId}`);
+                if (row && detailsRow) {
+                    row.classList.add('active');
+                    detailsRow.classList.add('expanded');
+                    document.getElementById('trucksListContainer').classList.add('expanded');
+                } else {
+                    // Если по какой-то причине строки нет — снимаем expanded
+                    activeTruckId = null;
+                    document.getElementById('trucksListContainer').classList.remove('expanded');
+                }
+            } else {
+                document.getElementById('trucksListContainer').classList.remove('expanded');
+            }
+
+            // Обновляем индикаторы сортировки
+            updateTruckSortIndicators();
+            
+            initDragAndDrop();
+        }
+
+        function updateTruckSortIndicators() {
+            document.querySelectorAll('.truck-table th.sortable').forEach(th => {
+                const key = th.getAttribute('data-key');
+                th.className = `sortable${key === truckSortState.key ? ` ${truckSortState.dir}` : ''}`;
+            });
+        }
+
+        function initializeTruckStore() {
+            truckStore = {};
+            
+            for (let i = 1; i <= 30; i++) {
+                const truckId = 1100 + i;
+                const actualTires = Math.random() > 0.4 ? 6 : getRandomInt(4, 5);
+                truckStore[truckId] = [];
+                
+                const positionsWithTires = [];
+                const availablePositions = [...positions];
+                
+                for (let j = 0; j < actualTires; j++) {
+                    if (availablePositions.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * availablePositions.length);
+                        positionsWithTires.push(availablePositions[randomIndex]);
+                        availablePositions.splice(randomIndex, 1);
+                    }
+                }
+
+                positionsWithTires.forEach(position => {
+                    const brand = tireBrands[getRandomInt(0, tireBrands.length - 1)];
+                    const model = tireModels[getRandomInt(0, tireModels.length - 1)];
+                    const pattern = treadPatterns[getRandomInt(0, treadPatterns.length - 1)];
+                    const size = tireSizes[getRandomInt(0, tireSizes.length - 1)];
+                    const tireNumber = tireNumbers[getRandomInt(0, tireNumbers.length - 1)];
+                    
+                    const daysAgo = Math.random() > 0.7 ? getRandomInt(15, 30) : getRandomInt(1, 14);
+                    const inspectionDate = new Date();
+                    inspectionDate.setDate(inspectionDate.getDate() - daysAgo);
+                    const inspectionDateStr = inspectionDate.toLocaleDateString('ru-RU');
+                    
+                    const totalMileage = getRandomInt(20000, 40000);
+                    const positionMileage = getRandomInt(100, 300);
+                    const initialDepth = 98;
+                    const currentDepth = getRandomInt(40, 80);
+                    const wearPercentage = Math.round(((initialDepth - currentDepth) / initialDepth) * 100);
+                    const damageClass = getRandomInt(0, 4);
+
+                    const tireData = {
+                        id: `${truckId}-${position}`,
+                        truckId: truckId,
+                        position: position,
+                        brand: brand,
+                        model: model,
+                        pattern: pattern,
+                        size: size,
+                        number: tireNumber,
+                        inspectionDate: inspectionDateStr,
+                        totalMileage: totalMileage,
+                        positionMileage: positionMileage,
+                        initialDepth: initialDepth,
+                        currentDepth: currentDepth,
+                        wearPercentage: wearPercentage,
+                        damageClass: damageClass,
+                        hasTire: true
+                    };
+                    
+                    truckStore[truckId].push(tireData);
+                });
+            }
+        }
+
+        // ===== DRAG & DROP =====
+        function initDragAndDrop() {
+            document.querySelectorAll('.tire-draggable').forEach(el => {
+                el.addEventListener('dragstart', handleDragStart);
+                el.addEventListener('dragend', handleDragEnd);
+            });
+
+            document.querySelectorAll('.position-drop-zone').forEach(el => {
+                el.addEventListener('dragover', handleDragOver);
+                el.addEventListener('dragenter', handleDragEnter);
+                el.addEventListener('dragleave', handleDragLeave);
+                el.addEventListener('drop', handleDrop);
+            });
+
+            const wh = document.getElementById('warehouseTableContainer');
+            wh.addEventListener('dragover', handleDragOver);
+            wh.addEventListener('drop', handleDrop);
+        }
+
+        function handleDragStart(e) {
+            const originRow = e.currentTarget; // гарантированно tr с атрибутами
+            const tireId = originRow.getAttribute('data-tire-id');
+            if (!tireId) return;
+            
+            currentDragData = {
+                tireId: tireId,
+                source: originRow.closest('.tire-details-table-container') ? 'truck' : 'warehouse'
+            };
+            
+            originRow.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', tireId);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.position-drop-zone').forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const target = e.target.closest('.position-drop-zone');
+            if (target) target.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            const target = e.target.closest('.position-drop-zone');
+            if (target) target.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (!currentDragData) return;
+            
+            const dropZone = e.target.closest('.position-drop-zone, .warehouse-table-container');
+            
+            if (dropZone && dropZone.classList.contains('position-drop-zone')) {
+                const truckId = dropZone.getAttribute('data-truck-id');
+                const position = dropZone.getAttribute('data-position');
+                currentDropTarget = { type: 'truck', truckId, position };
+            } else {
+                currentDropTarget = { type: 'warehouse' };
+            }
+            
+            showMoveModal(currentDragData, currentDropTarget);
+            
+            document.querySelectorAll('.position-drop-zone').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        // ===== МОДАЛЬНОЕ ОКНО =====
+        function showMoveModal(dragData, dropTarget) {
+            const modal = document.getElementById('moveTireModal');
+            const destinationInfo = document.getElementById('moveDestinationInfo');
+            
+            let destinationText = '';
+            if (dropTarget.type === 'truck') {
+                destinationText = `Перемещение на самосвал ${dropTarget.truckId}, позиция ${dropTarget.position}`;
+            } else {
+                destinationText = `Перемещение на склад "${currentWarehouse}"`;
+            }
+            
+            destinationInfo.innerHTML = `<strong>Назначение:</strong> ${destinationText}`;
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('moveDate').value = today;
+            document.getElementById('moveComment').value = '';
+            
+            modal.classList.add('active');
+        }
+
+        document.getElementById('closeMoveModal').addEventListener('click', closeMoveModal);
+        document.getElementById('cancelMove').addEventListener('click', closeMoveModal);
+        document.getElementById('confirmMove').addEventListener('click', confirmMove);
+
+        function closeMoveModal() {
+            document.getElementById('moveTireModal').classList.remove('active');
+            currentDragData = null;
+            currentDropTarget = null;
+        }
+
+        function confirmMove() {
+            const moveDate = document.getElementById('moveDate').value;
+            const moveComment = document.getElementById('moveComment').value;
+            
+            if (!moveDate) {
+                alert('Пожалуйста, укажите дату перемещения');
+                return;
+            }
+            
+            if (currentDragData && currentDropTarget) {
+                performTireMove(currentDragData, currentDropTarget, moveDate, moveComment);
+            }
+            
+            closeMoveModal();
+        }
+
+        // ===== ПЕРЕМЕЩЕНИЯ =====
+        function performTireMove(dragData, dropTarget, date, comment) {
+            if (dragData.source === 'truck' && dropTarget.type === 'warehouse') {
+                // С самосвала на склад
+                const [truckId, position] = dragData.tireId.split('-');
+                
+                const arr = truckStore[truckId] || [];
+                const tireIndex = arr.findIndex(t => t.position === position);
+                if (tireIndex !== -1) {
+                    const tire = arr[tireIndex];
+                    // Удаляем с самосвала
+                    arr.splice(tireIndex, 1);
+                    
+                    // На склад
+                    const warehouseTire = {
+                        ...tire,
+                        id: `warehouse-${currentWarehouse}-${Date.now()}`,
+                        substock: `${currentWarehouse}-${1 + Math.floor(Math.random() * 3)}`,
+                        row: ["A", "B", "C", "D"][Math.floor(Math.random() * 4)],
+                        place: 1 + Math.floor(Math.random() * 24),
+                        condition: tire.totalMileage > 80000 ? 'в эксплуатации' : 'на хранении',
+                        planOGP: tire.initialDepth,
+                        factOGP: tire.currentDepth,
+                        wearPercentage: tire.wearPercentage,
+                        repaired: Math.random() > 0.6,
+                        repairText: Math.random() > 0.6 ? "да" : "нет",
+                        damageClass: ["A", "B", "C"][Math.floor(Math.random() * 3)]
+                    };
+                    
+                    warehouseStore[currentWarehouse].push(warehouseTire);
+                    
+                    // Перерисовка (сохраняем активность)
+                    generateTrucks();
+                    renderWarehouseTable();
+                    
+                    alert(`Шина успешно перемещена на склад!\nДата: ${date}\nКомментарий: ${comment}`);
+                }
+            } else if (dragData.source === 'warehouse' && dropTarget.type === 'truck') {
+                // Со склада на самосвал
+                const list = warehouseStore[currentWarehouse];
+                const tireIndex = list.findIndex(t => t.id === dragData.tireId);
+                if (tireIndex !== -1) {
+                    const tire = list[tireIndex];
+                    // Удаляем со склада
+                    list.splice(tireIndex, 1);
+                    
+                    // Добавляем на самосвал (замещаем позицию)
+                    const truckTire = {
+                        id: `${dropTarget.truckId}-${dropTarget.position}`,
+                        truckId: dropTarget.truckId,
+                        position: dropTarget.position,
+                        brand: tire.brand,
+                        model: tire.model,
+                        pattern: tire.pattern,
+                        size: tire.size,
+                        number: tire.number,
+                        inspectionDate: new Date().toLocaleDateString('ru-RU'),
+                        totalMileage: tire.mileage || tire.totalMileage || 0,
+                        positionMileage: 0,
+                        initialDepth: tire.planOGP,
+                        currentDepth: tire.factOGP,
+                        wearPercentage: tire.wearPercentage,
+                        // Преобразуем буквенный класс из склада в числовой безопасно
+                        damageClass: typeof tire.damageClass === 'number' ? tire.damageClass : 0,
+                        hasTire: true
+                    };
+                    
+                    if (!truckStore[dropTarget.truckId]) truckStore[dropTarget.truckId] = [];
+                    
+                    const existingIndex = truckStore[dropTarget.truckId].findIndex(t => t.position === dropTarget.position);
+                    if (existingIndex !== -1) truckStore[dropTarget.truckId].splice(existingIndex, 1);
+                    
+                    truckStore[dropTarget.truckId].push(truckTire);
+
+                    // Если мы кладём шину на конкретный самосвал — логично считать его активным
+                    activeTruckId = String(dropTarget.truckId);
+                    
+                    // Перерисовка (с сохранением раскрытия)
+                    generateTrucks();
+                    renderWarehouseTable();
+                    
+                    alert(`Шина успешно перемещена на самосвал ${dropTarget.truckId}!\nДата: ${date}\nКомментарий: ${comment}`);
+                }
+            }
+        }
+
+        // ===== СКЛАД =====
+        const WAREHOUSES = ["АТУ", "МТР", "Оборот", "Ремонт", "Отремонтированные", "Нефункциональные", "Списанные"];
+        const WAREHOUSE_BRANDS = ["Michelin", "Bridgestone", "Goodyear", "Continental", "Hankook"];
+        const WAREHOUSE_MODELS = ["XDR2", "XDR3", "VSDL", "G177", "L5"];
+        const WAREHOUSE_PATTERNS = ["Тяговый", "Скальный", "Карьерный", "Универсальный"];
+        const WAREHOUSE_SIZES = ["33.00-51", "33.00R51", "40.00-57", "40.00R57", "46/90R57"];
+        const LOCKSMITHS = ["Иванов А.А.", "Петров В.В."];
+
+        function rand(seed) {
+            let x = Math.abs(seed) || 1;
+            return () => {
+                x = (1103515245 * x + 12345) & 0x7fffffff;
+                return x / 0x7fffffff;
+            };
+        }
+
+        function hash(s) {
+            let h = 0;
+            for (let i = 0; i < s.length; i++) {
+                h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+            }
+            return Math.abs(h) || 1;
+        }
+
+        function pad(n, w = 3) {
+            return String(n).padStart(w, '0');
+        }
+
+        function generateRepairInfo(r) {
+            const repaired = r() > 0.4;
+            if (!repaired) {
+                return { repaired: false, repairText: "нет" };
+            }
+            const actNumber = getRandomInt(1000, 2000);
+            const repairCount = getRandomInt(1, 3);
+            const mileageAfterRepair = getRandomInt(15000, 35000);
+            const locksmith = LOCKSMITHS[Math.floor(r() * LOCKSMITHS.length)];
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - getRandomInt(30, 180));
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + getRandomInt(1, 5));
+            return {
+                repaired: true,
+                repairText: "да",
+                repairDetails: {
+                    actNumber,
+                    startDate: startDate.toLocaleDateString('ru-RU'),
+                    endDate: endDate.toLocaleDateString('ru-RU'),
+                    repairCount,
+                    mileageAfterRepair,
+                    locksmith
+                }
+            };
+        }
+
+        function generateWarehouseData(warehouse, count = 12) {
+            const r = rand(hash(warehouse));
+            const arr = [];
+            for (let i = 0; i < count; i++) {
+                const brand = WAREHOUSE_BRANDS[Math.floor(r() * WAREHOUSE_BRANDS.length)];
+                const model = WAREHOUSE_MODELS[Math.floor(r() * WAREHOUSE_MODELS.length)];
+                const pattern = WAREHOUSE_PATTERNS[Math.floor(r() * WAREHOUSE_PATTERNS.length)];
+                const size = WAREHOUSE_SIZES[Math.floor(r() * WAREHOUSE_SIZES.length)];
+                const mileage = Math.floor(30000 + r() * 110000);
+                const wear = Math.min(95, Math.floor(r() * 35) + (mileage > 90000 ? 25 : 10));
+                const plan = +(16 + r() * 8).toFixed(1);
+                const fact = +(plan - (wear / 10)).toFixed(1);
+                
+                const repairInfo = generateRepairInfo(r);
+                const damageClass = repairInfo.repaired ? ["A", "B", "C"][Math.floor(r() * 3)] : "—";
+                
+                const substock = warehouse + "-" + (1 + Math.floor(r() * 3));
+                const row = ["A", "B", "C", "D"][Math.floor(r() * 4)];
+                const place = 1 + Math.floor(r() * 24);
+                const number = warehouse.slice(0, 2).toUpperCase() + "-" + pad(1 + Math.floor(r() * 999));
+                
+                arr.push({
+                    id: `warehouse-${warehouse}-${i}`,
+                    substock, row, place, number,
+                    brand, model, pattern, size,
+                    mileage,
+                    condition: mileage > 80000 ? 'в эксплуатации' : 'на хранении',
+                    planOGP: plan,
+                    factOGP: fact,
+                    wearPercentage: wear,
+                    repaired: repairInfo.repaired,
+                    repairText: repairInfo.repairText,
+                    repairDetails: repairInfo.repairDetails,
+                    damageClass,
+                    _mileage: mileage,
+                    _wear: wear
+                });
+            }
+            return arr;
+        }
+
+        // Инициализация склада
+        warehouseStore = Object.fromEntries(WAREHOUSES.map(w => [w, generateWarehouseData(w)]));
+        let sortState = { key: 'substock', dir: 'asc' };
+
+        function renderWarehouseTabs() {
+            const tabsContainer = document.getElementById('warehouseTabs');
+            tabsContainer.innerHTML = '';
+            WAREHOUSES.forEach(warehouse => {
+                const tab = document.createElement('div');
+                tab.className = `warehouse-tab ${warehouse === currentWarehouse ? 'active' : ''}`;
+                tab.textContent = warehouse;
+                tab.addEventListener('click', () => {
+                    currentWarehouse = warehouse;
+                    renderWarehouseTabs();
+                    renderWarehouseTable();
+                });
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        function createRowspanCell(text, span) {
+            const td = document.createElement('td');
+            td.rowSpan = span;
+            td.textContent = text;
+            return td;
+        }
+
+        function createCompactCell(text) {
+            const td = document.createElement('td');
+            td.textContent = text;
+            return td;
+        }
+
+        function createRepairCell(item) {
+            const td = document.createElement('td');
+            if (item.repaired && item.repairDetails) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'repair-tooltip';
+                const status = document.createElement('span');
+                status.className = 'repair-yes';
+                status.textContent = item.repairText;
+                const tooltipText = document.createElement('div');
+                tooltipText.className = 'tooltip-text';
+                tooltipText.innerHTML = `
+                    <strong>Информация о ремонте:</strong><br>
+                    Номер акта: ${item.repairDetails.actNumber}<br>
+                    Дата начала: ${item.repairDetails.startDate}<br>
+                    Дата окончания: ${item.repairDetails.endDate}<br>
+                    Количество ремонтов: ${item.repairDetails.repairCount}<br>
+                    Пробег после ремонта: ${item.repairDetails.mileageAfterRepair.toLocaleString('ru-RU')} км<br>
+                    Слесарь: ${item.repairDetails.locksmith}
+                `;
+                tooltip.appendChild(status);
+                tooltip.appendChild(tooltipText);
+                td.appendChild(tooltip);
+            } else {
+                const status = document.createElement('span');
+                status.className = 'repair-no';
+                status.textContent = item.repairText;
+                td.appendChild(status);
+            }
+            return td;
+        }
+
+        function getSortValue(item, key) {
+            switch(key) {
+                case 'substock': return item.substock;
+                case 'row': return item.row;
+                case 'place': return +item.place;
+                case 'number': return item.number;
+                case 'brand': return item.brand;
+                case 'size': return item.size;
+                case 'ogp': return item.planOGP;
+                case 'repair': return item.repaired;
+                default: return '';
+            }
+        }
+
+        function renderWarehouseTable() {
+            const tbody = document.getElementById('warehouseTbody');
+            const data = [...warehouseStore[currentWarehouse]];
+            
+            data.sort((a, b) => {
+                const aVal = getSortValue(a, sortState.key);
+                const bVal = getSortValue(b, sortState.key);
+                if (aVal < bVal) return sortState.dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortState.dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            tbody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const tr1 = document.createElement('tr');
+                const tr2 = document.createElement('tr');
+                const tr3 = document.createElement('tr');
+
+                const blockClass = index % 2 === 0 ? 'tire-block-even' : 'tire-block-odd';
+                tr1.className = blockClass + ' tire-draggable';
+                tr2.className = blockClass + ' tire-draggable';
+                tr3.className = blockClass + ' tire-draggable' + (index === data.length - 1 ? '' : ' tire-block');
+
+                tr1.setAttribute('draggable', 'true');
+                tr2.setAttribute('draggable', 'true');
+                tr3.setAttribute('draggable', 'true');
+                tr1.setAttribute('data-tire-id', item.id);
+                tr2.setAttribute('data-tire-id', item.id);
+                tr3.setAttribute('data-tire-id', item.id);
+
+                tr1.appendChild(createRowspanCell(item.substock, 3));
+                tr1.appendChild(createRowspanCell(item.row, 3));
+                tr1.appendChild(createRowspanCell(String(item.place), 3));
+                tr1.appendChild(createRowspanCell(item.number, 3));
+
+                tr1.appendChild(createCompactCell(item.brand));
+                tr2.appendChild(createCompactCell(item.model));
+                tr3.appendChild(createCompactCell(item.pattern));
+
+                tr1.appendChild(createCompactCell(item.size));
+                tr2.appendChild(createCompactCell(item.mileage.toLocaleString('ru-RU') + ' км'));
+                tr3.appendChild(createCompactCell(item.condition));
+
+                tr1.appendChild(createCompactCell(item.planOGP + ' мм'));
+                tr2.appendChild(createCompactCell(item.factOGP + ' мм'));
+                tr3.appendChild(createCompactCell(item.wearPercentage + '%'));
+
+                tr1.appendChild(createRepairCell(item));
+                tr2.appendChild(createCompactCell(item.damageClass));
+                tr3.appendChild(createCompactCell(item.repaired ? 'требует осмотра' : 'норма'));
+
+                tbody.appendChild(tr1);
+                tbody.appendChild(tr2);
+                tbody.appendChild(tr3);
+            });
+
+            document.querySelectorAll('#warehouseTable th.sortable').forEach(th => {
+                const key = th.dataset.key;
+                th.className = `sortable${key === sortState.key ? ` ${sortState.dir}` : ''}`;
+            });
+
+            initDragAndDrop();
+        }
+
+        function initSorting() {
+            // Сортировка самосвалов
+            document.querySelectorAll('.truck-table th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const key = th.getAttribute('data-key');
+                    if (truckSortState.key === key) {
+                        truckSortState.dir = truckSortState.dir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        truckSortState.key = key;
+                        truckSortState.dir = 'asc';
+                    }
+                    generateTrucks();
+                });
+            });
+
+            // Сортировка склада
+            document.querySelectorAll('#warehouseTable th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const key = th.dataset.key;
+                    if (sortState.key === key) {
+                        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortState.key = key;
+                        sortState.dir = 'asc';
+                    }
+                    renderWarehouseTable();
+                });
+            });
+        }
+
+        // Меню
+        document.getElementById('menuButton').addEventListener('click', function() {
+            const dropdown = document.getElementById('menuDropdown');
+            dropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(event) {
+            const menuButton = document.getElementById('menuButton');
+            const dropdown = document.getElementById('menuDropdown');
+            if (!menuButton.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function navigateTo(section) {
+            alert(`Переход к разделу: ${section}`);
+            document.getElementById('menuDropdown').classList.remove('show');
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTruckStore();
+            generateTrucks();
+            renderWarehouseTabs();
+            renderWarehouseTable();
+            initSorting();
+        });
+    </script>
+</body>
+</html>

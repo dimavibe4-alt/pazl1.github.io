@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ПАЗЛ — Программа учёта шин</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Фон с изображением */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("пазл.jpg");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.12;
+      z-index: 1;
+    }
+
+    /* Затемняющий оверлей */
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 2;
+    }
+
+    .slide {
+      text-align: center;
+      max-width: 900px;
+      padding: 2rem;
+      z-index: 3;
+      position: relative;
+    }
+
+    .title-main {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 2rem;
+      color: #fff;
+    }
+
+    .slogan {
+      font-size: 1.7rem;
+      font-style: italic;
+      color: #a0d2eb;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .next-btn {
+      margin-top: 2.5rem;
+      padding: 14px 32px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .next-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Декор */
+    .decoration {
+      position: absolute;
+      opacity: 0.05;
+      z-index: 2;
+    }
+
+    .circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: white;
+      top: 15%;
+      left: 8%;
+    }
+
+    .square {
+      width: 120px;
+      height: 120px;
+      background: white;
+      bottom: 12%;
+      right: 10%;
+      transform: rotate(15deg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="decoration circle" aria-hidden="true" role="presentation"></div>
+  <div class="decoration square" aria-hidden="true" role="presentation"></div>
+
+  <div class="slide">
+    <div class="title-main">
+      Программный Аналитический модуль<br>
+      Зондирования и Логистического управления СКГШ<br>
+      УК «Угольный разрез»
+    </div>
+
+    <div class="slogan">
+      Программа для шинного инженера —<br>
+      созданная шинным инженером
+    </div>
+
+    <a href="slide2.html" class="next-btn">
+      🔍 Открыть возможности ПАЗЛ
+    </a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ПАЗЛ — Главная</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide {
+      text-align: center;
+      max-width: 1200px;
+      padding: 2rem;
+      z-index: 2;
+    }
+
+    .logo-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: #e0f7fa;
+    }
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .module-btn {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(79, 172, 254, 0.5);
+      border-radius: 16px; /* Закруглённые края */
+      padding: 1.4rem 0.8rem;
+      text-align: center;
+      transition: all 0.35s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.35s ease;
+    }
+
+    .module-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.35s ease;
+    }
+
+    .module-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 0.4rem;
+      color: #4facfe;
+      padding: 0 0.4rem;
+    }
+
+    .module-desc {
+      font-size: 0.8rem;
+      color: #cbdff0;
+      line-height: 1.3;
+      opacity: 0.9;
+      padding: 0 0.4rem;
+    }
+
+    .module-btn:hover {
+      transform: translateY(-6px) scale(1.06);
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+      border-color: #4facfe;
+    }
+
+    .module-btn:hover .module-icon img {
+      transform: scale(1.2);
+    }
+
+    /* Декор */
+    .decoration {
+      position: absolute;
+      opacity: 0.05;
+      z-index: 1;
+    }
+
+    .circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: white;
+      top: 15%;
+      left: 8%;
+    }
+
+    .square {
+      width: 120px;
+      height: 120px;
+      background: white;
+      bottom: 12%;
+      right: 10%;
+      transform: rotate(15deg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="decoration circle" aria-hidden="true" role="presentation"></div>
+  <div class="decoration square" aria-hidden="true" role="presentation"></div>
+
+  <div class="slide">
+    <a href="slide1.html" class="logo-link">
+      <div class="logo">ПАЗЛ</div>
+    </a>
+
+    <div class="subtitle">Единая цифровая платформа управления шинным хозяйством</div>
+
+    <div class="modules">
+      <a href="slide3.html" class="module-btn">
+        <div class="module-icon"><img src="блок-учет.jpg" alt="Блок учёта"></div>
+        <div class="module-title">Блок учёта</div>
+        <div class="module-desc">Склады, перестановки, ремонт, утилизация</div>
+      </a>
+      <a href="#slide4" class="module-btn">
+        <div class="module-icon"><img src="мониторинг.jpg" alt="Мониторинг"></div>
+        <div class="module-title">Мониторинг</div>
+        <div class="module-desc">Онлайн-контроль давления, ТКВЧ, температуры</div>
+      </a>
+      <a href="#slide5" class="module-btn">
+        <div class="module-icon"><img src="шинный-инженер.jpg" alt="Шинный инженер"></div>
+        <div class="module-title">Шинный инженер</div>
+        <div class="module-desc">Замеры, осмотры, классификация повреждений</div>
+      </a>
+      <a href="#slide6" class="module-btn">
+        <div class="module-icon"><img src="аналитика.jpg" alt="Аналитика"></div>
+        <div class="module-title">Аналитика</div>
+        <div class="module-desc">Ходимость, стоимость км, причины списания</div>
+      </a>
+      <a href="#slide7" class="module-btn">
+        <div class="module-icon"><img src="прогноз-потребности.jpg" alt="Прогноз потребности"></div>
+        <div class="module-title">Прогноз потребности</div>
+        <div class="module-desc">Автоматический расчёт закупок</div>
+      </a>
+      <a href="#slide8" class="module-btn">
+        <div class="module-icon"><img src="конструктор-отчетов.jpg" alt="Конструктор отчётов"></div>
+        <div class="module-title">Конструктор отчётов</div>
+        <div class="module-desc">Гибкие сводные таблицы и экспорт в Excel</div>
+      </a>
+      <a href="#slide9" class="module-btn">
+        <div class="module-icon"><img src="качество-дорог.jpg" alt="Качество дорог"></div>
+        <div class="module-title">Качество дорог</div>
+        <div class="module-desc">Анализ влияния дорожного полотна на износ</div>
+      </a>
+      <a href="#slide10" class="module-btn">
+        <div class="module-icon"><img src="документы.jpg" alt="Документы"></div>
+        <div class="module-title">Документы</div>
+        <div class="module-desc">Акты, справочники, техлитература</div>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
