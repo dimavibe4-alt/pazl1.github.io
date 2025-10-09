@@ -1,920 +1,207 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ПАЗЛ — Блок учета</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Все стили остаются без изменений, только добавлю стили для сортировки */
-        .truck-table th.sortable {
-            cursor: pointer;
-            user-select: none;
-            position: relative;
-        }
-
-        .truck-table th.sortable:hover {
-            background-color: #e9ecef;
-        }
-
-        .truck-table th.sortable::after {
-            content: "⏷";
-            opacity: 0.5;
-            margin-left: 5px;
-            font-size: 0.8rem;
-        }
-
-        .truck-table th.sortable.asc::after {
-            content: "▲";
-            opacity: 0.8;
-        }
-
-        .truck-table th.sortable.desc::after {
-            content: "▼";
-            opacity: 0.8;
-        }
-
-        /* Остальные стили без изменений */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1a2b47, #2c3e50);
-            color: white;
-            padding: 1.2rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-title-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            height: 100px;
-            width: auto;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            border-radius: 8px;
-            filter: brightness(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            animation: logoEntrance 1s ease-out;
-        }
-
-        .logo:hover {
-            transform: scale(1.1) rotate(5deg);
-            filter: brightness(1.2) drop-shadow(0 5px 15px rgba(0,0,0,0.4));
-            animation: pulse 1.5s infinite;
-        }
-
-        .logo:active {
-            transform: scale(0.95) rotate(-5deg);
-            transition: all 0.1s ease;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1.1) rotate(5deg);
-            }
-            50% {
-                transform: scale(1.15) rotate(5deg);
-            }
-            100% {
-                transform: scale(1.1) rotate(5deg);
-            }
-        }
-
-        @keyframes logoEntrance {
-            0% {
-                opacity: 0;
-                transform: scale(0.5) rotate(-180deg);
-            }
-            70% {
-                transform: scale(1.1) rotate(10deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
-        }
-
-        .title-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-title h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .header-title p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        select, button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: white;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        select:hover, button:hover {
-            border-color: #1a2b47;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        button.export { background: #28a745; color: white; border-color: #218838; }
-        button.print { background: #17a2b8; color: white; border-color: #138496; }
-        button.settings { background: #6c757d; color: white; border-color: #545b62; }
-
-       .container {
-            max-width: 1600px;
-            margin: 1.5rem auto;
-            padding: 0 1.5rem;
-        }
-
-        .menu-button {
-            background-color: #1a2b47;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-        }
-
-        .menu-button:hover {
-            background-color: #2c4061;
-            transform: translateY(-1px);
-        }
-
-        .menu-dropdown {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 220px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            border-radius: 6px;
-            z-index: 1000;
-            margin-top: 0.5rem;
-            border: 1px solid #ddd;
-        }
-
-        .menu-dropdown.show {
-            display: block;
-        }
-
-        .menu-item {
-            padding: 0.75rem 1.2rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 0.95rem;
-        }
-
-        .menu-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .menu-item.active {
-            background-color: #e3f2fd;
-            color: #1a2b47;
-            font-weight: bold;
-        }
-
-        .damage-green {
-            background-color: #d4edda !important;
-            color: #155724;
-            font-weight: bold;
-        }
-
-        .damage-yellow {
-            background-color: #fff3cd !important;
-            color: #856404;
-            font-weight: bold;
-        }
-
-        .damage-orange {
-            background-color: #ffe0b2 !important;
-            color: #e65100;
-            font-weight: bold;
-        }
-
-        .damage-gray {
-            background-color: #e9ecef !important;
-            color: #495057;
-            font-weight: bold;
-        }
-
-        .warning-indicator {
-            color: #dc3545;
-            font-weight: bold;
-            font-size: 1.1rem;
-            animation: blink 2s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
-        }
-
-        .accounting-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .trucks-section {
-            flex: 0 0 40%;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            min-width: 0;
-        }
-
-        .warehouse-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            min-width: 0;
-        }
-
-        .trucks-list-container {
-            max-height: 500px;
-            overflow-y: auto;
-            overflow-x: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-        }
-
-        .trucks-list-container.expanded {
-            overflow: hidden;
-        }
-
-        .trucks-list-container.expanded .truck-row:not(.active) {
-            display: none;
-        }
-
-        .trucks-list-container.expanded .tires-details-container:not(.expanded) {
-            display: none;
-        }
-
-        .truck-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-            font-size: 0.85rem;
-        }
-
-        .truck-table th, .truck-table td {
-            padding: 0.5rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .truck-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            position: sticky;
-            top: 0;
-            font-size: 0.85rem;
-        }
-
-        .truck-table th:nth-child(1),
-        .truck-table td:nth-child(1) {
-            width: 15%;
-        }
-        
-        .truck-table th:nth-child(2),
-        .truck-table td:nth-child(2) {
-            width: 25%;
-        }
-        
-        .truck-table th:nth-child(3),
-        .truck-table td:nth-child(3) {
-            width: 20%;
-        }
-        
-        .truck-table th:nth-child(4),
-        .truck-table td:nth-child(4) {
-            width: 25%;
-        }
-        
-        .truck-table th:nth-child(5),
-        .truck-table td:nth-child(5) {
-            width: 15%;
-        }
-
-        .truck-row {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .truck-row:hover {
-            background-color: #f8f9fa;
-        }
-
-        .truck-row.active {
-            background-color: #e3f2fd;
-            position: sticky;
-            top: 42px;
-            z-index: 10;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .tires-details-container {
-            display: none;
-            background-color: #f8f9fa;
-            padding: 0;
-        }
-
-        .tires-details-container.expanded {
-            display: table-row;
-        }
-
-        .tire-details-cell {
-            padding: 0 !important;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .tire-details-table-container {
-            max-height: 400px;
-            overflow-y: auto;
-            overflow-x: auto;
-        }
-
-        .tire-details-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.7rem;
-        }
-
-        .tire-details-table th, .tire-details-table td {
-            padding: 0.2rem 0.4rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: top;
-        }
-
-        .tire-details-table th {
-            background-color: #e9ecef;
-            font-weight: 600;
-            color: #495057;
-            position: sticky;
-            top: 0;
-        }
-
-        .tire-details-table tr.tire-block-even {
-            background-color: #ffffff;
-        }
-
-        .tire-details-table tr.tire-block-odd {
-            background-color: #f8f9fa;
-        }
-
-        .tire-details-table tr.tire-block {
-            border-bottom: 2px solid #1a2b47 !important;
-        }
-
-        .empty-tire {
-            color: #6c757d;
-            font-style: italic;
-        }
-
-        .tire-draggable {
-            cursor: grab;
-            transition: all 0.2s ease;
-        }
-
-        .tire-draggable:hover {
-            background-color: #e3f2fd !important;
-        }
-
-        .tire-draggable.dragging {
-            opacity: 0.5;
-            background-color: #d1ecf1 !important;
-        }
-
-        .drop-zone {
-            transition: all 0.3s ease;
-            min-height: 20px;
-        }
-
-        .drop-zone.drag-over {
-            background-color: #d4edda !important;
-            box-shadow: inset 0 0 10px rgba(40, 167, 69, 0.3);
-        }
-
-        .position-drop-zone {
-            position: relative;
-        }
-
-        .position-drop-zone::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(40, 167, 69, 0.1);
-            border: 2px dashed #28a745;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .position-drop-zone.drag-over::after {
-            opacity: 1;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 1rem 1.5rem;
-            background: #1a2b47;
-            color: white;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            background: #f8f9fa;
-            border-radius: 0 0 8px 8px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background: #1a2b47;
-            color: white;
-            border-color: #1a2b47;
-        }
-
-        .btn-primary:hover {
-            background: #2c4061;
-            border-color: #2c4061;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-            border-color: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            border-color: #545b62;
-        }
-
-        .warehouse-tabs {
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 10px;
-        }
-
-        .warehouse-tab {
-            padding: 8px 16px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 20px;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
-        }
-
-        .warehouse-tab:hover {
-            background: #e9ecef;
-        }
-
-        .warehouse-tab.active {
-            background: #1a2b47;
-            color: white;
-            border-color: #1a2b47;
-        }
-
-        .warehouse-table-container {
-            max-height: 500px;
-            overflow-y: auto;
-            overflow-x: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-        }
-
-        .warehouse-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-            font-size: 0.7rem;
-        }
-
-        .warehouse-table th, .warehouse-table td {
-            padding: 0.2rem 0.4rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: top;
-        }
-
-        .warehouse-table th {
-            background-color: #e9ecef;
-            font-weight: 600;
-            color: #495057;
-            position: sticky;
-            top: 0;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .warehouse-table th.sortable:hover {
-            background-color: #dde1e5;
-        }
-
-        .warehouse-table th.sortable::after {
-            content: "⏷";
-            opacity: 0.5;
-            margin-left: 5px;
-            font-size: 0.7rem;
-        }
-
-        .warehouse-table th.sortable.asc::after {
-            content: "▲";
-            opacity: 0.8;
-        }
-
-        .warehouse-table th.sortable.desc::after {
-            content: "▼";
-            opacity: 0.8;
-        }
-
-        .warehouse-table td[rowspan] {
-            border-right: 1px solid #e0e0e0;
-        }
-
-        .warehouse-table tr.tire-block {
-            border-bottom: 2px solid #1a2b47 !important;
-        }
-
-        .warehouse-table tr.tire-block-even {
-            background-color: #ffffff;
-        }
-
-        .warehouse-table tr.tire-block-odd {
-            background-color: #f8f9fa;
-        }
-
-        .repair-tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .repair-tooltip .tooltip-text {
-            visibility: hidden;
-            width: auto;
-            min-width: 200px;
-            max-width: 400px;
-            background-color: #555;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1000;
-            top: 100%;
-            left: 0;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.7rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            white-space: normal;
-        }
-
-        .repair-tooltip .tooltip-text::after {
-            content: "";
-            position: absolute;
-            bottom: 100%;
-            left: 15px;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: transparent transparent #555 transparent;
-        }
-
-        .repair-tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .repair-yes {
-            color: #8B0000 !important;
-            font-weight: bold;
-        }
-
-        .repair-no {
-            color: #6c757d;
-        }
-
-        .stats-section {
-            display: flex;
-            overflow-x: auto;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .stat-card {
-            flex: 0 0 auto;
-            width: 108px;
-            padding: 0.5rem;
-            background: #f8f9fa;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        .stat-card h4 {
-            margin-bottom: 0.3rem;
-            color: #1a2b47;
-            font-size: 0.8rem;
-        }
-
-        .stat-value {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #1a2b47;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-warning {
-            color: #dc3545;
-            font-size: 0.7rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            min-height: 150px;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            color: #1a2b47;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 0.5rem;
-        }
-
-        .empty-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #6c757d;
-            font-style: italic;
-        }
-
-        @media (max-width: 1200px) {
-            .accounting-container {
-                flex-direction: column;
-            }
-           
-            .trucks-section, .warehouse-section {
-                flex: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                padding: 0.8rem 1rem;
-            }
-           
-            .header-title h1 {
-                font-size: 1.3rem;
-            }
-            
-            .header-title p {
-                font-size: 0.8rem;
-            }
-           
-            .controls {
-                width: 100%;
-                justify-content: flex-start;
-            }
-           
-            .header-title {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-           
-            .logo-title-container {
-                margin-bottom: 5px;
-            }
-           
-            .container {
-                padding: 0 0.8rem;
-            }
-           
-            .tire-details-table {
-                font-size: 0.7rem;
-            }
-           
-            .tire-details-table th, .tire-details-table td {
-                padding: 0.3rem;
-            }
-           
-            .stat-card {
-                width: 150px;
-            }
-           
-            .card {
-                padding: 0.8rem;
-            }
-        }
-       
-        @media (max-width: 480px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-           
-            .controls {
-                justify-content: space-between;
-            }
-           
-            select, button {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.8rem;
-            }
-           
-            .trucks-list-container {
-                max-height: 400px;
-            }
-           
-            .truck-table th, .truck-table td {
-                padding: 0.4rem;
-                font-size: 0.85rem;
-            }
-           
-            .stats-section {
-                gap: 0.5rem;
-                padding: 0.5rem;
-            }
-           
-            .stat-card {
-                width: 130px;
-                padding: 0.6rem;
-            }
-           
-            .stat-card h4 {
-                font-size: 0.8rem;
-            }
-           
-            .stat-value {
-                font-size: 1.1rem;
-            }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+        body{background-color:#f8f9fa;color:#333;line-height:1.5;overflow-x:hidden}
+        .header{background:linear-gradient(135deg,#1a2b47,#2c3e50);color:#fff;padding:1.2rem 2rem;box-shadow:0 2px 10px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .header-title{display:flex;align-items:center;gap:15px}
+        .logo-title-container{display:flex;align-items:center;gap:15px}
+        .logo{height:100px;width:auto;cursor:pointer;transition:all .5s ease;border-radius:8px;filter:brightness(1) drop-shadow(0 2px 4px rgba(0,0,0,.3));animation:logoEntrance 1s ease-out}
+        .logo:hover{transform:scale(1.1) rotate(5deg);filter:brightness(1.2) drop-shadow(0 5px 15px rgba(0,0,0,.4));animation:pulse 1.5s infinite}
+        .logo:active{transform:scale(.95) rotate(-5deg);transition:all .1s ease}
+        @keyframes pulse{0%{transform:scale(1.1) rotate(5deg)}50%{transform:scale(1.15) rotate(5deg)}100%{transform:scale(1.1) rotate(5deg)}}
+        @keyframes logoEntrance{0%{opacity:0;transform:scale(.5) rotate(-180deg)}70%{transform:scale(1.1) rotate(10deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+        .title-text{display:flex;flex-direction:column}
+        .header-title h1{font-size:1.8rem;margin-bottom:.3rem}
+        .header-title p{font-size:1rem;opacity:.9}
+        .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        select,button{padding:.5rem 1rem;border:1px solid #ccc;border-radius:4px;background:#fff;font-size:.95rem;cursor:pointer;transition:all .2s ease}
+        select:hover,button:hover{border-color:#1a2b47;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+        button.export{background:#28a745;color:#fff;border-color:#218838}
+        button.print{background:#17a2b8;color:#fff;border-color:#138496}
+        button.settings{background:#6c757d;color:#fff;border-color:#545b62}
+        .container{max-width:1600px;margin:1.5rem auto;padding:0 1.5rem}
+        .menu-button{background:#1a2b47;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:.5rem;transition:all .3s ease;margin-bottom:1rem}
+        .menu-button:hover{background:#2c4061;transform:translateY(-1px)}
+        .menu-dropdown{display:none;position:absolute;background:#fff;min-width:220px;box-shadow:0 8px 16px rgba(0,0,0,.15);border-radius:6px;z-index:1000;margin-top:.5rem;border:1px solid #ddd}
+        .menu-dropdown.show{display:block}
+        .menu-item{padding:.75rem 1.2rem;cursor:pointer;transition:background-color .2s;display:flex;align-items:center;gap:.7rem;font-size:.95rem}
+        .menu-item:hover{background:#f8f9fa}
+        .menu-item.active{background:#e3f2fd;color:#1a2b47;font-weight:bold}
+
+        .damage-green{background:#d4edda!important;color:#155724;font-weight:bold}
+        .damage-yellow{background:#fff3cd!important;color:#856404;font-weight:bold}
+        .damage-orange{background:#ffe0b2!important;color:#e65100;font-weight:bold}
+        .damage-gray{background:#e9ecef!important;color:#495057;font-weight:bold}
+        .warning-indicator{color:#dc3545;font-weight:bold;font-size:1.1rem;animation:blink 2s infinite}
+        @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.3}}
+
+        .accounting-container{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1rem}
+        .trucks-section{flex:0 0 40%;display:flex;flex-direction:column;gap:1rem;min-width:0}
+        .warehouse-section{flex:1;display:flex;flex-direction:column;gap:1rem;min-width:0}
+
+        .card{background:#fff;border-radius:8px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08);min-height:150px}
+        .card-title{font-size:1rem;font-weight:600;margin-bottom:.3rem;color:#1a2b47;border-bottom:1px solid #eee;padding-bottom:.1rem}
+
+        .trucks-list-container{max-height:507px;overflow-y:auto;overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px;background:#fff}
+        .trucks-list-container.expanded{overflow:hidden}
+        .trucks-list-container.expanded .truck-row:not(.active){display:none}
+        .trucks-list-container.expanded .tires-details-container:not(.expanded){display:none}
+        .truck-table{width:100%;border-collapse:collapse;min-width:500px;font-size:.85rem}
+        .truck-table th,.truck-table td{padding:.5rem;text-align:left;border-bottom:1px solid #e0e0e0}
+        .truck-table th{background:#f8f9fa;font-weight:600;color:#495057;position:sticky;top:0;font-size:.85rem}
+        .truck-row{cursor:pointer;transition:background-color .2s}
+        .truck-row:hover{background:#f8f9fa}
+        .truck-row.active{background:#e3f2fd;position:sticky;top:42px;z-index:10;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+
+        .tires-details-container{display:none;background:#f8f9fa;padding:0}
+        .tires-details-container.expanded{display:table-row}
+        .tire-details-cell{padding:0!important;border-bottom:1px solid #e0e0e0}
+        .tire-details-table-container{overflow-x:auto}
+        .tire-details-table{width:100%;border-collapse:collapse;font-size:.7rem}
+        .tire-details-table th,.tire-details-table td{padding:.2rem .4rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}
+        .tire-details-table th{background:#e9ecef;font-weight:600;color:#495057;position:sticky;top:0}
+        .tire-details-table tr.tire-block{border-bottom:2px solid #1a2b47!important}
+        .empty-tire{color:#6c757d;font-style:italic}
+
+        .tire-block-container{border-bottom:2px solid #1a2b47;}
+        .tire-block-container.dragging{opacity:.5;background:#d1ecf1!important;}
+        .tire-draggable{cursor:grab;transition:all .2s ease}
+        .tire-draggable:hover{background:#e3f2fd!important}
+
+        .drop-zone{transition:all .3s ease;min-height:20px}
+        .drop-zone.drag-over{background:#d4edda!important;box-shadow:inset 0 0 10px rgba(40,167,69,.3)}
+        .position-drop-zone{position:relative}
+        .position-drop-zone::after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(40,167,69,.1);border:2px dashed #28a745;pointer-events:none;opacity:0;transition:opacity .3s ease}
+        .position-drop-zone.drag-over::after{opacity:1}
+
+        /* Новая подсветка КОНТЕЙНЕРА занятых позиций при дропе */
+        .tire-details-table-container.drag-over{
+            outline:2px dashed #28a745;
+            background:rgba(40,167,69,.08);
+        }
+
+        .warehouse-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px}
+        .warehouse-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+        .search-container{position:relative;flex:1;max-width:300px}
+        .search-input{width:100%;padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:.9rem}
+        .search-results{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-top:none;border-radius:0 0 4px 4px;max-height:200px;overflow-y:auto;z-index:1000;display:none;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+        .search-result-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid #f0f0f0}
+        .search-result-item:hover{background:#f8f9fa}
+
+        .warehouse-tabs{display:flex;overflow-x:auto;gap:8px;padding:10px 0;border-bottom:1px solid #e0e0e0;margin-bottom:10px}
+        .warehouse-tab{padding:8px 16px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s ease;font-size:.9rem}
+        .warehouse-tab:hover{background:#e9ecef}
+        .warehouse-tab.active{background:#1a2b47;color:#fff;border-color:#1a2b47}
+
+        .warehouse-table-container{max-height:420px;overflow-y:auto;overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px;background:#fff}
+        .warehouse-table{width:100%;border-collapse:collapse;min-width:800px;font-size:.7rem}
+        .warehouse-table th,.warehouse-table td{padding:.2rem .4rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}
+        .warehouse-table th{background:#e9ecef;font-weight:600;color:#495057;position:sticky;top:0;cursor:pointer;user-select:none}
+        .warehouse-table th.sortable:hover{background:#dde1e5}
+        .warehouse-table th.sortable::after{content:"⏷";opacity:.5;margin-left:5px;font-size:.7rem}
+        .warehouse-table th.sortable.asc::after{content:"▲";opacity:.8}
+        .warehouse-table th.sortable.desc::after{content:"▼";opacity:.8}
+        .warehouse-table tr.tire-block{border-bottom:2px solid #1a2b47!important}
+
+        .repair-tooltip{position:relative;display:inline-block;cursor:pointer}
+        .repair-tooltip .tooltip-text{visibility:hidden;min-width:200px;max-width:420px;background:#555;color:#fff;text-align:left;border-radius:6px;padding:8px;position:absolute;z-index:1000;top:100%;left:0;margin-top:5px;opacity:0;transition:opacity .3s;font-size:.7rem;box-shadow:0 2px 10px rgba(0,0,0,.2);white-space:normal}
+        .repair-tooltip .tooltip-text::after{content:"";position:absolute;bottom:100%;left:15px;margin-left:-5px;border-width:5px;border-style:solid;border-color:transparent transparent #555 transparent}
+        .repair-tooltip:hover .tooltip-text{visibility:visible;opacity:1}
+        .warehouse-table .repair-tooltip .tooltip-text{top:100%;right:0;left:auto;margin-top:5px;max-width:min(420px,calc(100vw - 32px))}
+        .warehouse-table .repair-tooltip .tooltip-text::after{left:auto;right:15px;border-color:transparent transparent #555 transparent}
+
+        .stats-section{display:flex;overflow-x:auto;gap:.5rem;padding:.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);height:150px}
+        .stat-card{flex:0 0 auto;width:108px;padding:.5rem;background:#f8f9fa;border-radius:6px;text-align:center}
+        .stat-card h4{margin-bottom:.3rem;color:#1a2b47;font-size:.8rem}
+        .stat-value{font-size:1rem;font-weight:bold;color:#1a2b47;margin-bottom:.3рем}
+        .stat-warning{color:#dc3545;font-size:.7rem}
+
+        .action-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+        .btn{padding:.5rem 1rem;border:1px solid;border-radius:4px;cursor:pointer;font-size:.9rem;transition:all .2s ease}
+        .btn-primary{background:#1a2b47;color:#fff;border-color:#1a2b47}
+        .btn-primary:hover{background:#2c4061;border-color:#2c4061}
+        .btn-secondary{background:#6c757d;color:#fff;border-color:#6c757d}
+        .btn-secondary:hover{background:#5a6268;border-color:#545b62}
+        .btn-filter{background:#6f42c1;color:#fff;border-color:#6f42c1}
+        .btn-filter:hover{background:#5a36a3;border-color:#5a36a3}
+
+        .empty-section{display:flex;align-items:center;justify-content:center;height:100%;color:#6c757d;font-style:italic}
+
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:10000}
+        .modal-overlay.active{display:flex}
+        .modal{background:#fff;border-radius:8px;padding:20px;min-width:420px;max-width:90%;box-shadow:0 2px 10px rgba(0,0,0,0.1);transition:all .3s ease}
+        .modal.wide{min-width:600px}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+        .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer}
+        .modal-body{margin-bottom:15px}
+        .modal-footer{display:flex;justify-content:flex-end;gap:10px}
+        .form-group{margin-bottom:10px}
+        .form-group label{display:block;margin-bottom:5px;font-weight:500}
+        .form-control{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px}
+        .warning-message{background:#fff3cd;border:1px solid #ffeaa7;border-radius:4px;padding:10px;margin-bottom:15px;color:#856404}
+        .replacement-section{border-top:1px solid #eee;padding-top:15px;margin-top:15px;display:none}
+        .replacement-section.active{display:block}
+
+        .repair-yes{color:#8B0000!important;font-weight:bold!important;text-transform:uppercase}
+
+        .summary-container{max-height:70px;overflow-y:auto;overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px;background:#fff}
+        .summary-table{width:100%;border-collapse:collapse;font-size:.7rem}
+        .summary-table th,.summary-table td{padding:.2rem .4rem;text-align:center;border:1px solid #e0e0e0}
+        .summary-table th{background:#e9ecef;font-weight:600;color:#495057;position:sticky;top:0}
+        .summary-table tr:nth-child(even){background:#f8f9fa}
+
+        .truck-table th.sortable{cursor:pointer;user-select:none;position:relative}
+        .truck-table th.sortable:hover{background:#e9ecef}
+        .truck-table th.sortable::after{content:"⏷";opacity:.5;margin-left:5px;font-size:.8rem}
+        .truck-table th.sortable.asc::after{content:"▲";opacity:.8}
+        .truck-table th.sortable.desc::after{content:"▼";opacity:.8}
+
+        @media (max-width:1200px){.accounting-container{flex-direction:column}.trucks-section,.warehouse-section{flex:1}}
+        @media (max-width:768px){
+            .header{padding:.8rem 1rem}
+            .header-title h1{font-size:1.3rem}
+            .header-title p{font-size:.8rem}
+            .controls{width:100%;justify-content:flex-start}
+            .header-title{flex-direction:column;align-items:flex-start}
+            .logo-title-container{margin-bottom:5px}
+            .container{padding:0 .8rem}
+            .tire-details-table{font-size:.7rem}
+            .tire-details-table th,.tire-details-table td{padding:.3rem}
+            .stat-card{width:150px}
+            .card{padding:.8rem}
+            .warehouse-header{flex-direction:column;align-items:flex-start}
+            .warehouse-controls{width:100%;justify-content:space-between}
+            .search-container{max-width:100%}
+            .modal{min-width:90%;padding:15px}
+            .modal.wide{min-width:90%}
+        }
+        @media (max-width:480px){
+            .header{flex-direction:column;align-items:flex-start}
+            .controls{justify-content:space-between}
+            select,button{padding:.4rem .6rem;font-size:.8rem}
+            .trucks-list-container{max-height:400px}
+            .truck-table th,.truck-table td{padding:.4rem;font-size:.85rem}
+            .stats-section{gap:.5rem;padding:.5rem}
+            .stat-card{width:130px;padding:.6rem}
+            .stat-card h4{font-size:.8rem}
+            .stat-value{font-size:1.1rem}
+        }
+
+        .tire-num{border-bottom:1px dashed #1a2b47}
+        .highlighted{background:#fff3cd!important;animation:highlight 2s ease}
+        @keyframes highlight{0%{background:#fff3cd}100%{background:inherit}}
+
+        /* Чередование строк */
+        .tire-details-table tr:nth-child(even){background:#f8f9fa}
+        .tire-details-table tr:nth-child(odd){background:#fff}
+        .warehouse-table tr:nth-child(even){background:#f8f9fa}
+        .warehouse-table tr:nth-child(odd){background:#fff}
     </style>
 </head>
 <body>
@@ -930,18 +217,12 @@
                 </div>
             </div>
         </div>
-
         <div class="controls">
             <select id="regionSelect">
-                <option>Регион: Все</option>
-                <option>Регион 1</option>
-                <option>Регион 2</option>
+                <option>Регион: Все</option><option>Регион 1</option><option>Регион 2</option>
             </select>
             <select id="enterpriseSelect">
-                <option>Предприятие: Все</option>
-                <option>Разрез 1</option>
-                <option>Разрез 2</option>
-                <option>Разрез 3</option>
+                <option>Предприятие: Все</option><option>Разрез 1</option><option>Разрез 2</option><option>Разрез 3</option>
             </select>
             <button class="export">Экспорт</button>
             <button class="print">Печать</button>
@@ -970,6 +251,7 @@
         </div>
 
         <div class="accounting-container">
+            <!-- ЛЕВАЯ КОЛОНКА -->
             <div class="trucks-section">
                 <div class="card">
                     <h3 class="card-title">Перечень самосвалов</h3>
@@ -984,47 +266,36 @@
                                     <th class="sortable" data-key="status">Статус</th>
                                 </tr>
                             </thead>
-                            <tbody id="trucks-table-body">
-                            </tbody>
+                            <tbody id="trucks-table-body"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="stats-section">
-                    <div class="stat-card">
-                        <h4>Всего самосвалов</h4>
-                        <div class="stat-value">30</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>БелАЗ 75131</h4>
-                        <div class="stat-value">8</div>
-                        <div class="stat-warning">Требует внимания: 3</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>БелАЗ 7513D</h4>
-                        <div class="stat-value">6</div>
-                        <div class="stat-warning">Требует внимания: 4</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>БелАЗ 75306</h4>
-                        <div class="stat-value">7</div>
-                        <div class="stat-warning">Требует внимания: 5</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>БелАЗ 7530G</h4>
-                        <div class="stat-value">9</div>
-                        <div class="stat-warning">Требует внимания: 2</div>
-                    </div>
+                    <div class="stat-card"><h4>Всего самосвалов</h4><div class="stat-value">30</div></div>
+                    <div class="stat-card"><h4>БелАЗ 75131</h4><div class="stat-value">8</div><div class="stat-warning">Требует внимания: 3</div></div>
+                    <div class="stat-card"><h4>БелАЗ 7513D</h4><div class="stat-value">6</div><div class="stat-warning">Требует внимания: 4</div></div>
+                    <div class="stat-card"><h4>БелАЗ 75306</h4><div class="stat-value">7</div><div class="stat-warning">Требует внимания: 5</div></div>
+                    <div class="stat-card"><h4>БелАЗ 7530G</h4><div class="stat-value">9</div><div class="stat-warning">Требует внимания: 2</div></div>
                 </div>
             </div>
 
+            <!-- ПРАВАЯ КОЛОНКА -->
             <div class="warehouse-section">
                 <div class="card">
-                    <h3 class="card-title">Склад</h3>
-                    
-                    <div class="warehouse-tabs" id="warehouseTabs">
+                    <div class="warehouse-header">
+                        <h3 class="card-title">Склад</h3>
+                        <div class="warehouse-controls">
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="tireSearch" placeholder="Поиск по номеру шины...">
+                                <div class="search-results" id="searchResults"></div>
+                            </div>
+                            <button class="btn btn-primary" id="btnRecs">Рекомендации</button>
+                            <button class="btn btn-secondary" id="btnAdd">Добавить</button>
+                            <button class="btn btn-filter" id="btnFilter">Фильтр</button>
+                        </div>
                     </div>
-                    
+                    <div class="warehouse-tabs" id="warehouseTabs"></div>
                     <div class="warehouse-table-container" id="warehouseTableContainer">
                         <table class="warehouse-table" id="warehouseTable">
                             <thead>
@@ -1039,8 +310,19 @@
                                     <th class="sortable" data-key="repair">Ремонт / Класс повреждения</th>
                                 </tr>
                             </thead>
-                            <tbody id="warehouseTbody">
-                            </tbody>
+                            <tbody id="warehouseTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Свод по брендам/размерам -->
+                <div class="card">
+                    <h3 class="card-title">Свод по шинам и размерам (по брендам)</h3>
+                    <div class="summary-container" id="summaryContainer">
+                        <table class="summary-table" id="summaryTable">
+                            <thead id="summaryHead"></thead>
+                            <tbody id="summaryBody"></tbody>
+                            <tfoot id="summaryFoot"></tfoot>
                         </table>
                     </div>
                 </div>
@@ -1048,23 +330,74 @@
         </div>
     </div>
 
+    <!-- МОДАЛ перемещения (основной) -->
     <div class="modal-overlay" id="moveTireModal">
-        <div class="modal">
+        <div class="modal" id="moveModal">
             <div class="modal-header">
                 <h3>Перемещение шины</h3>
                 <button class="modal-close" id="closeMoveModal">&times;</button>
             </div>
             <div class="modal-body">
+                <div class="warning-message" id="replacementWarning" style="display:none;">
+                    На этой позиции шина уже установлена. После подтверждения появится блок ввода для снятия текущей шины.
+                </div>
+
+                <div id="moveDestinationInfo" class="form-group"></div>
+
                 <div class="form-group">
                     <label for="moveDate">Дата перемещения</label>
                     <input type="date" id="moveDate" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="moveComment">Комментарий</label>
-                    <textarea id="moveComment" class="form-control" placeholder="Введите комментарий к перемещению..."></textarea>
+                    <label for="moveTime">Время</label>
+                    <input type="time" id="moveTime" class="form-control">
                 </div>
-                <div id="moveDestinationInfo" class="form-group">
-                    <!-- Информация о назначении будет добавляться динамически -->
+                <div class="form-group">
+                    <label for="moveState">Состояние (назначение)</label>
+                    <select id="moveState" class="form-control">
+                        <option value="эксплуатация">Эксплуатация</option>
+                        <option value="ремонт">Ремонт</option>
+                        <option value="резерв">Резерв</option>
+                        <option value="нефункциональное">Нефункциональное</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="moveComment">Причина / комментарий</label>
+                    <textarea id="moveComment" class="form-control" placeholder="Кратко опишите причину..."></textarea>
+                </div>
+
+                <!-- секция для снятия занятой шины -->
+                <div class="replacement-section" id="replacementSection">
+                    <h4>Перемещение текущей шины (снятой с позиции)</h4>
+                    <div class="form-group">
+                        <label for="replacementWarehouse">Склад назначения</label>
+                        <select id="replacementWarehouse" class="form-control">
+                            <option value="АТУ">АТУ</option>
+                            <option value="МТР">МТР</option>
+                            <option value="Оборот">Оборот</option>
+                            <option value="Ремонт">Ремонт</option>
+                            <option value="Отремонтированные">Отремонтированные</option>
+                            <option value="Нефункциональные">Нефункциональные</option>
+                            <option value="Списанные">Списанные</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="replacementState">Состояние снятой</label>
+                        <select id="replacementState" class="form-control">
+                            <option value="эксплуатация">Эксплуатация</option>
+                            <option value="ремонт" selected>Ремонт</option>
+                            <option value="резерв">Резерв</option>
+                            <option value="нефункциональное">Нефункциональное</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="replacementReason">Причина снятия</label>
+                        <textarea id="replacementReason" class="form-control" placeholder="Укажите причину снятия..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="replacementComment">Комментарий</label>
+                        <textarea id="replacementComment" class="form-control" placeholder="Дополнительные детали..."></textarea>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1074,760 +407,399 @@
         </div>
     </div>
 
+    <!-- МОДАЛ подтверждения при занятой позиции -->
+    <div class="modal-overlay" id="occupiedConfirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Позиция занята</h3>
+                <button class="modal-close" id="closeOccupiedConfirm">&times;</button>
+            </div>
+            <div class="modal-body">
+                Позиция уже занята другой шиной. Вы уверены, что хотите выполнить перемещение и снять текущую?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="occupiedNo">Нет</button>
+                <button class="btn btn-primary" id="occupiedYes">Да</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ===== ГЛОБАЛЬНОЕ СОСТОЯНИЕ =====
         let truckStore = {};
+        let truckMetaStore = {};
         let warehouseStore = {};
         let currentDragData = null;
         let currentDropTarget = null;
         let currentWarehouse = "АТУ";
         let truckSortState = { key: 'id', dir: 'asc' };
-        // Новый глобальный идентификатор раскрытого самосвала
         let activeTruckId = null;
+        let occupiedPending = false;
+        let pendingDragData = null;
+        let pendingDropTarget = null;
 
-        // ===== СЛУЖЕБНЫЕ ДАННЫЕ =====
+        // ===== СПРАВОЧНИКИ =====
         const truckModels = ['БелАЗ 75131', 'БелАЗ 7513D', 'БелАЗ 75306', 'БелАЗ 7530G'];
-        const tireBrands = ['MICHELIN', 'BRIDGESTONE', 'GOODYEAR', 'CONTINENTAL'];
+        const tireBrands = ['MICHELIN', 'BRIDGESTONE', 'GOODYEAR', 'CONTINENTAL','Hankook'];
         const tireModels = ['XDR2', 'XDR3', 'VSDL', 'G177', 'L5'];
         const treadPatterns = ['Тяговый', 'Скальный', 'Карьерный', 'Универсальный'];
-        const tireSizes = ['33.00 R51', '40.00 R57', '46/90R57'];
-        const tireNumbers = ['V080018A5C', 'V080018A5D', 'V080018A5E', 'V080018A5F', 'V080018A5G', 'V080018A5H'];
-        const positions = ['ПП', 'ПЛ', 'ЗЛН', 'ЗЛВ', 'ЗПВ', 'ЗПН'];
-       
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-       
-        function getRandomInspectionDate() {
-            const today = new Date();
-            const pastDate = new Date();
-            pastDate.setDate(today.getDate() - getRandomInt(1, 30));
-            return pastDate.toLocaleDateString('ru-RU');
-        }
-
-        function checkWarningConditions(tireDataArray) {
-            const conditions = {
-                differentPairs: false,
-                damageClassOver2: false,
-                inspectionOver14Days: false,
-                wearOver90: false
-            };
-
-            const pairs = [
-                ['ПП', 'ПЛ'], 
-                ['ЗПН', 'ЗПВ'], 
-                ['ЗЛН', 'ЗЛВ']
-            ];
-            
-            pairs.forEach(pair => {
-                const tire1 = tireDataArray.find(t => t.position === pair[0] && t.hasTire);
-                const tire2 = tireDataArray.find(t => t.position === pair[1] && t.hasTire);
-                
-                if (tire1 && tire2) {
-                    if (tire1.brand !== tire2.brand || 
-                        tire1.model !== tire2.model || 
-                        tire1.pattern !== tire2.pattern) {
-                        conditions.differentPairs = true;
-                    }
-                }
-            });
-
-            tireDataArray.forEach(tire => {
-                if (tire.hasTire) {
-                    if (tire.damageClass > 2) {
-                        conditions.damageClassOver2 = true;
-                    }
-                    
-                    const inspectionDate = new Date(tire.inspectionDate.split('.').reverse().join('-'));
-                    const today = new Date();
-                    const diffTime = Math.abs(today - inspectionDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays > 14) {
-                        conditions.inspectionOver14Days = true;
-                    }
-                    
-                    if (tire.wearPercentage > 90) {
-                        conditions.wearOver90 = true;
-                    }
-                }
-            });
-
-            return Object.values(conditions).some(Boolean);
-        }
-
-        function getDamageClassColor(damageClass) {
-            switch(damageClass) {
-                case 0:
-                case 1:
-                    return 'damage-green';
-                case 2:
-                    return 'damage-yellow';
-                case 3:
-                    return 'damage-orange';
-                case 4:
-                    return 'damage-gray';
-                default:
-                    return '';
-            }
-        }
-        
-        // ===== ВСПОМОГАТЕЛЬНЫЕ ГЕНЕРАТОРЫ =====
-        function generateTireData(truckId) {
-            let html = '';
-            const tireDataArray = truckStore[truckId] || [];
-
-            html += `
-            <tr class="tire-position-header">
-                <th class="position-header">Позиция / Номер / Дата осмотра</th>
-                <th>Бренд / Модель / Рисунок</th>
-                <th>Размер / Пробег факт / Пробег на позиции</th>
-                <th>ОГП план / ОГП факт / % износа</th>
-                <th>Класс повреждения</th>
-            </tr>
-            `;
-
-            positions.forEach((position, index) => {
-                const tire = tireDataArray.find(t => t.position === position);
-                const hasTire = !!tire;
-                const blockClass = index % 2 === 0 ? 'tire-block-even' : 'tire-block-odd';
-                const isLastPosition = index === positions.length - 1;
-                
-                if (hasTire) {
-                    const { brand, model, pattern, size, number, inspectionDate, totalMileage, positionMileage, initialDepth, currentDepth, wearPercentage, damageClass } = tire;
-                    const damageColorClass = getDamageClassColor(damageClass);
-
-                    html += `
-                    <tr class="${blockClass} tire-draggable position-drop-zone" draggable="true" 
-                        data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
-                        <td>${position}</td>
-                        <td>${brand}</td>
-                        <td>${size}</td>
-                        <td>${initialDepth} мм</td>
-                        <td rowspan="3" class="${damageColorClass}">${damageClass}</td>
-                    </tr>
-                    <tr class="${blockClass} tire-draggable position-drop-zone" draggable="true" 
-                        data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
-                        <td>${number}</td>
-                        <td>${model}</td>
-                        <td>${totalMileage} км</td>
-                        <td>${currentDepth} мм</td>
-                    </tr>
-                    <tr class="${blockClass} tire-draggable position-drop-zone ${isLastPosition ? '' : 'tire-block'}" 
-                        draggable="true" data-tire-id="${tire.id}" data-truck-id="${truckId}" data-position="${position}">
-                        <td>${inspectionDate}</td>
-                        <td>${pattern}</td>
-                        <td>${positionMileage} км</td>
-                        <td>${wearPercentage}%</td>
-                    </tr>
-                    `;
-                } else {
-                    html += `
-                    <tr class="${blockClass} empty-tire position-drop-zone" data-truck-id="${truckId}" data-position="${position}">
-                        <td>${position}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td rowspan="3">-</td>
-                    </tr>
-                    <tr class="${blockClass} empty-tire position-drop-zone" data-truck-id="${truckId}" data-position="${position}">
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                    <tr class="${blockClass} empty-tire position-drop-zone ${isLastPosition ? '' : 'tire-block'}" 
-                        data-truck-id="${truckId}" data-position="${position}">
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                    `;
-                }
-            });
-            
-            return { html, tireDataArray };
-        }
-       
-        // ===== САМOСВАЛЫ =====
-        function generateTrucks() {
-            const tableBody = document.getElementById('trucks-table-body');
-            const container = document.getElementById('trucksListContainer');
-
-            // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: перед перерисовкой обязательно снимаем expanded,
-            // чтобы не скрыть все строки, если активной строки нет.
-            container.classList.remove('expanded');
-
-            let html = '';
-
-            // Коллекция для сортировки
-            let trucksArray = [];
-            for (let i = 1; i <= 30; i++) {
-                const truckId = 1100 + i;
-                const model = truckModels[getRandomInt(0, truckModels.length - 1)];
-                const wheelbase = '2*4';
-                const planTires = 6;
-                
-                const actualTires = truckStore[truckId] ? truckStore[truckId].length : 0;
-                const { html: tireHtml, tireDataArray } = generateTireData(truckId);
-                
-                const needsAttention = actualTires < planTires || checkWarningConditions(tireDataArray);
-                const showWarning = needsAttention && Math.random() > 0.3;
-                const status = showWarning ? '<span class="warning-indicator">!!!</span>' : '✅';
-
-                trucksArray.push({
-                    truckId,
-                    model,
-                    wheelbase,
-                    planTires,
-                    actualTires,
-                    status,
-                    statusOrder: showWarning ? 1 : 0
-                });
-            }
-
-            // Сортировка
-            trucksArray.sort((a, b) => {
-                let aVal, bVal;
-                switch (truckSortState.key) {
-                    case 'id':
-                        aVal = a.truckId; bVal = b.truckId; break;
-                    case 'model':
-                        aVal = a.model; bVal = b.model; break;
-                    case 'wheelbase':
-                        aVal = a.wheelbase; bVal = b.wheelbase; break;
-                    case 'tiresCount':
-                        aVal = a.actualTires; bVal = b.actualTires; break;
-                    case 'status':
-                        aVal = a.statusOrder; bVal = b.statusOrder; break;
-                    default:
-                        aVal = a.truckId; bVal = b.truckId;
-                }
-                if (aVal < bVal) return truckSortState.dir === 'asc' ? -1 : 1;
-                if (aVal > bVal) return truckSortState.dir === 'asc' ? 1 : -1;
-                return 0;
-            });
-
-            // Генерация HTML
-            for (const truck of trucksArray) {
-                const { truckId, model, wheelbase, planTires, actualTires } = truck;
-                const { html: tireHtml } = generateTireData(truckId);
-
-                html += `
-                <tr class="truck-row" data-truck="${truckId}">
-                    <td>${truckId}</td>
-                    <td>${model}</td>
-                    <td>${wheelbase}</td>
-                    <td>${planTires}/${actualTires}</td>
-                    <td>${truck.status}</td>
-                </tr>
-                <tr class="tires-details-container" id="tires-${truckId}">
-                    <td colspan="5" class="tire-details-cell">
-                        <div class="tire-details-table-container">
-                            <table class="tire-details-table">
-                                <tbody>
-                                    ${tireHtml}
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-                `;
-            }
-
-            tableBody.innerHTML = html;
-
-            // Вешаем обработчики клика по строкам самосвалов
-            document.querySelectorAll('.truck-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    const truckId = this.getAttribute('data-truck');
-                    const detailsRow = document.getElementById(`tires-${truckId}`);
-                    const container = document.getElementById('trucksListContainer');
-
-                    const isExpanded = detailsRow.classList.contains('expanded');
-
-                    // Свернуть всё
-                    document.querySelectorAll('.tires-details-container').forEach(d => d.classList.remove('expanded'));
-                    document.querySelectorAll('.truck-row').forEach(r => r.classList.remove('active'));
-                    container.classList.remove('expanded');
-
-                    if (!isExpanded) {
-                        // Развернуть выбранный
-                        detailsRow.classList.add('expanded');
-                        this.classList.add('active');
-                        container.classList.add('expanded');
-                        activeTruckId = truckId; // запоминаем активный
-                    } else {
-                        // Если сворачиваем — забываем активный
-                        activeTruckId = null;
-                    }
-                });
-            });
-
-            // Восстанавливаем раскрытый самосвал после перерисовки (если был)
-            if (activeTruckId) {
-                const row = document.querySelector(`.truck-row[data-truck="${activeTruckId}"]`);
-                const detailsRow = document.getElementById(`tires-${activeTruckId}`);
-                if (row && detailsRow) {
-                    row.classList.add('active');
-                    detailsRow.classList.add('expanded');
-                    document.getElementById('trucksListContainer').classList.add('expanded');
-                } else {
-                    // Если по какой-то причине строки нет — снимаем expanded
-                    activeTruckId = null;
-                    document.getElementById('trucksListContainer').classList.remove('expanded');
-                }
-            } else {
-                document.getElementById('trucksListContainer').classList.remove('expanded');
-            }
-
-            // Обновляем индикаторы сортировки
-            updateTruckSortIndicators();
-            
-            initDragAndDrop();
-        }
-
-        function updateTruckSortIndicators() {
-            document.querySelectorAll('.truck-table th.sortable').forEach(th => {
-                const key = th.getAttribute('data-key');
-                th.className = `sortable${key === truckSortState.key ? ` ${truckSortState.dir}` : ''}`;
-            });
-        }
-
-        function initializeTruckStore() {
-            truckStore = {};
-            
-            for (let i = 1; i <= 30; i++) {
-                const truckId = 1100 + i;
-                const actualTires = Math.random() > 0.4 ? 6 : getRandomInt(4, 5);
-                truckStore[truckId] = [];
-                
-                const positionsWithTires = [];
-                const availablePositions = [...positions];
-                
-                for (let j = 0; j < actualTires; j++) {
-                    if (availablePositions.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * availablePositions.length);
-                        positionsWithTires.push(availablePositions[randomIndex]);
-                        availablePositions.splice(randomIndex, 1);
-                    }
-                }
-
-                positionsWithTires.forEach(position => {
-                    const brand = tireBrands[getRandomInt(0, tireBrands.length - 1)];
-                    const model = tireModels[getRandomInt(0, tireModels.length - 1)];
-                    const pattern = treadPatterns[getRandomInt(0, treadPatterns.length - 1)];
-                    const size = tireSizes[getRandomInt(0, tireSizes.length - 1)];
-                    const tireNumber = tireNumbers[getRandomInt(0, tireNumbers.length - 1)];
-                    
-                    const daysAgo = Math.random() > 0.7 ? getRandomInt(15, 30) : getRandomInt(1, 14);
-                    const inspectionDate = new Date();
-                    inspectionDate.setDate(inspectionDate.getDate() - daysAgo);
-                    const inspectionDateStr = inspectionDate.toLocaleDateString('ru-RU');
-                    
-                    const totalMileage = getRandomInt(20000, 40000);
-                    const positionMileage = getRandomInt(100, 300);
-                    const initialDepth = 98;
-                    const currentDepth = getRandomInt(40, 80);
-                    const wearPercentage = Math.round(((initialDepth - currentDepth) / initialDepth) * 100);
-                    const damageClass = getRandomInt(0, 4);
-
-                    const tireData = {
-                        id: `${truckId}-${position}`,
-                        truckId: truckId,
-                        position: position,
-                        brand: brand,
-                        model: model,
-                        pattern: pattern,
-                        size: size,
-                        number: tireNumber,
-                        inspectionDate: inspectionDateStr,
-                        totalMileage: totalMileage,
-                        positionMileage: positionMileage,
-                        initialDepth: initialDepth,
-                        currentDepth: currentDepth,
-                        wearPercentage: wearPercentage,
-                        damageClass: damageClass,
-                        hasTire: true
-                    };
-                    
-                    truckStore[truckId].push(tireData);
-                });
-            }
-        }
-
-        // ===== DRAG & DROP =====
-        function initDragAndDrop() {
-            document.querySelectorAll('.tire-draggable').forEach(el => {
-                el.addEventListener('dragstart', handleDragStart);
-                el.addEventListener('dragend', handleDragEnd);
-            });
-
-            document.querySelectorAll('.position-drop-zone').forEach(el => {
-                el.addEventListener('dragover', handleDragOver);
-                el.addEventListener('dragenter', handleDragEnter);
-                el.addEventListener('dragleave', handleDragLeave);
-                el.addEventListener('drop', handleDrop);
-            });
-
-            const wh = document.getElementById('warehouseTableContainer');
-            wh.addEventListener('dragover', handleDragOver);
-            wh.addEventListener('drop', handleDrop);
-        }
-
-        function handleDragStart(e) {
-            const originRow = e.currentTarget; // гарантированно tr с атрибутами
-            const tireId = originRow.getAttribute('data-tire-id');
-            if (!tireId) return;
-            
-            currentDragData = {
-                tireId: tireId,
-                source: originRow.closest('.tire-details-table-container') ? 'truck' : 'warehouse'
-            };
-            
-            originRow.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', tireId);
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragEnd(e) {
-            e.currentTarget.classList.remove('dragging');
-            document.querySelectorAll('.position-drop-zone').forEach(el => {
-                el.classList.remove('drag-over');
-            });
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDragEnter(e) {
-            e.preventDefault();
-            const target = e.target.closest('.position-drop-zone');
-            if (target) target.classList.add('drag-over');
-        }
-
-        function handleDragLeave(e) {
-            const target = e.target.closest('.position-drop-zone');
-            if (target) target.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            if (!currentDragData) return;
-            
-            const dropZone = e.target.closest('.position-drop-zone, .warehouse-table-container');
-            
-            if (dropZone && dropZone.classList.contains('position-drop-zone')) {
-                const truckId = dropZone.getAttribute('data-truck-id');
-                const position = dropZone.getAttribute('data-position');
-                currentDropTarget = { type: 'truck', truckId, position };
-            } else {
-                currentDropTarget = { type: 'warehouse' };
-            }
-            
-            showMoveModal(currentDragData, currentDropTarget);
-            
-            document.querySelectorAll('.position-drop-zone').forEach(el => el.classList.remove('drag-over'));
-        }
-
-        // ===== МОДАЛЬНОЕ ОКНО =====
-        function showMoveModal(dragData, dropTarget) {
-            const modal = document.getElementById('moveTireModal');
-            const destinationInfo = document.getElementById('moveDestinationInfo');
-            
-            let destinationText = '';
-            if (dropTarget.type === 'truck') {
-                destinationText = `Перемещение на самосвал ${dropTarget.truckId}, позиция ${dropTarget.position}`;
-            } else {
-                destinationText = `Перемещение на склад "${currentWarehouse}"`;
-            }
-            
-            destinationInfo.innerHTML = `<strong>Назначение:</strong> ${destinationText}`;
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('moveDate').value = today;
-            document.getElementById('moveComment').value = '';
-            
-            modal.classList.add('active');
-        }
-
-        document.getElementById('closeMoveModal').addEventListener('click', closeMoveModal);
-        document.getElementById('cancelMove').addEventListener('click', closeMoveModal);
-        document.getElementById('confirmMove').addEventListener('click', confirmMove);
-
-        function closeMoveModal() {
-            document.getElementById('moveTireModal').classList.remove('active');
-            currentDragData = null;
-            currentDropTarget = null;
-        }
-
-        function confirmMove() {
-            const moveDate = document.getElementById('moveDate').value;
-            const moveComment = document.getElementById('moveComment').value;
-            
-            if (!moveDate) {
-                alert('Пожалуйста, укажите дату перемещения');
-                return;
-            }
-            
-            if (currentDragData && currentDropTarget) {
-                performTireMove(currentDragData, currentDropTarget, moveDate, moveComment);
-            }
-            
-            closeMoveModal();
-        }
-
-        // ===== ПЕРЕМЕЩЕНИЯ =====
-        function performTireMove(dragData, dropTarget, date, comment) {
-            if (dragData.source === 'truck' && dropTarget.type === 'warehouse') {
-                // С самосвала на склад
-                const [truckId, position] = dragData.tireId.split('-');
-                
-                const arr = truckStore[truckId] || [];
-                const tireIndex = arr.findIndex(t => t.position === position);
-                if (tireIndex !== -1) {
-                    const tire = arr[tireIndex];
-                    // Удаляем с самосвала
-                    arr.splice(tireIndex, 1);
-                    
-                    // На склад
-                    const warehouseTire = {
-                        ...tire,
-                        id: `warehouse-${currentWarehouse}-${Date.now()}`,
-                        substock: `${currentWarehouse}-${1 + Math.floor(Math.random() * 3)}`,
-                        row: ["A", "B", "C", "D"][Math.floor(Math.random() * 4)],
-                        place: 1 + Math.floor(Math.random() * 24),
-                        condition: tire.totalMileage > 80000 ? 'в эксплуатации' : 'на хранении',
-                        planOGP: tire.initialDepth,
-                        factOGP: tire.currentDepth,
-                        wearPercentage: tire.wearPercentage,
-                        repaired: Math.random() > 0.6,
-                        repairText: Math.random() > 0.6 ? "да" : "нет",
-                        damageClass: ["A", "B", "C"][Math.floor(Math.random() * 3)]
-                    };
-                    
-                    warehouseStore[currentWarehouse].push(warehouseTire);
-                    
-                    // Перерисовка (сохраняем активность)
-                    generateTrucks();
-                    renderWarehouseTable();
-                    
-                    alert(`Шина успешно перемещена на склад!\nДата: ${date}\nКомментарий: ${comment}`);
-                }
-            } else if (dragData.source === 'warehouse' && dropTarget.type === 'truck') {
-                // Со склада на самосвал
-                const list = warehouseStore[currentWarehouse];
-                const tireIndex = list.findIndex(t => t.id === dragData.tireId);
-                if (tireIndex !== -1) {
-                    const tire = list[tireIndex];
-                    // Удаляем со склада
-                    list.splice(tireIndex, 1);
-                    
-                    // Добавляем на самосвал (замещаем позицию)
-                    const truckTire = {
-                        id: `${dropTarget.truckId}-${dropTarget.position}`,
-                        truckId: dropTarget.truckId,
-                        position: dropTarget.position,
-                        brand: tire.brand,
-                        model: tire.model,
-                        pattern: tire.pattern,
-                        size: tire.size,
-                        number: tire.number,
-                        inspectionDate: new Date().toLocaleDateString('ru-RU'),
-                        totalMileage: tire.mileage || tire.totalMileage || 0,
-                        positionMileage: 0,
-                        initialDepth: tire.planOGP,
-                        currentDepth: tire.factOGP,
-                        wearPercentage: tire.wearPercentage,
-                        // Преобразуем буквенный класс из склада в числовой безопасно
-                        damageClass: typeof tire.damageClass === 'number' ? tire.damageClass : 0,
-                        hasTire: true
-                    };
-                    
-                    if (!truckStore[dropTarget.truckId]) truckStore[dropTarget.truckId] = [];
-                    
-                    const existingIndex = truckStore[dropTarget.truckId].findIndex(t => t.position === dropTarget.position);
-                    if (existingIndex !== -1) truckStore[dropTarget.truckId].splice(existingIndex, 1);
-                    
-                    truckStore[dropTarget.truckId].push(truckTire);
-
-                    // Если мы кладём шину на конкретный самосвал — логично считать его активным
-                    activeTruckId = String(dropTarget.truckId);
-                    
-                    // Перерисовка (с сохранением раскрытия)
-                    generateTrucks();
-                    renderWarehouseTable();
-                    
-                    alert(`Шина успешно перемещена на самосвал ${dropTarget.truckId}!\nДата: ${date}\nКомментарий: ${comment}`);
-                }
-            }
-        }
-
-        // ===== СКЛАД =====
-        const WAREHOUSES = ["АТУ", "МТР", "Оборот", "Ремонт", "Отремонтированные", "Нефункциональные", "Списанные"];
-        const WAREHOUSE_BRANDS = ["Michelin", "Bridgestone", "Goodyear", "Continental", "Hankook"];
-        const WAREHOUSE_MODELS = ["XDR2", "XDR3", "VSDL", "G177", "L5"];
-        const WAREHOUSE_PATTERNS = ["Тяговый", "Скальный", "Карьерный", "Универсальный"];
         const WAREHOUSE_SIZES = ["33.00-51", "33.00R51", "40.00-57", "40.00R57", "46/90R57"];
-        const LOCKSMITHS = ["Иванов А.А.", "Петров В.В."];
+        const positions = ['ПП','ПЛ','ЗЛН','ЗЛВ','ЗПВ','ЗПН'];
+        const WAREHOUSES = ["АТУ","МТР","Оборот","Ремонт","Отремонтированные","Нефункциональные","Списанные"];
 
-        function rand(seed) {
-            let x = Math.abs(seed) || 1;
-            return () => {
-                x = (1103515245 * x + 12345) & 0x7fffffff;
-                return x / 0x7fffffff;
-            };
+        const SIZE_GROUP_51 = new Set(['33.00-51','33.00R51','33.00 R51']);
+        const SIZE_GROUP_57 = new Set(['40.00-57','40.00R57','40.00 R57','46/90R57']);
+
+        function normalizeSize(s){
+            return s.replace(/\s+/g,'').replace('33.0051','33.00-51').replace('40.0057','40.00-57');
+        }
+        function getAllowedSizesByModel(model){
+            if (model.includes('75131') || model.includes('7513')) return SIZE_GROUP_51;
+            return SIZE_GROUP_57;
         }
 
-        function hash(s) {
-            let h = 0;
-            for (let i = 0; i < s.length; i++) {
-                h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+        // ===== УТИЛИТЫ =====
+        function getRandomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+        function daysBetween(d1,d2){
+            if(!d1||!d2||isNaN(d1.getTime())||isNaN(d2.getTime())) return 0;
+            return Math.ceil(Math.abs(d2-d1)/(1000*60*60*24));
+        }
+        function getDamageClassColor(d){
+            switch(d){
+                case 0: case 1: return 'damage-green';
+                case 2: return 'damage-yellow';
+                case 3: return 'damage-orange';
+                case 4: return 'damage-gray';
+                default: return '';
             }
-            return Math.abs(h) || 1;
         }
+        function rand(seed){let x=Math.abs(seed)||1;return()=>{x=(1103515245*x+12345)&0x7fffffff;return x/0x7fffffff;}}
+        function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return Math.abs(h)||1;}
+        function pad(n,w=3){return String(n).padStart(w,'0');}
 
-        function pad(n, w = 3) {
-            return String(n).padStart(w, '0');
-        }
-
-        function generateRepairInfo(r) {
-            const repaired = r() > 0.4;
-            if (!repaired) {
-                return { repaired: false, repairText: "нет" };
-            }
-            const actNumber = getRandomInt(1000, 2000);
-            const repairCount = getRandomInt(1, 3);
-            const mileageAfterRepair = getRandomInt(15000, 35000);
-            const locksmith = LOCKSMITHS[Math.floor(r() * LOCKSMITHS.length)];
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - getRandomInt(30, 180));
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + getRandomInt(1, 5));
-            return {
-                repaired: true,
-                repairText: "да",
-                repairDetails: {
-                    actNumber,
-                    startDate: startDate.toLocaleDateString('ru-RU'),
-                    endDate: endDate.toLocaleDateString('ru-RU'),
-                    repairCount,
-                    mileageAfterRepair,
-                    locksmith
+        // ===== ОЦЕНКИ/ПРЕДУПРЕЖДЕНИЯ =====
+        function checkWarningConditions(arr){
+            const pairs=[['ПП','ПЛ'],['ЗПН','ЗПВ'],['ЗЛН','ЗЛВ']];
+            let differentPairs=false, inspectionOver14=false, wearOver90=false, damageOver2=false;
+            pairs.forEach(p=>{
+                const a=arr.find(t=>t.position===p[0]&&t.hasTire);
+                const b=arr.find(t=>t.position===p[1]&&t.hasTire);
+                if(a&&b){
+                    if(a.brand!==b.brand||a.model!==b.model||a.pattern!==b.pattern||normalizeSize(a.size)!==normalizeSize(b.size)) 
+                        differentPairs=true;
                 }
-            };
+            });
+            arr.forEach(t=>{
+                if(t.hasTire){
+                    const [dd,mm,yy]=t.inspectionDate.split('.');
+                    let d=new Date(`${yy}-${mm}-${dd}`); 
+                    if(isNaN(d.getTime())) d=new Date();
+                    if(daysBetween(d,new Date())>14) inspectionOver14=true;
+                    if(t.wearPercentage>90) wearOver90=true;
+                    if(t.damageClass>2) damageOver2=true;
+                }
+            });
+            return differentPairs||inspectionOver14||wearOver90||damageOver2;
         }
 
-        function generateWarehouseData(warehouse, count = 12) {
-            const r = rand(hash(warehouse));
-            const arr = [];
-            for (let i = 0; i < count; i++) {
-                const brand = WAREHOUSE_BRANDS[Math.floor(r() * WAREHOUSE_BRANDS.length)];
-                const model = WAREHOUSE_MODELS[Math.floor(r() * WAREHOUSE_MODELS.length)];
-                const pattern = WAREHOUSE_PATTERNS[Math.floor(r() * WAREHOUSE_PATTERNS.length)];
-                const size = WAREHOUSE_SIZES[Math.floor(r() * WAREHOUSE_SIZES.length)];
-                const mileage = Math.floor(30000 + r() * 110000);
-                const wear = Math.min(95, Math.floor(r() * 35) + (mileage > 90000 ? 25 : 10));
-                const plan = +(16 + r() * 8).toFixed(1);
-                const fact = +(plan - (wear / 10)).toFixed(1);
-                
-                const repairInfo = generateRepairInfo(r);
-                const damageClass = repairInfo.repaired ? ["A", "B", "C"][Math.floor(r() * 3)] : "—";
-                
-                const substock = warehouse + "-" + (1 + Math.floor(r() * 3));
-                const row = ["A", "B", "C", "D"][Math.floor(r() * 4)];
-                const place = 1 + Math.floor(r() * 24);
-                const number = warehouse.slice(0, 2).toUpperCase() + "-" + pad(1 + Math.floor(r() * 999));
-                
+        // ===== ГЕНЕРАЦИЯ ДАННЫХ =====
+        function initializeTruckMeta(){
+            truckMetaStore={};
+            for(let i=1;i<=30;i++){
+                const id=1100+i;
+                const m = truckModels[(id % truckModels.length)];
+                truckMetaStore[id] = { model: m, wheelbase: '2*4', allowed: getAllowedSizesByModel(m) };
+            }
+        }
+        function initializeTruckStore(){
+            truckStore={};
+            for(let i=1;i<=30;i++){
+                const truckId=1100+i;
+                const actual=Math.random()>0.4?6:getRandomInt(4,5);
+                truckStore[truckId]=[];
+                const pos=[...positions];
+                for(let j=0;j<actual&&pos.length;j++){
+                    const idx=Math.floor(Math.random()*pos.length);
+                    const position=pos.splice(idx,1)[0];
+                    const brand=tireBrands[getRandomInt(0,tireBrands.length-1)];
+                    const model=tireModels[getRandomInt(0,tireModels.length-1)];
+                    const pattern=treadPatterns[getRandomInt(0,treadPatterns.length-1)];
+                    const allowed=truckMetaStore[truckId].allowed;
+                    let size = allowed===SIZE_GROUP_51 ? (Math.random()>0.5?'33.00-51':'33.00R51') : (['40.00-57','40.00R57','46/90R57'][getRandomInt(0,2)]);
+                    const number='V'+getRandomInt(80000,99999)+String.fromCharCode(65+getRandomInt(0,5))+'5'+String.fromCharCode(65+getRandomInt(0,5));
+                    const daysAgo=Math.random()>0.7?getRandomInt(15,30):getRandomInt(1,14);
+                    const insp=new Date(); insp.setDate(insp.getDate()-daysAgo);
+                    const total=getRandomInt(20000,40000);
+                    const posKm=getRandomInt(100,300);
+                    const initDepth=98;
+                    const curr=getRandomInt(40,80);
+                    const wear=Math.round(((initDepth-curr)/initDepth)*100);
+                    const dmg=getRandomInt(0,4);
+                    const wear30StartDays=getRandomInt(10,120);
+                    const pressureDeviations=getRandomInt(0,6), pressureAvgMins=pressureDeviations?getRandomInt(5,40):0;
+                    const speedExceeds=getRandomInt(0,10), speedTimeMin=speedExceeds?getRandomInt(3,60):0;
+                    const tkvchExceeded=getRandomInt(0,15), tkvchTotal=getRandomInt(Math.max(tkvchExceeded,15),60);
+
+                    truckStore[truckId].push({
+                        id:`${truckId}-${position}`, truckId, position, brand, model, pattern, size, number,
+                        inspectionDate: insp.toLocaleDateString('ru-RU'),
+                        totalMileage: total, positionMileage: posKm,
+                        initialDepth: initDepth, currentDepth: curr, wearPercentage: wear,
+                        damageClass: dmg, hasTire:true,
+                        meta:{ wear30SinceDays: wear>=30 ? wear30StartDays : 0, tkvchExceeded, tkvchTotal,
+                               pressureDeviations, pressureAvgMins, speedExceeds, speedTimeMin }
+                    });
+                }
+            }
+        }
+
+        const WAREHOUSE_BRANDS=["Michelin","Bridgestone","Goodyear","Continental","Hankook"];
+        const WAREHOUSE_MODELS=["XDR2","XDR3","VSDL","G177","L5"];
+        const WAREHOUSE_PATTERNS=["Тяговый","Скальный","Карьерный","Универсальный"];
+        const LOCKSMITHS=["Иванов А.А.","Петров В.В."];
+
+        function generateRepairInfo(r){
+            const repaired=r()>0.4;
+            if(!repaired) return {repaired:false,repairText:"нет"};
+            const start=new Date(); start.setDate(start.getDate()-getRandomInt(30,180));
+            const end=new Date(start); end.setDate(end.getDate()+getRandomInt(1,5));
+            return { repaired:true, repairText:"ДА",
+                repairDetails:{ actNumber:getRandomInt(1000,2000),
+                    startDate:start.toLocaleDateString('ru-RU'), endDate:end.toLocaleDateString('ru-RU'),
+                    repairCount:getRandomInt(1,3), mileageAfterRepair:getRandomInt(15000,35000),
+                    locksmith:LOCKSMITHS[Math.floor(r()*LOCKSMITHS.length)] } };
+        }
+        function generateWarehouseData(warehouse,count=12){
+            const r=rand(hash(warehouse)); const arr=[];
+            for(let i=0;i<count;i++){
+                const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
+                const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
+                const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
+                const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
+                const mileage=Math.floor(30000+r()*110000);
+                const wear=Math.min(95,Math.floor(r()*35)+(mileage>90000?25:10));
+                const plan=+(16+r()*8).toFixed(1);
+                const fact=+(plan-(wear/10)).toFixed(1);
+                const rep=generateRepairInfo(r);
+                const dmgNum = wear<30?1 : wear<60?2 : wear<90?3 : 4;
+
                 arr.push({
-                    id: `warehouse-${warehouse}-${i}`,
-                    substock, row, place, number,
-                    brand, model, pattern, size,
-                    mileage,
-                    condition: mileage > 80000 ? 'в эксплуатации' : 'на хранении',
-                    planOGP: plan,
-                    factOGP: fact,
-                    wearPercentage: wear,
-                    repaired: repairInfo.repaired,
-                    repairText: repairInfo.repairText,
-                    repairDetails: repairInfo.repairDetails,
-                    damageClass,
-                    _mileage: mileage,
-                    _wear: wear
+                    id:`warehouse-${warehouse}-${i}`,
+                    substock:`${warehouse}-${1+Math.floor(r()*3)}`,
+                    row:["A","B","C","D"][Math.floor(r()*4)],
+                    place:1+Math.floor(r()*24),
+                    number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
+                    brand, model, pattern, size, mileage,
+                    condition:mileage>80000?'в эксплуатации':'на хранении',
+                    planOGP:plan, factOGP:fact, wearPercentage:wear,
+                    repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
+                    damageClassNumeric:dmgNum
                 });
             }
             return arr;
         }
 
-        // Инициализация склада
-        warehouseStore = Object.fromEntries(WAREHOUSES.map(w => [w, generateWarehouseData(w)]));
-        let sortState = { key: 'substock', dir: 'asc' };
+        // ===== СВОД =====
+        function renderSummary(){
+            const head=document.getElementById('summaryHead');
+            const body=document.getElementById('summaryBody');
+            const foot=document.getElementById('summaryFoot');
+            let allTires=[];
+            Object.values(truckStore).forEach(truckTires=>truckTires.forEach(t=>{if(t.hasTire){allTires.push({brand:t.brand,size:normalizeSize(t.size)})}}));
+            Object.values(warehouseStore).forEach(warehouseTires=>warehouseTires.forEach(t=>allTires.push({brand:t.brand,size:normalizeSize(t.size)})));
+            const brands=[...new Set(allTires.map(t=>t.brand))].sort();
+            const sizes=[...new Set(allTires.map(t=>t.size))].sort();
+            const summaryData={}; brands.forEach(b=>{summaryData[b]={}; sizes.forEach(s=>summaryData[b][s]=0);});
+            allTires.forEach(t=>summaryData[t.brand][t.size]++);
+            head.innerHTML=''; const hr=document.createElement('tr'); const eTh=document.createElement('th'); eTh.textContent='Бренд / Размер'; hr.appendChild(eTh);
+            sizes.forEach(s=>{const th=document.createElement('th'); th.textContent=s; hr.appendChild(th)}); head.appendChild(hr);
+            body.innerHTML=''; brands.forEach(b=>{const r=document.createElement('tr'); const c=document.createElement('td'); c.textContent=b; c.style.fontWeight='bold'; r.appendChild(c);
+                sizes.forEach(s=>{const n=summaryData[b][s]||0; const td=document.createElement('td'); td.textContent=n; if(n>0){td.style.fontWeight='bold'; td.style.background='#e3f2fd'} r.appendChild(td);}); body.appendChild(r);});
+            foot.innerHTML=''; const fr=document.createElement('tr'); const tl=document.createElement('td'); tl.textContent='Всего'; tl.style.fontWeight='bold'; fr.appendChild(tl);
+            sizes.forEach(s=>{const total=brands.reduce((sum,b)=>sum+(summaryData[b][s]||0),0); const td=document.createElement('td'); td.textContent=total; td.style.fontWeight='bold'; td.style.background='#d4edda'; fr.appendChild(td);}); foot.appendChild(fr);
+        }
 
-        function renderWarehouseTabs() {
-            const tabsContainer = document.getElementById('warehouseTabs');
-            tabsContainer.innerHTML = '';
-            WAREHOUSES.forEach(warehouse => {
-                const tab = document.createElement('div');
-                tab.className = `warehouse-tab ${warehouse === currentWarehouse ? 'active' : ''}`;
-                tab.textContent = warehouse;
-                tab.addEventListener('click', () => {
-                    currentWarehouse = warehouse;
-                    renderWarehouseTabs();
-                    renderWarehouseTable();
+        // ===== ТАБЛИЦА САМОСВАЛОВ =====
+        function generateTireData(truckId){
+            let html=''; const arr=truckStore[truckId]||[];
+            html+=`<tr class="tire-position-header">
+                <th class="position-header">Позиция / Номер / Дата осмотра</th>
+                <th>Бренд / Модель / Рисунок</th>
+                <th>Размер / Пробег факт / Пробег на позиции</th>
+                <th>ОГП план / ОГП факт / % износа</th>
+                <th>Класс повреждения</th></tr>`;
+            const positionsOrder=['ПП','ПЛ','ЗЛН','ЗЛВ','ЗПВ','ЗПН'];
+            positionsOrder.forEach((pos,idx)=>{
+                const t=arr.find(x=>x.position===pos);
+                const even=idx%2===0; const last=idx===positionsOrder.length-1;
+                if(t){
+                    const color=getDamageClassColor(t.damageClass);
+                    const [dd,mm,yy]=t.inspectionDate.split('.');
+                    let d=new Date(`${yy}-${mm}-${dd}`); if(isNaN(d.getTime())) d=new Date();
+                    const daysSince=daysBetween(d,new Date());
+                    const rotationDays=t.meta.wear30SinceDays||0;
+                    const pairMap={ПП:'ПЛ',ПЛ:'ПП',ЗЛН:'ЗЛВ',ЗЛВ:'ЗЛН',ЗПВ:'ЗПН',ЗПН:'ЗПВ'};
+                    let mismatch='—'; const pair=arr.find(x=>x.position===pairMap[t.position]);
+                    if(pair){
+                        const eq=t.brand===pair.brand && t.model===pair.model && t.pattern===pair.pattern && normalizeSize(t.size)===normalizeSize(pair.size);
+                        mismatch=eq?'нет':'да';
+                    }
+                    const infoHTML=`<div class="tooltip-text">
+                        <strong>Инфо по шине ${t.number}</strong><br>
+                        Дней с последнего осмотра: ${daysSince}<br>
+                        Ротация (с 30% износа): ${rotationDays} дн.<br>
+                        Несоответствие позиции: ${mismatch}<br>
+                        ТКВЧ: ${t.meta.tkvchExceeded}/${t.meta.tkvchTotal}<br>
+                        Давление: отклонений ${t.meta.pressureDeviations} / ср. длит. ${t.meta.pressureAvgMins} мин<br>
+                        Скорость: превышений ${t.meta.speedExceeds} / всего ${t.meta.speedTimeMin} мин
+                    </div>`;
+                    html+=`<tr class="tire-draggable ${even?'even':'odd'}" draggable="true" data-tire-id="${t.id}" data-truck-id="${truckId}" data-position="${pos}">
+                        <td colspan="5" class="tire-block-container">
+                            <div class="tire-details-table-container">
+                                <table class="tire-details-table" style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <td>${pos}</td>
+                                            <td>${t.brand}</td>
+                                            <td>${t.size}</td>
+                                            <td>${t.initialDepth} мм</td>
+                                            <td rowspan="3" class="${color}">${t.damageClass}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="repair-tooltip tire-num">${t.number}${infoHTML}</span></td>
+                                            <td>${t.model}</td>
+                                            <td>${t.totalMileage.toLocaleString('ru-RU')} км</td>
+                                            <td>${t.currentDepth} мм</td>
+                                        </tr>
+                                        <tr class="${last?'':'tire-block'}">
+                                            <td>${t.inspectionDate}</td>
+                                            <td>${t.pattern}</td>
+                                            <td>${t.positionMileage.toLocaleString('ru-RU')} км</td>
+                                            <td>${t.wearPercentage}%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>`;
+                } else {
+                    html+=`<tr class="empty-tire position-drop-zone ${even?'even':'odd'}" data-truck-id="${truckId}" data-position="${pos}">
+                        <td colspan="5" class="tire-block-container">
+                            <div class="tire-details-table-container">
+                                <table class="tire-details-table" style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <td>${pos}</td><td>-</td><td>-</td><td>-</td><td rowspan="3">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>-</td><td>-</td><td>-</td><td>-</td>
+                                        </tr>
+                                        <tr class="${last?'':'tire-block'}">
+                                            <td>-</td><td>-</td><td>-</td><td>-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>`;
+                }
+            });
+            return { html, tireDataArray: arr };
+        }
+
+        function generateTrucks(){
+            const tbody=document.getElementById('trucks-table-body');
+            const container=document.getElementById('trucksListContainer');
+            container.classList.remove('expanded');
+
+            let trucksArr=[];
+            for(let i=1;i<=30;i++){
+                const truckId=1100+i;
+                const meta=truckMetaStore[truckId];
+                const plan=6;
+                const actual=truckStore[truckId]?truckStore[truckId].length:0;
+                const {html:tireHtml,tireDataArray}=generateTireData(truckId);
+                const needsAttention=actual<plan||checkWarningConditions(tireDataArray);
+                const status=needsAttention&&Math.random()>0.3?'<span class="warning-indicator">!!!</span>':'✅';
+                trucksArr.push({truckId, model:meta.model, wheelbase:meta.wheelbase, planTires:plan, actualTires:actual, status, statusOrder:status.includes('!!!')?1:0, tireHtml});
+            }
+
+            trucksArr.sort((a,b)=>{
+                let av,bv;
+                switch(truckSortState.key){
+                    case 'id': av=a.truckId; bv=b.truckId; break;
+                    case 'model': av=a.model; bv=b.model; break;
+                    case 'wheelbase': av=a.wheelbase; bv=b.wheelbase; break;
+                    case 'tiresCount': av=a.actualTires; bv=b.actualTires; break;
+                    case 'status': av=a.statusOrder; bv=b.statusOrder; break;
+                    default: av=a.truckId; bv=b.truckId;
+                }
+                if(av<bv) return truckSortState.dir==='asc'?-1:1;
+                if(av>bv) return truckSortState.dir==='asc'?1:-1;
+                return 0;
+            });
+
+            let html='';
+            for(const t of trucksArr){
+                html+=`<tr class="truck-row" data-truck="${t.truckId}">
+                    <td>${t.truckId}</td><td>${t.model}</td><td>${t.wheelbase}</td>
+                    <td>${t.planTires}/${t.actualTires}</td><td>${t.status}</td></tr>
+                <tr class="tires-details-container" id="tires-${t.truckId}">
+                    <td colspan="5" class="tire-details-cell">
+                        <div class="tire-details-table-container">
+                            <table class="tire-details-table"><tbody>${t.tireHtml}</tbody></table>
+                        </div>
+                    </td>
+                </tr>`;
+            }
+            tbody.innerHTML=html;
+
+            document.querySelectorAll('.truck-row').forEach(row=>{
+                row.addEventListener('click',function(){
+                    const truckId=this.getAttribute('data-truck');
+                    const details=document.getElementById(`tires-${truckId}`);
+                    const isExp=details.classList.contains('expanded');
+                    document.querySelectorAll('.tires-details-container').forEach(d=>d.classList.remove('expanded'));
+                    document.querySelectorAll('.truck-row').forEach(r=>r.classList.remove('active'));
+                    container.classList.remove('expanded');
+                    if(!isExp){ details.classList.add('expanded'); this.classList.add('active'); container.classList.add('expanded'); activeTruckId=truckId; }
+                    else { activeTruckId=null; }
                 });
-                tabsContainer.appendChild(tab);
+            });
+
+            if(activeTruckId){
+                const r=document.querySelector(`.truck-row[data-truck="${activeTruckId}"]`);
+                const d=document.getElementById(`tires-${activeTruckId}`);
+                if(r&&d){ r.classList.add('active'); d.classList.add('expanded'); container.classList.add('expanded'); }
+                else { activeTruckId=null; container.classList.remove('expanded'); }
+            }
+
+            updateTruckSortIndicators();
+            initDragAndDrop();
+            renderSummary();
+        }
+        function updateTruckSortIndicators(){
+            document.querySelectorAll('.truck-table th.sortable').forEach(th=>{
+                const key=th.getAttribute('data-key');
+                th.className=`sortable${key===truckSortState.key?` ${truckSortState.dir}`:''}`;
             });
         }
 
-        function createRowspanCell(text, span) {
-            const td = document.createElement('td');
-            td.rowSpan = span;
-            td.textContent = text;
-            return td;
+        // ===== СКЛАД =====
+        function renderWarehouseTabs(){
+            const c=document.getElementById('warehouseTabs'); c.innerHTML='';
+            WAREHOUSES.forEach(w=>{
+                const tab=document.createElement('div'); 
+                tab.className=`warehouse-tab ${w===currentWarehouse?'active':''}`; 
+                tab.textContent=w;
+                tab.addEventListener('click',()=>{ currentWarehouse=w; renderWarehouseTabs(); renderWarehouseTable(); renderSummary(); });
+                c.appendChild(tab);
+            });
         }
 
-        function createCompactCell(text) {
-            const td = document.createElement('td');
-            td.textContent = text;
-            return td;
-        }
-
-        function createRepairCell(item) {
-            const td = document.createElement('td');
-            if (item.repaired && item.repairDetails) {
-                const tooltip = document.createElement('div');
-                tooltip.className = 'repair-tooltip';
-                const status = document.createElement('span');
-                status.className = 'repair-yes';
-                status.textContent = item.repairText;
-                const tooltipText = document.createElement('div');
-                tooltipText.className = 'tooltip-text';
-                tooltipText.innerHTML = `
-                    <strong>Информация о ремонте:</strong><br>
-                    Номер акта: ${item.repairDetails.actNumber}<br>
-                    Дата начала: ${item.repairDetails.startDate}<br>
-                    Дата окончания: ${item.repairDetails.endDate}<br>
-                    Количество ремонтов: ${item.repairDetails.repairCount}<br>
-                    Пробег после ремонта: ${item.repairDetails.mileageAfterRepair.toLocaleString('ru-RU')} км<br>
-                    Слесарь: ${item.repairDetails.locksmith}
-                `;
-                tooltip.appendChild(status);
-                tooltip.appendChild(tooltipText);
-                td.appendChild(tooltip);
-            } else {
-                const status = document.createElement('span');
-                status.className = 'repair-no';
-                status.textContent = item.repairText;
-                td.appendChild(status);
-            }
-            return td;
-        }
-
-        function getSortValue(item, key) {
-            switch(key) {
+        let sortState={key:'substock',dir:'asc'};
+        function getSortValue(item,key){
+            switch(key){
                 case 'substock': return item.substock;
                 case 'row': return item.row;
                 case 'place': return +item.place;
@@ -1839,128 +811,519 @@
                 default: return '';
             }
         }
-
-        function renderWarehouseTable() {
-            const tbody = document.getElementById('warehouseTbody');
-            const data = [...warehouseStore[currentWarehouse]];
-            
-            data.sort((a, b) => {
-                const aVal = getSortValue(a, sortState.key);
-                const bVal = getSortValue(b, sortState.key);
-                if (aVal < bVal) return sortState.dir === 'asc' ? -1 : 1;
-                if (aVal > bVal) return sortState.dir === 'asc' ? 1 : -1;
-                return 0;
+        function buildRepairCellHTML(item){
+            if(item.repaired && item.repairDetails){
+                return `<span class="repair-tooltip repair-yes">ДА
+                    <div class="tooltip-text">
+                        <strong>Инфо о ремонте</strong><br>
+                        Номер акта: ${item.repairDetails.actNumber}<br>
+                        Дата начала: ${item.repairDetails.startDate}<br>
+                        Дата окончания: ${item.repairDetails.endDate}<br>
+                        Кол-во ремонтов: ${item.repairDetails.repairCount}<br>
+                        Пробег после ремонта: ${item.repairDetails.mileageAfterRepair.toLocaleString('ru-RU')} км<br>
+                        Слесарь: ${item.repairDetails.locksmith}
+                    </div>
+                </span>`;
+            }
+            return `<span>нет</span>`;
+        }
+        function buildDamageBadge(num){
+            const cls=getDamageClassColor(num);
+            return `<span class="repair-tooltip ${cls}" style="padding:2px 6px;display:inline-block;margin-left:6px;">
+                ${num}
+                <div class="tooltip-text">
+                    <strong>Классификация повреждений КГШ</strong><br>
+                    1 — косметические, эксплуатация<br>
+                    2 — наблюдать<br>
+                    3 — критично, рассмотреть ремонт<br>
+                    4 — предельный износ / не принимать
+                </div>
+            </span>`;
+        }
+        function renderWarehouseTable(){
+            const tbody=document.getElementById('warehouseTbody');
+            const data=[...warehouseStore[currentWarehouse]];
+            data.sort((a,b)=>{const av=getSortValue(a,sortState.key), bv=getSortValue(b,sortState.key); if(av<bv) return sortState.dir==='asc'?-1:1; if(av>bv) return sortState.dir==='asc'?1:-1; return 0;});
+            tbody.innerHTML='';
+            data.forEach((item,index)=>{
+                const tr=document.createElement('tr');
+                tr.className=`tire-draggable ${index%2===0?'even':'odd'}`;
+                tr.setAttribute('draggable','true');
+                tr.setAttribute('data-tire-id',item.id);
+                tr.setAttribute('data-warehouse',currentWarehouse);
+                tr.innerHTML=`
+                    <td>${item.substock}</td>
+                    <td>${item.row}</td>
+                    <td>${item.place}</td>
+                    <td>${item.number}</td>
+                    <td>${item.brand} / ${item.model} / ${item.pattern}</td>
+                    <td>${item.size} / ${item.mileage.toLocaleString('ru-RU')} км / ${item.condition}</td>
+                    <td>${item.planOGP} мм / ${item.factOGP} мм / ${item.wearPercentage}%</td>
+                    <td>${buildRepairCellHTML(item)} ${buildDamageBadge(item.damageClassNumeric)}</td>`;
+                tbody.appendChild(tr);
             });
-            
-            tbody.innerHTML = '';
-            
-            data.forEach((item, index) => {
-                const tr1 = document.createElement('tr');
-                const tr2 = document.createElement('tr');
-                const tr3 = document.createElement('tr');
-
-                const blockClass = index % 2 === 0 ? 'tire-block-even' : 'tire-block-odd';
-                tr1.className = blockClass + ' tire-draggable';
-                tr2.className = blockClass + ' tire-draggable';
-                tr3.className = blockClass + ' tire-draggable' + (index === data.length - 1 ? '' : ' tire-block');
-
-                tr1.setAttribute('draggable', 'true');
-                tr2.setAttribute('draggable', 'true');
-                tr3.setAttribute('draggable', 'true');
-                tr1.setAttribute('data-tire-id', item.id);
-                tr2.setAttribute('data-tire-id', item.id);
-                tr3.setAttribute('data-tire-id', item.id);
-
-                tr1.appendChild(createRowspanCell(item.substock, 3));
-                tr1.appendChild(createRowspanCell(item.row, 3));
-                tr1.appendChild(createRowspanCell(String(item.place), 3));
-                tr1.appendChild(createRowspanCell(item.number, 3));
-
-                tr1.appendChild(createCompactCell(item.brand));
-                tr2.appendChild(createCompactCell(item.model));
-                tr3.appendChild(createCompactCell(item.pattern));
-
-                tr1.appendChild(createCompactCell(item.size));
-                tr2.appendChild(createCompactCell(item.mileage.toLocaleString('ru-RU') + ' км'));
-                tr3.appendChild(createCompactCell(item.condition));
-
-                tr1.appendChild(createCompactCell(item.planOGP + ' мм'));
-                tr2.appendChild(createCompactCell(item.factOGP + ' мм'));
-                tr3.appendChild(createCompactCell(item.wearPercentage + '%'));
-
-                tr1.appendChild(createRepairCell(item));
-                tr2.appendChild(createCompactCell(item.damageClass));
-                tr3.appendChild(createCompactCell(item.repaired ? 'требует осмотра' : 'норма'));
-
-                tbody.appendChild(tr1);
-                tbody.appendChild(tr2);
-                tbody.appendChild(tr3);
+            document.querySelectorAll('#warehouseTable th.sortable').forEach(th=>{
+                const key=th.dataset.key; th.className=`sortable${key===sortState.key?` ${sortState.dir}`:''}`;
             });
-
-            document.querySelectorAll('#warehouseTable th.sortable').forEach(th => {
-                const key = th.dataset.key;
-                th.className = `sortable${key === sortState.key ? ` ${sortState.dir}` : ''}`;
-            });
-
             initDragAndDrop();
         }
 
-        function initSorting() {
-            // Сортировка самосвалов
-            document.querySelectorAll('.truck-table th.sortable').forEach(th => {
-                th.addEventListener('click', () => {
-                    const key = th.getAttribute('data-key');
-                    if (truckSortState.key === key) {
-                        truckSortState.dir = truckSortState.dir === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        truckSortState.key = key;
-                        truckSortState.dir = 'asc';
+        // ===== DRAG & DROP (обновлено) =====
+        function initDragAndDrop(){
+            // источники
+            document.querySelectorAll('.tire-draggable').forEach(el=>{
+                el.removeEventListener('dragstart',handleDragStart);
+                el.removeEventListener('dragend',handleDragEnd);
+                el.addEventListener('dragstart',handleDragStart);
+                el.addEventListener('dragend',handleDragEnd);
+            });
+
+            // пустые позиции
+            document.querySelectorAll('.position-drop-zone').forEach(el=>{
+                el.removeEventListener('dragover',handleDragOver);
+                el.removeEventListener('dragenter',handleDragEnter);
+                el.removeEventListener('dragleave',handleDragLeave);
+                el.removeEventListener('drop',handleDrop);
+                el.addEventListener('dragover',handleDragOver);
+                el.addEventListener('dragenter',handleDragEnter);
+                el.addEventListener('dragleave',handleDragLeave);
+                el.addEventListener('drop',handleDrop);
+            });
+
+            // КОНТЕЙНЕРЫ занятых позиций (ключ к замене)
+            document.querySelectorAll('.tire-details-table-container').forEach(el=>{
+                el.removeEventListener('dragover',handleDragOver);
+                el.removeEventListener('dragenter',onContainerEnter);
+                el.removeEventListener('dragleave',onContainerLeave);
+                el.removeEventListener('drop',handleDrop);
+                el.addEventListener('dragover',handleDragOver);
+                el.addEventListener('dragenter',onContainerEnter);
+                el.addEventListener('dragleave',onContainerLeave);
+                el.addEventListener('drop',handleDrop);
+            });
+            function onContainerEnter(e){ e.preventDefault(); this.classList.add('drag-over'); }
+            function onContainerLeave(){ this.classList.remove('drag-over'); }
+
+            // область склада
+            const wh=document.getElementById('warehouseTableContainer');
+            if(wh){
+                wh.removeEventListener('dragover',handleDragOver);
+                wh.removeEventListener('drop',handleDrop);
+                wh.addEventListener('dragover',handleDragOver);
+                wh.addEventListener('drop',handleDrop);
+            }
+        }
+        function handleDragStart(e){
+            const row=e.currentTarget;
+            const tireId=row.getAttribute('data-tire-id'); if(!tireId) return;
+            const isTruck=!!row.closest('.tire-details-table-container');
+            let source=isTruck?'truck':'warehouse';
+            let warehouseAttr=isTruck?null:(row.getAttribute('data-warehouse')||currentWarehouse);
+            currentDragData={tireId,source,warehouse:warehouseAttr};
+            row.classList.add('dragging');
+            e.dataTransfer.setData('text/plain',tireId);
+            e.dataTransfer.effectAllowed='move';
+        }
+        function handleDragEnd(e){
+            e.currentTarget.classList.remove('dragging');
+            cleanupDropHighlights();
+        }
+        function handleDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+        function handleDragEnter(e){ const t=e.target.closest('.position-drop-zone'); if(t) t.classList.add('drag-over'); }
+        function handleDragLeave(e){ const t=e.target.closest('.position-drop-zone'); if(t) t.classList.remove('drag-over'); }
+
+        function handleDrop(e){
+            e.preventDefault();
+            if(!currentDragData) return;
+
+            // 1) Пустая позиция
+            const zone=e.target.closest('.position-drop-zone');
+            if(zone){
+                const truckId=zone.getAttribute('data-truck-id');
+                const position=zone.getAttribute('data-position');
+                const existingTire=(truckStore[truckId]||[]).find(t=>t.position===position);
+                currentDropTarget={type:'truck',truckId,position};
+                if(existingTire){
+                    pendingDragData={...currentDragData};
+                    pendingDropTarget={...currentDropTarget};
+                    openOccupiedConfirm();
+                }else{
+                    openMoveModal({needReplacement:false});
+                }
+                cleanupDropHighlights();
+                return;
+            }
+
+            // 2) Занятая позиция (дроп по контейнеру)
+            const cont=e.target.closest('.tire-details-table-container');
+            if(cont){
+                const tiresContainer=cont.closest('.tires-details-container'); // tr#tires-XXXX
+                let truckId=null, position=null;
+                if(tiresContainer){ truckId=String(tiresContainer.id||'').replace('tires-',''); }
+                const posCell=cont.querySelector('tbody tr:first-child td:first-child');
+                if(posCell) position=posCell.textContent.trim();
+                if(truckId && position){
+                    currentDropTarget={type:'truck',truckId,position};
+                    pendingDragData={...currentDragData};
+                    pendingDropTarget={...currentDropTarget};
+                    openOccupiedConfirm();
+                }
+                cleanupDropHighlights();
+                return;
+            }
+
+            // 3) Область склада
+            const whc=document.getElementById('warehouseTableContainer');
+            if(whc && (e.target===whc || whc.contains(e.target))){
+                currentDropTarget={type:'warehouse',warehouse:currentWarehouse};
+                openMoveModal({needReplacement:false});
+            }
+            cleanupDropHighlights();
+        }
+        function cleanupDropHighlights(){
+            document.querySelectorAll('.position-drop-zone').forEach(el=>el.classList.remove('drag-over'));
+            document.querySelectorAll('.tire-details-table-container').forEach(el=>el.classList.remove('drag-over'));
+        }
+
+        // ===== МОДАЛЫ =====
+        function openOccupiedConfirm(){ document.getElementById('occupiedConfirmModal').classList.add('active'); }
+        function closeOccupiedConfirm(){
+            document.getElementById('occupiedConfirmModal').classList.remove('active');
+            occupiedPending=false; pendingDragData=null; pendingDropTarget=null;
+        }
+        function openMoveModal({needReplacement}){
+            const modal=document.getElementById('moveTireModal');
+            const moveModal=document.getElementById('moveModal');
+            const info=document.getElementById('moveDestinationInfo');
+            const replacementWarning=document.getElementById('replacementWarning');
+            const replacementSection=document.getElementById('replacementSection');
+            const text=currentDropTarget.type==='truck'
+                ? `Назначение: самосвал <b>${currentDropTarget.truckId}</b>, позиция <b>${currentDropTarget.position}</b>`
+                : `Назначение: склад <b>${currentDropTarget.warehouse}</b>`;
+            info.innerHTML=text;
+            const now=new Date();
+            document.getElementById('moveDate').value=now.toISOString().split('T')[0];
+            document.getElementById('moveTime').value=now.toTimeString().slice(0,5);
+            document.getElementById('moveState').value=currentDropTarget.type==='truck'?'эксплуатация':'резерв';
+            document.getElementById('moveComment').value='';
+            replacementWarning.style.display='none';
+            replacementSection.classList.remove('active');
+            moveModal.classList.remove('wide');
+            if(needReplacement){
+                replacementWarning.style.display='block';
+                replacementSection.classList.add('active');
+                moveModal.classList.add('wide');
+                document.getElementById('replacementWarehouse').value='АТУ';
+                document.getElementById('replacementState').value='ремонт';
+                document.getElementById('replacementReason').value='';
+                document.getElementById('replacementComment').value='';
+            }
+            modal.classList.add('active');
+        }
+        function closeMoveModal(){
+            document.getElementById('moveTireModal').classList.remove('active');
+            currentDragData=null; currentDropTarget=null;
+        }
+        function confirmMove(){
+            if(!currentDragData || !currentDropTarget){ 
+                alert('Ошибка: данные о перемещении отсутствуют'); 
+                return; 
+            }
+            const date=document.getElementById('moveDate').value;
+            const time=document.getElementById('moveTime').value||'00:00';
+            const comment=document.getElementById('moveComment').value||'';
+            const moveState=(document.getElementById('moveState').value||'').toLowerCase();
+            if(!date){ alert('Укажите дату'); return; }
+            const replacementActive=document.getElementById('replacementSection').classList.contains('active');
+            let replacement=null;
+            if(replacementActive){
+                const replacementWarehouse=document.getElementById('replacementWarehouse').value;
+                const replacementState=(document.getElementById('replacementState').value||'').toLowerCase();
+                const replacementReason=document.getElementById('replacementReason').value||'';
+                const replacementComment=document.getElementById('replacementComment').value||'';
+                if(!replacementReason){ alert('Укажите причину снятия текущей шины'); return; }
+                replacement={replacementWarehouse,replacementState,replacementReason,replacementComment};
+            }
+            
+            try {
+                performTireMove(currentDragData, currentDropTarget, {date, time, comment, moveState, replacement});
+                closeMoveModal();
+            } catch(err) { 
+                console.error('Ошибка при перемещении:', err);
+                alert('Произошла ошибка при перемещении: ' + err.message); 
+            }
+        }
+
+        // ===== ПЕРЕМЕЩЕНИЯ =====
+        function performTireMove(dragData, dropTarget, payload){
+            const rerenderAll=()=>{ 
+                generateTrucks(); 
+                renderWarehouseTable(); 
+                renderSummary(); 
+            };
+
+            // Самосвал -> Склад
+            if(dragData.source==='truck' && dropTarget.type==='warehouse'){
+                const [truckId, position]=dragData.tireId.split('-');
+                const arr=truckStore[truckId]||[];
+                const idx=arr.findIndex(t=>t.position===position);
+                if(idx!==-1){
+                    const t=arr[idx]; 
+                    arr.splice(idx,1);
+                    warehouseStore[dropTarget.warehouse].push({
+                        ...t,
+                        id:`warehouse-${dropTarget.warehouse}-${Date.now()}`,
+                        substock:`${dropTarget.warehouse}-${1+Math.floor(Math.random()*3)}`,
+                        row:["A","B","C","D"][Math.floor(Math.random()*4)],
+                        place:1+Math.floor(Math.random()*24),
+                        condition:payload.moveState,
+                        planOGP:t.initialDepth, 
+                        factOGP:t.currentDepth,
+                        repaired:t.repaired??false, 
+                        repairText:(t.repaired?'ДА':'нет'),
+                        damageClassNumeric:Math.min(4,Math.max(1,Math.round((t.wearPercentage||0)/25)))
+                    });
+                    rerenderAll();
+                    alert(`Шина перемещена на склад "${dropTarget.warehouse}".\n${payload.date} ${payload.time}\nСостояние: ${payload.moveState}\nКомментарий: ${payload.comment}`);
+                }
+                return;
+            }
+
+            // Склад -> Самосвал
+            if(dragData.source==='warehouse' && dropTarget.type==='truck'){
+                const srcWarehouse=dragData.warehouse||currentWarehouse;
+                const list=warehouseStore[srcWarehouse];
+                const idx=list.findIndex(x=>x.id===dragData.tireId);
+                if(idx===-1){ 
+                    throw new Error('Шина не найдена на исходном складе'); 
+                }
+                const item=list[idx];
+
+                const allowed=truckMetaStore[dropTarget.truckId].allowed;
+                const sizeNorm=normalizeSize(item.size);
+                if(!allowed.has(sizeNorm)){ 
+                    throw new Error(`Нельзя установить размер ${item.size} на модель ${truckMetaStore[dropTarget.truckId].model}.`); 
+                }
+
+                // Проверяем, есть ли уже шина на этой позиции
+                const existing=(truckStore[dropTarget.truckId]||[]).find(t=>t.position===dropTarget.position);
+                
+                // Если есть замена и позиция занята
+                if(payload.replacement && existing){
+                    const truckArr=truckStore[dropTarget.truckId];
+                    const exIndex=truckArr.findIndex(t=>t.id===existing.id);
+                    if(exIndex!==-1) {
+                        truckArr.splice(exIndex,1);
+                        warehouseStore[payload.replacement.replacementWarehouse].push({
+                            ...existing,
+                            id:`warehouse-${payload.replacement.replacementWarehouse}-${Date.now()}`,
+                            substock:`${payload.replacement.replacementWarehouse}-${1+Math.floor(Math.random()*3)}`,
+                            row:["A","B","C","D"][Math.floor(Math.random()*4)],
+                            place:1+Math.floor(Math.random()*24),
+                            condition:payload.replacement.replacementState,
+                            planOGP:existing.initialDepth, 
+                            factOGP:existing.currentDepth,
+                            repaired:existing.repaired??false, 
+                            repairText:(existing.repaired?'ДА':'нет'),
+                            damageClassNumeric:Math.min(4,Math.max(1,Math.round((existing.wearPercentage||0)/25))),
+                            replacementMeta:{
+                                reason:payload.replacement.replacementReason,
+                                comment:payload.replacement.replacementComment
+                            }
+                        });
+                    }
+                } else if (existing && !payload.replacement) {
+                    // Если позиция занята, но не было подтверждения замены
+                    throw new Error('Позиция занята. Повторите перенос с подтверждением.');
+                }
+
+                list.splice(idx,1);
+                const newTire={ 
+                    id:`${dropTarget.truckId}-${dropTarget.position}`, 
+                    truckId:dropTarget.truckId, 
+                    position:dropTarget.position,
+                    brand:item.brand, 
+                    model:item.model, 
+                    pattern:item.pattern, 
+                    size:item.size, 
+                    number:item.number,
+                    inspectionDate:new Date().toLocaleDateString('ru-RU'),
+                    totalMileage:item.mileage||0, 
+                    positionMileage:0,
+                    initialDepth:item.planOGP, 
+                    currentDepth:item.factOGP,
+                    wearPercentage:item.wearPercentage, 
+                    damageClass:item.damageClassNumeric??1, 
+                    hasTire:true,
+                    meta:{ 
+                        wear30SinceDays:item.wearPercentage>=30?getRandomInt(5,120):0,
+                        tkvchExceeded:getRandomInt(0,10), 
+                        tkvchTotal:getRandomInt(20,60),
+                        pressureDeviations:getRandomInt(0,6), 
+                        pressureAvgMins:getRandomInt(0,40),
+                        speedExceeds:getRandomInt(0,8), 
+                        speedTimeMin:getRandomInt(0,50) 
+                    } 
+                };
+                
+                if(!truckStore[dropTarget.truckId]) truckStore[dropTarget.truckId]=[];
+                truckStore[dropTarget.truckId].push(newTire);
+                activeTruckId=String(dropTarget.truckId);
+                rerenderAll();
+                alert(`Шина установлена на самосвал ${dropTarget.truckId} (${dropTarget.position}).\n${payload.date} ${payload.time}\nКомментарий: ${payload.comment}`);
+                return;
+            }
+
+            // Склад -> Склад
+            if(dragData.source==='warehouse' && dropTarget.type==='warehouse'){
+                const src=dragData.warehouse||currentWarehouse;
+                const dst=dropTarget.warehouse;
+                const srcList=warehouseStore[src];
+                const idx=srcList.findIndex(x=>x.id===dragData.tireId);
+                if(idx===-1){ 
+                    throw new Error('Шина не найдена на исходном складе'); 
+                }
+                const t=srcList[idx]; 
+                srcList.splice(idx,1);
+                warehouseStore[dst].push({
+                    ...t, 
+                    id:`warehouse-${dst}-${Date.now()}`,
+                    substock:`${dst}-${1+Math.floor(Math.random()*3)}`,
+                    row:["A","B","C","D"][Math.floor(Math.random()*4)],
+                    place:1+Math.floor(Math.random()*24),
+                    condition:payload.moveState
+                });
+                renderWarehouseTable(); 
+                renderSummary();
+                alert(`Шина перемещена: ${src} → ${dst}\n${payload.date} ${payload.time}\nСостояние: ${payload.moveState}\nКомментарий: ${payload.comment}`);
+                return;
+            }
+            
+            throw new Error('Неизвестный тип перемещения');
+        }
+
+        // ===== ПОИСК =====
+        function initSearch(){
+            const searchInput=document.getElementById('tireSearch');
+            const searchResults=document.getElementById('searchResults');
+            searchInput.addEventListener('input',function(){
+                const query=this.value.trim();
+                searchResults.innerHTML='';
+                if(query.length<2){ searchResults.style.display='none'; return; }
+                const allTires=[];
+                Object.values(warehouseStore).forEach(wh=>wh.forEach(t=>allTires.push(t)));
+                Object.values(truckStore).forEach(tt=>tt.forEach(t=>allTires.push(t)));
+                const filtered=allTires.filter(t=>(t.number||'').toLowerCase().includes(query.toLowerCase()));
+                if(filtered.length>0){
+                    filtered.forEach(tire=>{
+                        const div=document.createElement('div');
+                        div.className='search-result-item';
+                        div.textContent=`${tire.number} - ${(tire.brand||'')} ${(tire.model||'')} (${tire.size||''})`;
+                        div.addEventListener('click',()=>{ 
+                            searchInput.value=tire.number; 
+                            searchResults.style.display='none'; 
+                            highlightTire(tire.id); 
+                        });
+                        searchResults.appendChild(div);
+                    });
+                    searchResults.style.display='block';
+                } else { searchResults.style.display='none'; }
+            });
+            document.addEventListener('click',function(e){
+                if(!searchInput.contains(e.target) && !searchResults.contains(e.target)){ 
+                    searchResults.style.display='none'; 
+                }
+            });
+        }
+        function highlightTire(tireId){
+            document.querySelectorAll('.highlighted').forEach(el=>el.classList.remove('highlighted'));
+            const whRows=document.querySelectorAll('#warehouseTbody tr');
+            for(let i=0;i<whRows.length;i++){
+                if(whRows[i].getAttribute('data-tire-id')===tireId){ 
+                    whRows[i].classList.add('highlighted'); 
+                    whRows[i].scrollIntoView({behavior:'smooth',block:'center'}); 
+                    return; 
+                }
+            }
+            const truckRows=document.querySelectorAll('.tire-draggable');
+            for(let i=0;i<truckRows.length;i++){
+                if(truckRows[i].getAttribute('data-tire-id')===tireId){ 
+                    truckRows[i].classList.add('highlighted'); 
+                    truckRows[i].scrollIntoView({behavior:'smooth',block:'center'}); 
+                    return; 
+                }
+            }
+        }
+
+        // ===== СОРТИРОВКА/МЕНЮ =====
+        function initSortingAndMenu(){
+            document.querySelectorAll('.truck-table th.sortable').forEach(th=>{
+                th.addEventListener('click',()=>{
+                    const key=th.getAttribute('data-key');
+                    if(truckSortState.key===key){ 
+                        truckSortState.dir=truckSortState.dir==='asc'?'desc':'asc'; 
+                    } else { 
+                        truckSortState.key=key; 
+                        truckSortState.dir='asc'; 
                     }
                     generateTrucks();
                 });
             });
-
-            // Сортировка склада
-            document.querySelectorAll('#warehouseTable th.sortable').forEach(th => {
-                th.addEventListener('click', () => {
-                    const key = th.dataset.key;
-                    if (sortState.key === key) {
-                        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        sortState.key = key;
-                        sortState.dir = 'asc';
+            document.querySelectorAll('#warehouseTable th.sortable').forEach(th=>{
+                th.addEventListener('click',()=>{
+                    const key=th.dataset.key;
+                    if(sortState.key===key){ 
+                        sortState.dir=sortState.dir==='asc'?'desc':'asc'; 
+                    } else { 
+                        sortState.key=key; 
+                        sortState.dir='asc'; 
                     }
                     renderWarehouseTable();
                 });
             });
+            document.getElementById('menuButton').addEventListener('click',()=>{ 
+                document.getElementById('menuDropdown').classList.toggle('show'); 
+            });
+            document.addEventListener('click',function(e){
+                const btn=document.getElementById('menuButton'); 
+                const dd=document.getElementById('menuDropdown');
+                if(!btn.contains(e.target) && !dd.contains(e.target)){ 
+                    dd.classList.remove('show'); 
+                }
+            });
+            document.getElementById('btnRecs').addEventListener('click',()=>alert('Функционал рекомендаций будет реализован позже'));
+            document.getElementById('btnAdd').addEventListener('click',()=>alert('Функционал добавления будет реализован позже'));
+            document.getElementById('btnFilter').addEventListener('click',()=>alert('Функционал фильтра будет реализован позже'));
+        }
+        function navigateTo(section){ 
+            alert(`Переход к разделу: ${section}`); 
+            document.getElementById('menuDropdown').classList.remove('show'); 
         }
 
-        // Меню
-        document.getElementById('menuButton').addEventListener('click', function() {
-            const dropdown = document.getElementById('menuDropdown');
-            dropdown.classList.toggle('show');
+        // ===== ОБРАБОТЧИКИ МОДАЛОВ =====
+        document.getElementById('closeOccupiedConfirm').addEventListener('click',closeOccupiedConfirm);
+        document.getElementById('occupiedNo').addEventListener('click',closeOccupiedConfirm);
+        document.getElementById('occupiedYes').addEventListener('click',()=>{
+            currentDragData={...pendingDragData};
+            currentDropTarget={...pendingDropTarget};
+            closeOccupiedConfirm();
+            openMoveModal({needReplacement:true});
         });
+        document.getElementById('closeMoveModal').addEventListener('click',closeMoveModal);
+        document.getElementById('cancelMove').addEventListener('click',closeMoveModal);
+        document.getElementById('confirmMove').addEventListener('click',confirmMove);
 
-        document.addEventListener('click', function(event) {
-            const menuButton = document.getElementById('menuButton');
-            const dropdown = document.getElementById('menuDropdown');
-            if (!menuButton.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
-
-        function navigateTo(section) {
-            alert(`Переход к разделу: ${section}`);
-            document.getElementById('menuDropdown').classList.remove('show');
-        }
-
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        document.addEventListener('DOMContentLoaded', function() {
+        // ===== ЗАПУСК =====
+        document.addEventListener('DOMContentLoaded',function(){
+            initializeTruckMeta();
             initializeTruckStore();
-            generateTrucks();
+            warehouseStore=Object.fromEntries(WAREHOUSES.map(w=>[w,generateWarehouseData(w)]));
             renderWarehouseTabs();
             renderWarehouseTable();
-            initSorting();
+            initSortingAndMenu();
+            initSearch();
+            generateTrucks();
+            setTimeout(()=>{ initDragAndDrop(); },100);
         });
     </script>
 </body>
