@@ -108,6 +108,8 @@
         .warehouse-tab{padding:8px 16px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s ease;font-size:.9rem}
         .warehouse-tab:hover{background:#e9ecef}
         .warehouse-tab.active{background:#1a2b47;color:#fff;border-color:#1a2b47}
+        .warehouse-tab.special{background:#ffcccc;border-color:#ff6b6b;color:#8b0000}
+        .warehouse-tab.special.active{background:#8b0000;color:#fff;border-color:#8b0000}
  
         .warehouse-table-container{max-height:420px;overflow-y:auto;overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px;background:#fff}
         .warehouse-table{width:100%;border-collapse:collapse;min-width:800px;font-size:.7rem}
@@ -167,7 +169,7 @@
         .modal.wide{min-width:600px}
         .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
         .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer}
-        .modal-body{margin-bottom:15px}
+        .modal-body{margin-bottom:15px;max-height:70vh;overflow-y:auto;padding:10px}
         .modal-footer{display:flex;justify-content:flex-end;gap:10px}
         .form-group{margin-bottom:10px}
         .form-group label{display:block;margin-bottom:5px;font-weight:500}
@@ -274,6 +276,63 @@
             vertical-align: top;
         }
 
+        /* Стили для нефункциональных и списанных шин */
+        .immovable-tire {
+            cursor: not-allowed !important;
+            background-color: #f8f9fa !important;
+            opacity: 0.7;
+        }
+        .immovable-tire:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        /* Стили для иконок */
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Стили для модального окна фильтра */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .filter-group select[multiple] {
+            height: 120px;
+        }
+
+        /* Стили для модального окна настроек */
+        .settings-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .settings-section h4 {
+            margin-bottom: 10px;
+            color: #1a2b47;
+        }
+        .settings-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .settings-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         @media (max-width:1200px){.accounting-container{flex-direction:column}.trucks-section,.warehouse-section{flex:1}}
         @media (max-width:768px){
             .header{padding:.8rem 1rem}
@@ -295,6 +354,8 @@
             .recommendations-modal{min-width:90%}
             .recommendations-grid{grid-template-columns:1fr}
             .tire-form-grid{grid-template-columns:1fr}
+            .filter-grid{grid-template-columns:1fr}
+            .settings-options{grid-template-columns:1fr}
         }
         @media (max-width:480px){
             .header{flex-direction:column;align-items:flex-start}
@@ -372,6 +433,58 @@
 }
  
     </style>
+
+<style id="patch-scroll-tooltip-selection">
+/* === PATCH: прокрутка раскрытого перечня шин и фикс «последняя шина скрыта» === */
+.tire-details-cell { padding: 0; }
+.tire-details-container, .tires-details-container, .tires-list, .tire-details-scroll{
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 12px; /* чтобы последняя шина не прилипала к низу */
+  -ms-overflow-style: auto;
+  scrollbar-width: auto;
+}
+.tire-details-container::-webkit-scrollbar,
+.tires-details-container::-webkit-scrollbar,
+.tires-list::-webkit-scrollbar,
+.tire-details-scroll::-webkit-scrollbar{ width:8px; }
+.tire-details-container::-webkit-scrollbar-thumb,
+.tires-details-container::-webkit-scrollbar-thumb,
+.tires-list::-webkit-scrollbar-thumb,
+.tire-details-scroll::-webkit-scrollbar-thumb{ background:#c7ccd1; border-radius:8px; }
+
+/* === PATCH: читаемость тултипа ремонта/повреждений === */
+.repair-tooltip .tooltip-text{
+  position: absolute;
+  left: 0; top: 100%;
+  z-index: 9999;
+  background: #1a2b47;
+  color: #fff;
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: 0 6px 18px rgba(0,0,0,.2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: .8rem;
+  line-height: 1.3;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity .12s ease, transform .12s ease;
+}
+.repair-tooltip:hover .tooltip-text{ opacity: 1; transform: translateY(2px); }
+.tire-block-container.dragging .repair-tooltip .tooltip-text{
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: none;
+}
+
+/* === PATCH: выделение шин на складе === */
+.warehouse-table tr.selected{
+  background:#e3f2fd !important;
+  border-left: 2px solid #1a2b47;
+}
+</style>
 </head>
 <body>
  
@@ -381,7 +494,7 @@
                 <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
                 <div class="title-text">
                     <h1>ПАЗЛ</h1>
-                    <p>Программный Аналитический модуль Зондирования и Логистического управления СКГШ</p>
+                    <p>Программный Аналитический модуль Зондирования и Логического управления СКГШ</p>
                     <p>УК УГОЛЬНЫЙ РАЗРЕЗ</p>
                 </div>
             </div>
@@ -393,9 +506,27 @@
             <select id="enterpriseSelect">
                 <option>Предприятие: Все</option><option>Разрез 1</option><option>Разрез 2</option><option>Разрез 3</option>
             </select>
-            <button class="export">Экспорт</button>
-            <button class="print">Печать</button>
-            <button class="settings">Настройки</button>
+            <button class="export btn-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+                Экспорт
+            </button>
+            <button class="print btn-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                </svg>
+                Печать
+            </button>
+            <button class="settings btn-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+                </svg>
+                Настройки
+            </button>
         </div>
     </div>
  
@@ -414,7 +545,7 @@
             <div class="menu-item" onclick="navigateTo('engineer')">Блок шинного инженера</div>
             <div class="menu-item" onclick="navigateTo('analytics')">Аналитика</div>
             <div class="menu-item" onclick="navigateTo('forecast')">Прогноз потребности</div>
-            <div class="menu-item" onclick="navigateTo('constructor')">Конструктор отчетов</div>
+            <div class="menu-item" onclick="navigateTo('constructor')">Конструкор отчетов</div>
             <div class="menu-item" onclick="navigateTo('quality')">Качество дорог</div>
             <div class="menu-item" onclick="navigateTo('documents')">Документы и литература</div>
         </div>
@@ -457,7 +588,12 @@
                             </div>
                             <button class="btn btn-primary" id="btnRecs">Рекомендации</button>
                             <button class="btn btn-secondary" id="btnAdd">Добавить</button>
-                            <button class="btn btn-filter" id="btnFilter">Фильтр</button>
+                            <button class="btn btn-filter btn-icon" id="btnFilter">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                Фильтр
+                            </button>
                             <button class="btn btn-reset" id="btnResetFilter" style="display:none">Сбросить</button>
                         </div>
                     </div>
@@ -688,6 +824,32 @@
                     <input type="text" id="addSimpleInput" class="form-control" placeholder="Введите наименование">
                     <div class="error-message" id="addSimpleError"></div>
                 </div>
+                <div id="warehouseTypeSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="warehouseType">Тип склада</label>
+                        <select id="warehouseType" class="form-control">
+                            <option value="general">Общий</option>
+                            <option value="special">Специальный</option>
+                        </select>
+                    </div>
+                    <div id="specialConditions" style="display: none;">
+                        <div class="form-group">
+                            <label>Условия для специального склада</label>
+                            <div class="settings-option">
+                                <input type="checkbox" id="condition1" value="immovable">
+                                <label for="condition1">Шины нельзя перемещать</label>
+                            </div>
+                            <div class="settings-option">
+                                <input type="checkbox" id="condition2" value="noinstall">
+                                <label for="condition2">Шины нельзя устанавливать на самосвалы</label>
+                            </div>
+                            <div class="settings-option">
+                                <input type="checkbox" id="condition3" value="specialrules">
+                                <label for="condition3">Особые правила учета</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelAddSimple">Отмена</button>
@@ -816,8 +978,8 @@
                         <h4>Дополнительные параметры</h4>
                         <div class="form-group">
                             <label for="tireInitialOGP">Начальная ОГП (мм)</label>
-                            <input type="number" id="tireInitialOGP" class="form-control" placeholder="Введите начальную ОГП" min="1" max="100" required>
-                            <div class="error-message" id="tireInitialOGPError">Укажите начальную ОГП</div>
+                            <input type="number" id="tireInitialOGP" class="form-control" placeholder="Введите начальную ОГП" min="90" max="100" step="2" required>
+                            <div class="error-message" id="tireInitialOGPError">Укажите начальную ОГП (90-100 мм)</div>
                         </div>
                         <div class="form-group">
                             <label for="tirePattern">Тип рисунка протектора</label>
@@ -841,11 +1003,275 @@
                             <div class="error-message" id="tireNomenclatureError">Укажите номенклатурный номер</div>
                         </div>
                     </div>
+
+                    <!-- НОВАЯ СЕКЦИЯ: Расположение на складе -->
+                    <div class="form-section">
+                        <h4>Расположение на складе</h4>
+                        <div class="form-group">
+                            <label for="tireSubstock">Подсклад</label>
+                            <select id="tireSubstock" class="form-control" required>
+                                <option value="">Выберите подсклад</option>
+                                <!-- Будет заполнено динамически -->
+                            </select>
+                            <div class="error-message" id="tireSubstockError">Выберите подсклад</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tireRow">Ряд</label>
+                            <select id="tireRow" class="form-control" required>
+                                <option value="">Выберите ряд</option>
+                                <!-- Будет заполнено динамически -->
+                            </select>
+                            <div class="error-message" id="tireRowError">Выберите ряд</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tirePlace">Место</label>
+                            <select id="tirePlace" class="form-control" required>
+                                <option value="">Выберите место</option>
+                                <!-- Будет заполнено динамически -->
+                            </select>
+                            <div class="error-message" id="tirePlaceError">Выберите место</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelAddTire">Отмена</button>
                 <button class="btn btn-primary" id="confirmAddTire">Сохранить шину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛ фильтра -->
+    <div class="modal-overlay" id="filterModal">
+        <div class="modal wide">
+            <div class="modal-header">
+                <h3>Фильтр склада</h3>
+                <button class="modal-close" id="closeFilterModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-section">
+                    <h4>Параметры фильтрации</h4>
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label for="filterWarehouse">Склад</label>
+                            <select id="filterWarehouse" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterSubstock">Подсклад</label>
+                            <select id="filterSubstock" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterRow">Ряд</label>
+                            <select id="filterRow" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterPlace">Место</label>
+                            <select id="filterPlace" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterBrand">Бренд</label>
+                            <select id="filterBrand" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterModel">Модель</label>
+                            <select id="filterModel" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterPattern">Рисунок</label>
+                            <select id="filterPattern" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterSize">Типоразмер</label>
+                            <select id="filterSize" class="form-control" multiple size="3">
+                                <!-- заполнится динамически -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterOGPFrom">Фактическое ОГП (мм)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" id="filterOGPFrom" class="form-control" placeholder="от" min="0" max="100">
+                                <input type="number" id="filterOGPTo" class="form-control" placeholder="до" min="0" max="100">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterRepair">Признак ремонта</label>
+                            <select id="filterRepair" class="form-control">
+                                <option value="">Все</option>
+                                <option value="yes">Да</option>
+                                <option value="no">Нет</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterDamage">Класс повреждения</label>
+                            <select id="filterDamage" class="form-control" multiple size="3">
+                                <option value="1">1 - Допустимые</option>
+                                <option value="2">2 - Под наблюдением</option>
+                                <option value="3">3 - Критические</option>
+                                <option value="4">4 - Предельные</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelFilter">Отмена</button>
+                <button class="btn btn-primary" id="applyFilter">Применить фильтр</button>
+                <button class="btn btn-reset" id="resetFilter">Сбросить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛ экспорта -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Экспорт данных</h3>
+                <button class="modal-close" id="closeExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exportFormat">Формат файла</label>
+                    <select id="exportFormat" class="form-control">
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="word">Word</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exportFileName">Наименование файла</label>
+                    <input type="text" id="exportFileName" class="form-control" placeholder="Введите название файла" value="Отчет_по_шинам">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelExport">Отмена</button>
+                <button class="btn btn-primary" id="confirmExport">Экспорт</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛ печати -->
+    <div class="modal-overlay" id="printModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Печать</h3>
+                <button class="modal-close" id="closePrintModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="printerSelect">Выберите принтер</label>
+                    <select id="printerSelect" class="form-control">
+                        <option value="printer1">Принтер 1</option>
+                        <option value="printer2">Принтер 2</option>
+                        <option value="pdf">Сохранить как PDF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="printRange">Диапазон печати</label>
+                    <select id="printRange" class="form-control">
+                        <option value="all">Все данные</option>
+                        <option value="current">Текущий вид</option>
+                        <option value="selection">Выбранные элементы</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPrint">Отмена</button>
+                <button class="btn btn-primary" id="confirmPrint">Печать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛ настроек -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal wide">
+            <div class="modal-header">
+                <h3>Настройки системы</h3>
+                <button class="modal-close" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h4>Условия и запреты для перестановок</h4>
+                    <div class="settings-options">
+                        <div class="settings-option">
+                            <input type="checkbox" id="setting1" checked>
+                            <label for="setting1">Запрет установки отремонтированных шин на ПП/ПЛ</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="setting2" checked>
+                            <label for="setting2">Проверка соответствия размеров шин модели самосвала</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="setting3">
+                            <label for="setting3">Требовать подтверждение для всех перемещений</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="setting4" checked>
+                            <label for="setting4">Автоматическая проверка парности шин</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Условия отображения предупреждений (!!!)</h4>
+                    <div class="settings-options">
+                        <div class="settings-option">
+                            <input type="checkbox" id="warning1" checked>
+                            <label for="warning1">Несоответствие пар по бренду/модели/размеру</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="warning2" checked>
+                            <label for="warning2">Разница в износе более 10 мм в паре</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="warning3" checked>
+                            <label for="warning3">Износ более 85%</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="warning4" checked>
+                            <label for="warning4">Класс повреждения 2 и выше</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="warning5">
+                            <label for="warning5">Отсутствие шин в позициях</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Настройка отображения по складам</h4>
+                    <div class="settings-options">
+                        <div class="settings-option">
+                            <input type="checkbox" id="display1" checked>
+                            <label for="display1">Показывать специальные склады</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="display2">
+                            <label for="display2">Скрывать пустые позиции</label>
+                        </div>
+                        <div class="settings-option">
+                            <input type="checkbox" id="display3" checked>
+                            <label for="display3">Подсвечивать специальные склады</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettings">Отмена</button>
+                <button class="btn btn-primary" id="saveSettings">Сохранить настройки</button>
             </div>
         </div>
     </div>
@@ -885,9 +1311,10 @@
 
         // ===== ДАННЫЕ ДЛЯ ДОБАВЛЕНИЯ =====
         let WAREHOUSES = ["АТУ","МТР","Оборот","Ремонт","Отремонтированные","Нефункциональные","Списанные"];
-        let SUBSTOCKS = [];
-        let ROWS = [];
-        let PLACES = [];
+        let SPECIAL_WAREHOUSES = ["Нефункциональные", "Списанные"];
+        let SUBSTOCKS = ["АТУ-1", "АТУ-2", "МТР-1", "МТР-2"];
+        let ROWS = ["A", "B", "C", "D"];
+        let PLACES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
         let currentAddType = null;
 
         // ===== СПРАВОЧНИКИ =====
@@ -910,6 +1337,9 @@
             'ЗЛВ': 'ЗЛН',
             'ЗЛН': 'ЗЛВ'
         };
+
+        // Склады, из которых нельзя перемещать шины
+        const IMMOVABLE_WAREHOUSES = ['Нефункциональные', 'Списанные'];
 
         function normalizeSize(s){
             return s.replace(/\s+/g,'').replace('33.0051','33.00-51').replace('40.0057','40.00-57');
@@ -991,6 +1421,8 @@
             const label = document.getElementById('addSimpleLabel');
             const input = document.getElementById('addSimpleInput');
             const error = document.getElementById('addSimpleError');
+            const warehouseTypeSection = document.getElementById('warehouseTypeSection');
+            const specialConditions = document.getElementById('specialConditions');
             
             // Сбрасываем предыдущие значения
             input.value = '';
@@ -1003,21 +1435,25 @@
                     title.textContent = 'Добавить склад';
                     label.textContent = 'Наименование склада';
                     input.placeholder = 'Введите название склада';
+                    warehouseTypeSection.style.display = 'block';
                     break;
                 case 'substock':
                     title.textContent = 'Добавить подсклад';
                     label.textContent = 'Наименование подсклада';
                     input.placeholder = 'Введите название подсклада';
+                    warehouseTypeSection.style.display = 'none';
                     break;
                 case 'row':
                     title.textContent = 'Добавить ряд';
                     label.textContent = 'Наименование ряда';
                     input.placeholder = 'Введите название ряда';
+                    warehouseTypeSection.style.display = 'none';
                     break;
                 case 'place':
                     title.textContent = 'Добавить место';
                     label.textContent = 'Наименование места';
                     input.placeholder = 'Введите название места';
+                    warehouseTypeSection.style.display = 'none';
                     break;
             }
             
@@ -1069,6 +1505,12 @@
                     WAREHOUSES.push(name);
                     // Создаем пустой массив для нового склада
                     warehouseStore[name] = [];
+                    
+                    // Проверяем тип склада
+                    const warehouseType = document.getElementById('warehouseType').value;
+                    if (warehouseType === 'special') {
+                        SPECIAL_WAREHOUSES.push(name);
+                    }
                     break;
                 case 'substock':
                     SUBSTOCKS.push(name);
@@ -1107,6 +1549,35 @@
             document.getElementById('tireArrivalDate').value = today;
             document.getElementById('tireStartDate').value = today;
             
+            // Заполняем выпадающие списки подсклада, ряда и места
+            const substockSelect = document.getElementById('tireSubstock');
+            const rowSelect = document.getElementById('tireRow');
+            const placeSelect = document.getElementById('tirePlace');
+            
+            substockSelect.innerHTML = '<option value="">Выберите подсклад</option>';
+            SUBSTOCKS.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                substockSelect.appendChild(option);
+            });
+            
+            rowSelect.innerHTML = '<option value="">Выберите ряд</option>';
+            ROWS.forEach(row => {
+                const option = document.createElement('option');
+                option.value = row;
+                option.textContent = row;
+                rowSelect.appendChild(option);
+            });
+            
+            placeSelect.innerHTML = '<option value="">Выберите место</option>';
+            PLACES.forEach(place => {
+                const option = document.createElement('option');
+                option.value = place;
+                option.textContent = place;
+                placeSelect.appendChild(option);
+            });
+            
             document.getElementById('addTireModal').classList.add('active');
         }
 
@@ -1122,7 +1593,8 @@
                 'tireRegion', 'tireEnterprise', 'tireArrivalDate', 'tireStartDate',
                 'tireCondition', 'tireSupplier', 'tireBatch', 'tireCost',
                 'tireBrand', 'tireSize', 'tireModel', 'tireCompound',
-                'tireInitialOGP', 'tirePattern', 'tireSerial', 'tireNomenclature'
+                'tireInitialOGP', 'tirePattern', 'tireSerial', 'tireNomenclature',
+                'tireSubstock', 'tireRow', 'tirePlace'
             ];
             
             requiredFields.forEach(fieldId => {
@@ -1147,8 +1619,8 @@
                 isValid = false;
             }
             
-            if (ogp && (isNaN(ogp) || parseFloat(ogp) <= 0 || parseFloat(ogp) > 100)) {
-                document.getElementById('tireInitialOGPError').textContent = 'ОГП должна быть в диапазоне 1-100 мм';
+            if (ogp && (isNaN(ogp) || parseFloat(ogp) < 90 || parseFloat(ogp) > 100)) {
+                document.getElementById('tireInitialOGPError').textContent = 'ОГП должна быть в диапазоне 90-100 мм';
                 document.getElementById('tireInitialOGPError').classList.add('show');
                 isValid = false;
             }
@@ -1182,11 +1654,11 @@
                 serial: document.getElementById('tireSerial').value,
                 nomenclature: document.getElementById('tireNomenclature').value,
                 
-                // Генерируем случайные данные для отображения
-                substock: `${currentWarehouse}-${1 + Math.floor(Math.random() * 3)}`,
-                row: ["A","B","C","D"][Math.floor(Math.random() * 4)],
-                place: 1 + Math.floor(Math.random() * 24),
-                number: currentWarehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(Math.random()*999)),
+                // Используем введенные значения для расположения
+                substock: document.getElementById('tireSubstock').value,
+                row: document.getElementById('tireRow').value,
+                place: document.getElementById('tirePlace').value,
+                number: document.getElementById('tireSerial').value, // Используем заводской номер как номер шины
                 mileage: 0,
                 condition: 'на хранении',
                 planOGP: parseFloat(document.getElementById('tireInitialOGP').value),
@@ -1210,6 +1682,279 @@
             closeAddTireModal();
             closeAddMenu();
             alert('Шина успешно добавлена в склад: ' + currentWarehouse);
+        }
+
+        // ===== ФУНКЦИОНАЛ ФИЛЬТРА =====
+        function openFilterModal() {
+            const modal = document.getElementById('filterModal');
+            
+            // Заполняем выпадающие списки
+            const warehousesSelect = document.getElementById('filterWarehouse');
+            const substocksSelect = document.getElementById('filterSubstock');
+            const rowsSelect = document.getElementById('filterRow');
+            const placesSelect = document.getElementById('filterPlace');
+            const brandsSelect = document.getElementById('filterBrand');
+            const modelsSelect = document.getElementById('filterModel');
+            const patternsSelect = document.getElementById('filterPattern');
+            const sizesSelect = document.getElementById('filterSize');
+            
+            // Заполняем склады
+            warehousesSelect.innerHTML = '';
+            WAREHOUSES.forEach(wh => {
+                const option = document.createElement('option');
+                option.value = wh;
+                option.textContent = wh;
+                warehousesSelect.appendChild(option);
+            });
+            
+            // Заполняем подсклады
+            substocksSelect.innerHTML = '';
+            SUBSTOCKS.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                substocksSelect.appendChild(option);
+            });
+            
+            // Заполняем ряды
+            rowsSelect.innerHTML = '';
+            ROWS.forEach(row => {
+                const option = document.createElement('option');
+                option.value = row;
+                option.textContent = row;
+                rowsSelect.appendChild(option);
+            });
+            
+            // Заполняем места
+            placesSelect.innerHTML = '';
+            PLACES.forEach(place => {
+                const option = document.createElement('option');
+                option.value = place;
+                option.textContent = place;
+                placesSelect.appendChild(option);
+            });
+            
+            // Заполняем бренды
+            brandsSelect.innerHTML = '';
+            tireBrands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                brandsSelect.appendChild(option);
+            });
+            
+            // Заполняем модели
+            modelsSelect.innerHTML = '';
+            tireModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelsSelect.appendChild(option);
+            });
+            
+            // Заполняем рисунки
+            patternsSelect.innerHTML = '';
+            treadPatterns.forEach(pattern => {
+                const option = document.createElement('option');
+                option.value = pattern;
+                option.textContent = pattern;
+                patternsSelect.appendChild(option);
+            });
+            
+            // Заполняем размеры
+            sizesSelect.innerHTML = '';
+            WAREHOUSE_SIZES.forEach(size => {
+                const option = document.createElement('option');
+                option.value = size;
+                option.textContent = size;
+                sizesSelect.appendChild(option);
+            });
+            
+            modal.classList.add('active');
+        }
+
+        function closeFilterModal() {
+            document.getElementById('filterModal').classList.remove('active');
+        }
+
+        function applyWarehouseFilter() {
+            // Собираем параметры фильтра
+            const filterParams = {
+                warehouses: Array.from(document.getElementById('filterWarehouse').selectedOptions).map(o => o.value),
+                substocks: Array.from(document.getElementById('filterSubstock').selectedOptions).map(o => o.value),
+                rows: Array.from(document.getElementById('filterRow').selectedOptions).map(o => o.value),
+                places: Array.from(document.getElementById('filterPlace').selectedOptions).map(o => o.value),
+                brands: Array.from(document.getElementById('filterBrand').selectedOptions).map(o => o.value),
+                models: Array.from(document.getElementById('filterModel').selectedOptions).map(o => o.value),
+                patterns: Array.from(document.getElementById('filterPattern').selectedOptions).map(o => o.value),
+                sizes: Array.from(document.getElementById('filterSize').selectedOptions).map(o => o.value),
+                ogpFrom: document.getElementById('filterOGPFrom').value,
+                ogpTo: document.getElementById('filterOGPTo').value,
+                repair: document.getElementById('filterRepair').value,
+                damages: Array.from(document.getElementById('filterDamage').selectedOptions).map(o => o.value)
+            };
+            
+            // Применяем фильтр к данным склада
+            const filteredData = filterWarehouseData(filterParams);
+            
+            // Обновляем таблицу
+            renderFilteredWarehouseTable(filteredData);
+            
+            closeFilterModal();
+        }
+
+        function filterWarehouseData(params) {
+            let filtered = [...warehouseStore[currentWarehouse]];
+            
+            // Применяем фильтры
+            if (params.warehouses.length > 0) {
+                // Если фильтр по складам применен, переключаемся на первый выбранный склад
+                currentWarehouse = params.warehouses[0];
+                filtered = [...warehouseStore[currentWarehouse]];
+                renderWarehouseTabs();
+            }
+            
+            if (params.substocks.length > 0) {
+                filtered = filtered.filter(item => params.substocks.includes(item.substock));
+            }
+            
+            if (params.rows.length > 0) {
+                filtered = filtered.filter(item => params.rows.includes(item.row));
+            }
+            
+            if (params.places.length > 0) {
+                filtered = filtered.filter(item => params.places.includes(item.place));
+            }
+            
+            if (params.brands.length > 0) {
+                filtered = filtered.filter(item => params.brands.includes(item.brand));
+            }
+            
+            if (params.models.length > 0) {
+                filtered = filtered.filter(item => params.models.includes(item.model));
+            }
+            
+            if (params.patterns.length > 0) {
+                filtered = filtered.filter(item => params.patterns.includes(item.pattern));
+            }
+            
+            if (params.sizes.length > 0) {
+                filtered = filtered.filter(item => params.sizes.includes(item.size));
+            }
+            
+            if (params.ogpFrom) {
+                filtered = filtered.filter(item => item.factOGP >= parseFloat(params.ogpFrom));
+            }
+            
+            if (params.ogpTo) {
+                filtered = filtered.filter(item => item.factOGP <= parseFloat(params.ogpTo));
+            }
+            
+            if (params.repair === 'yes') {
+                filtered = filtered.filter(item => item.repaired);
+            } else if (params.repair === 'no') {
+                filtered = filtered.filter(item => !item.repaired);
+            }
+            
+            if (params.damages.length > 0) {
+                filtered = filtered.filter(item => params.damages.includes(item.damageClassNumeric.toString()));
+            }
+            
+            return filtered;
+        }
+
+        function renderFilteredWarehouseTable(data) {
+            const tbody = document.getElementById('warehouseTbody');
+            tbody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const isImmovable = IMMOVABLE_WAREHOUSES.includes(currentWarehouse);
+                
+                if (isImmovable) {
+                    tr.className = `tire-draggable immovable-tire ${index % 2 === 0 ? 'even' : 'odd'}`;
+                    tr.setAttribute('draggable', 'false');
+                } else {
+                    tr.className = `tire-draggable ${index % 2 === 0 ? 'even' : 'odd'}`;
+                    tr.setAttribute('draggable', 'true');
+                }
+                
+                tr.setAttribute('data-tire-id', item.id);
+                tr.setAttribute('data-warehouse', currentWarehouse);
+                const km = (item.mileage ?? 0).toLocaleString('ru-RU');
+                tr.innerHTML = `
+                    <td>${item.substock}</td>
+                    <td>${item.row}</td>
+                    <td>${item.place}</td>
+                    <td>${item.number}</td>
+                    <td>${item.brand} / ${item.model} / ${item.pattern}</td>
+                    <td>${item.size} / ${km} км / ${item.condition}</td>
+                    <td>${item.planOGP} мм / ${item.factOGP} мм / ${item.wearPercentage}%</td>
+                    <td>${buildRepairCellHTML(item)} ${buildDamageBadge(item.damageClassNumeric)}</td>`;
+                tbody.appendChild(tr);
+            });
+            
+            // Обновляем заголовок с количеством отфильтрованных записей
+            document.getElementById('warehouseTitle').textContent = `Склад (показано: ${data.length} из ${warehouseStore[currentWarehouse].length})`;
+            
+            initDragAndDrop();
+        }
+
+        function resetWarehouseFilter() {
+            renderWarehouseTable();
+            document.getElementById('warehouseTitle').textContent = 'Склад';
+            closeFilterModal();
+        }
+
+        // ===== ФУНКЦИОНАЛ ЭКСПОРТА =====
+        function openExportModal() {
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('active');
+        }
+
+        function confirmExport() {
+            const format = document.getElementById('exportFormat').value;
+            const fileName = document.getElementById('exportFileName').value || 'Отчет_по_шинам';
+            
+            // Имитация экспорта
+            alert(`Экспорт в формате ${format.toUpperCase()} выполнен успешно!\nФайл: ${fileName}.${format}`);
+            closeExportModal();
+        }
+
+        // ===== ФУНКЦИОНАЛ ПЕЧАТИ =====
+        function openPrintModal() {
+            document.getElementById('printModal').classList.add('active');
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').classList.remove('active');
+        }
+
+        function confirmPrint() {
+            const printer = document.getElementById('printerSelect').value;
+            const range = document.getElementById('printRange').value;
+            
+            // Имитация печати
+            alert(`Данные отправлены на печать.\nПринтер: ${printer}\nДиапазон: ${range}`);
+            closePrintModal();
+        }
+
+        // ===== ФУНКЦИОНАЛ НАСТРОЕК =====
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function saveSettings() {
+            // Сохранение настроек (здесь можно добавить логику сохранения в localStorage)
+            alert('Настройки успешно сохранены');
+            closeSettingsModal();
         }
 
         // ===== РЕКОМЕНДАЦИИ =====
@@ -1713,12 +2458,20 @@
                         (Math.random() > 0.5 ? '33.00-51' : '33.00R51') : 
                         (['40.00-57','40.00R57','46/90R57'][getRandomInt(0,2)]);
                     
-                    const initDepth = 98;
-                    // Базовый износ для пары (одинаковый для обеих шин)
-                    const baseCurrentDepth = getRandomInt(30, 80);
+                    // ФИКС: ОГП план только 90-100 с четным шагом
+                    const initDepth = [90, 92, 94, 96, 98, 100][getRandomInt(0,5)];
+                    
+                    // ФИКС: Пробег для расчета ОГП факт
+                    const totalMileage = getRandomInt(1000, 120000);
+                    
+                    // ФИКС: Расчет ОГП факт на основе пробега (линейная зависимость)
+                    const currentDepth = Math.max(1, Math.round(initDepth * (1 - totalMileage / 140000) * 10) / 10);
+                    
+                    // ФИКС: Расчет износа
+                    const wear = Math.round(((initDepth - currentDepth) / initDepth) * 100);
                     
                     baseTires.push({
-                        brand, model, pattern, size, initDepth, baseCurrentDepth
+                        brand, model, pattern, size, initDepth, totalMileage, currentDepth, wear
                     });
                 }
                 
@@ -1738,6 +2491,12 @@
                     }
                     
                     if (!baseTire) {
+                        // Если позиция не в паре (например, если actual < 6), генерируем отдельно
+                        const initDepth = [90, 92, 94, 96, 98, 100][getRandomInt(0,5)];
+                        const totalMileage = getRandomInt(1000, 120000);
+                        const currentDepth = Math.max(1, Math.round(initDepth * (1 - totalMileage / 140000) * 10) / 10);
+                        const wear = Math.round(((initDepth - currentDepth) / initDepth) * 100);
+                        
                         baseTire = {
                             brand: tireBrands[getRandomInt(0,tireBrands.length-1)],
                             model: tireModels[getRandomInt(0,tireModels.length-1)],
@@ -1745,20 +2504,24 @@
                             size: meta.allowed === SIZE_GROUP_51 ? 
                                 (Math.random() > 0.5 ? '33.00-51' : '33.00R51') : 
                                 (['40.00-57','40.00R57','46/90R57'][getRandomInt(0,2)]),
-                            initDepth: 98,
-                            baseCurrentDepth: getRandomInt(30, 80)
+                            initDepth: initDepth,
+                            totalMileage: totalMileage,
+                            currentDepth: currentDepth,
+                            wear: wear
                         };
                     }
                     
                     const number='V'+getRandomInt(80000,99999)+String.fromCharCode(65+getRandomInt(0,5))+'5'+String.fromCharCode(65+getRandomInt(0,5));
                     const daysAgo=getRandomInt(1,14);
                     const insp=new Date(); insp.setDate(insp.getDate()-daysAgo);
-                    const total=getRandomInt(20000,40000);
+                    
+                    // ФИКС: Используем данные из baseTire
+                    const total = baseTire.totalMileage;
                     const posKm=getRandomInt(100,300);
                     
-                    // Вариация износа в пределах ±5 мм от базового
-                    const currentDepth = Math.max(1, Math.min(98, baseTire.baseCurrentDepth + getRandomInt(-5, 5)));
-                    const wear=Math.round(((baseTire.initDepth - currentDepth)/baseTire.initDepth)*100);
+                    // ФИКС: Используем рассчитанные значения
+                    const currentDepth = baseTire.currentDepth;
+                    const wear = baseTire.wear;
                     
                     // Случайный класс повреждения: 80% - 0-1, 20% - 2-4
                     const dmg = Math.random() > 0.2 ? getRandomInt(0,1) : getRandomInt(2,4);
@@ -1797,7 +2560,7 @@
                             speedExceeds, 
                             speedTimeMin 
                         }
-                   });
+                    });
                 }
             }
         }
@@ -1830,59 +2593,154 @@
             const r=rand(hash(warehouse)); 
             const arr=[];
             
-            // Добавляем несколько шин, которые точно подойдут для рекомендаций
-            const guaranteedTires = 5;
-            for(let i=0;i<guaranteedTires;i++){
-                const brand=tireBrands[Math.floor(r()*tireBrands.length)];
-                const model=tireModels[Math.floor(r()*tireModels.length)];
-                const pattern=treadPatterns[Math.floor(r()*treadPatterns.length)];
-                const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
-                const mileage=Math.floor(30000+r()*110000);
-                const wear=Math.min(95,Math.floor(r()*35)+(mileage>90000?25:10));
-                const plan=+(16+r()*8).toFixed(1);
-                const fact=+(plan-(wear/10)).toFixed(1);
-                const rep=generateRepairInfo(r);
-                const dmgNum = wear<30?1 : wear<60?2 : wear<90?3 : 4;
+            // Для специальных складов генерируем соответствующие данные
+            if (warehouse === "Отремонтированные") {
+                // Отремонтированные шины - только с признаком ремонта
+                for(let i=0;i<count;i++){
+                    const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
+                    const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
+                    const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
+                    const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
+                    const mileage=Math.floor(30000+r()*110000);
+                    
+                    // ФИКС: ОГП план только 90-100 с четным шагом
+                    const plan=+([90, 92, 94, 96, 98, 100][getRandomInt(0,5)]);
+                    
+                    // ФИКС: Расчет ОГП факт на основе пробега
+                    const fact=Math.max(0, plan * (1 - mileage / 140000));
+                    
+                    // ФИКС: Расчет износа
+                    const wear=Math.round(((plan - fact) / plan) * 100);
+                    
+                    // Всегда отремонтированные
+                    const rep = { 
+                        repaired:true, 
+                        repairText:"ДА",
+                        repairDetails:{ 
+                            actNumber:getRandomInt(1000,2000),
+                            startDate:new Date(Date.now() - getRandomInt(30,180)*24*60*60*1000).toLocaleDateString('ru-RU'), 
+                            endDate:new Date(Date.now() - getRandomInt(1,30)*24*60*60*1000).toLocaleDateString('ru-RU'),
+                            repairCount:getRandomInt(1,3), 
+                            mileageAfterRepair:getRandomInt(15000,35000),
+                            locksmith:LOCKSMITHS[Math.floor(r()*LOCKSMITHS.length)] 
+                        } 
+                    };
+                    
+                    const dmgNum = wear<30?1 : wear<60?2 : wear<90?3 : 4;
 
-                arr.push({
-                    id:`warehouse-${warehouse}-guaranteed-${i}`,
-                    substock:`${warehouse}-${1+Math.floor(r()*3)}`,
-                    row:["A","B","C","D"][Math.floor(r()*4)],
-                    place:1+Math.floor(r()*24),
-                    number:warehouse.slice(0,2).toUpperCase()+"-G"+pad(1+Math.floor(r()*999)),
-                    brand, model, pattern, size, mileage,
-                    condition:mileage>80000?'в эксплуатации':'на хранении',
-                    planOGP:plan, factOGP:fact, wearPercentage:wear,
-                    repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
-                    damageClassNumeric:dmgNum
-                });
-            }
-            
-            // Остальные шины генерируем как обычно
-            for(let i=guaranteedTires;i<count;i++){
-                const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
-                const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
-                const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
-                const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
-                const mileage=Math.floor(30000+r()*110000);
-                const wear=Math.min(95,Math.floor(r()*35)+(mileage>90000?25:10));
-                const plan=+(16+r()*8).toFixed(1);
-                const fact=+(plan-(wear/10)).toFixed(1);
-                const rep=generateRepairInfo(r);
-                const dmgNum = wear<30?1 : wear<60?2 : wear<90?3 : 4;
+                    arr.push({
+                        id:`warehouse-${warehouse}-${i}`,
+                        substock:`${warehouse}-${1+Math.floor(r()*3)}`,
+                        row:["A","B","C","D"][Math.floor(r()*4)],
+                        place:1+Math.floor(r()*24),
+                        number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
+                        brand, model, pattern, size, mileage,
+                        condition:'отремонтированное',
+                        planOGP:plan, 
+                        factOGP:Math.round(fact * 10) / 10, 
+                        wearPercentage:wear,
+                        repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
+                        damageClassNumeric:dmgNum
+                    });
+                }
+            } else if (warehouse === "Нефункциональные") {
+                // Нефункциональные шины - состояние "нефункциональное"
+                for(let i=0;i<count;i++){
+                    const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
+                    const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
+                    const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
+                    const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
+                    const mileage=Math.floor(30000+r()*110000);
+                    const wear=100; // Полный износ
+                    const plan=+([90, 92, 94, 96, 98, 100][getRandomInt(0,5)]);
+                    const fact=0; // Нет протектора
+                    
+                    const rep=generateRepairInfo(r);
+                    const dmgNum = 4; // Предельный класс повреждения
 
-                arr.push({
-                    id:`warehouse-${warehouse}-${i}`,
-                    substock:`${warehouse}-${1+Math.floor(r()*3)}`,
-                    row:["A","B","C","D"][Math.floor(r()*4)],
-                    place:1+Math.floor(r()*24),
-                    number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
-                    brand, model, pattern, size, mileage,
-                    condition:mileage>80000?'в эксплуатации':'на хранении',
-                    planOGP:plan, factOGP:fact, wearPercentage:wear,
-                    repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
-                    damageClassNumeric:dmgNum
-                });
+                    arr.push({
+                        id:`warehouse-${warehouse}-${i}`,
+                        substock:`${warehouse}-${1+Math.floor(r()*3)}`,
+                        row:["A","B","C","D"][Math.floor(r()*4)],
+                        place:1+Math.floor(r()*24),
+                        number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
+                        brand, model, pattern, size, mileage,
+                        condition:'нефункциональное',
+                        planOGP:plan, 
+                        factOGP:fact, 
+                        wearPercentage:wear,
+                        repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
+                        damageClassNumeric:dmgNum
+                    });
+                }
+            } else if (warehouse === "Списанные") {
+                // Списанные шины - полный износ и состояние "списанное"
+                for(let i=0;i<count;i++){
+                    const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
+                    const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
+                    const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
+                    const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
+                    const mileage=Math.floor(30000+r()*110000);
+                    const wear=100; // Полный износ
+                    const plan=+([90, 92, 94, 96, 98, 100][getRandomInt(0,5)]);
+                    const fact=0; // Нет протектора
+                    
+                    const rep=generateRepairInfo(r);
+                    const dmgNum = 4; // Предельный класс повреждения
+
+                    arr.push({
+                        id:`warehouse-${warehouse}-${i}`,
+                        substock:`${warehouse}-${1+Math.floor(r()*3)}`,
+                        row:["A","B","C","D"][Math.floor(r()*4)],
+                        place:1+Math.floor(r()*24),
+                        number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
+                        brand, model, pattern, size, mileage,
+                        condition:'списанное',
+                        planOGP:plan, 
+                        factOGP:fact, 
+                        wearPercentage:wear,
+                        repaired:rep.repaired, repairText:rep.repairText, repairDetails:rep.repairDetails,
+                        damageClassNumeric:dmgNum
+                    });
+                }
+            } else {
+                // Обычные склады
+                for(let i=0;i<count;i++){
+                    const brand=WAREHOUSE_BRANDS[Math.floor(r()*WAREHOUSE_BRANDS.length)];
+                    const model=WAREHOUSE_MODELS[Math.floor(r()*WAREHOUSE_MODELS.length)];
+                    const pattern=WAREHOUSE_PATTERNS[Math.floor(r()*WAREHOUSE_PATTERNS.length)];
+                    const size=WAREHOUSE_SIZES[Math.floor(r()*WAREHOUSE_SIZES.length)];
+                    const mileage=Math.floor(30000+r()*110000);
+                    
+                    // ФИКС: ОГП план только 90-100 с четным шагом
+                    const plan=+([90, 92, 94, 96, 98, 100][getRandomInt(0,5)]);
+                    
+                    // ФИКС: Расчет ОГП факт на основе пробега
+                    const fact=Math.max(0, plan * (1 - mileage / 140000));
+                    
+                    // ФИКС: Расчет износа
+                    const wear=Math.round(((plan - fact) / plan) * 100);
+                    
+                    const rep=generateRepairInfo(r);
+                    const dmgNum = wear<30?1 : wear<60?2 : wear<90?3 : 4;
+
+                    arr.push({
+                        id:`warehouse-${warehouse}-${i}`,
+                        substock:`${warehouse}-${1+Math.floor(r()*3)}`,
+                        row:["A","B","C","D"][Math.floor(r()*4)],
+                        place:1+Math.floor(r()*24),
+                        number:warehouse.slice(0,2).toUpperCase()+"-"+pad(1+Math.floor(r()*999)),
+                        brand, model, pattern, size, mileage,
+                        condition:mileage>80000?'в эксплуатации':'на хранении',
+                        planOGP:plan, 
+                        factOGP:Math.round(fact * 10) / 10, // Округляем до 1 знака
+                        wearPercentage:wear,
+                        repaired:rep.repaired, 
+                        repairText:rep.repairText, 
+                        repairDetails:rep.repairDetails,
+                        damageClassNumeric:dmgNum
+                    });
+                }
             }
             return arr;
         }
@@ -2121,7 +2979,8 @@
             const c=document.getElementById('warehouseTabs'); c.innerHTML='';
             WAREHOUSES.forEach(w=>{
                 const tab=document.createElement('div');
-                tab.className=`warehouse-tab ${w===currentWarehouse?'active':''}`;
+                const isSpecial = SPECIAL_WAREHOUSES.includes(w);
+                tab.className=`warehouse-tab ${w===currentWarehouse?'active':''} ${isSpecial?'special':''}`;
                 tab.textContent=w;
                 tab.addEventListener('click',()=>{ 
                     currentWarehouse=w; 
@@ -2221,8 +3080,18 @@
             tbody.innerHTML='';
             data.forEach((item,index)=>{
                 const tr=document.createElement('tr');
-                tr.className=`tire-draggable ${index%2===0?'even':'odd'}`;
-                tr.setAttribute('draggable','true');
+                
+                // Проверяем, является ли склад нефункциональным или списанным
+                const isImmovable = IMMOVABLE_WAREHOUSES.includes(currentWarehouse);
+                
+                if (isImmovable) {
+                    tr.className=`tire-draggable immovable-tire ${index%2===0?'even':'odd'}`;
+                    tr.setAttribute('draggable', 'false');
+                } else {
+                    tr.className=`tire-draggable ${index%2===0?'even':'odd'}`;
+                    tr.setAttribute('draggable','true');
+                }
+                
                 tr.setAttribute('data-tire-id',item.id);
                 tr.setAttribute('data-warehouse',currentWarehouse);
                 const km = (item.mileage ?? 0).toLocaleString('ru-RU');
@@ -2287,6 +3156,15 @@
             const row=e.currentTarget;
             const tireId=row.getAttribute('data-tire-id'); 
             if(!tireId) return;
+            
+            // Проверяем, можно ли перемещать шину с этого склада
+            const warehouse = row.getAttribute('data-warehouse');
+            if (IMMOVABLE_WAREHOUSES.includes(warehouse)) {
+                e.preventDefault();
+                alert(`Шины со склада "${warehouse}" нельзя перемещать.`);
+                return;
+            }
+            
             const isTruck=!!row.closest('.tire-details-table-container');
             let source=isTruck?'truck':'warehouse';
             let warehouseAttr=isTruck?null:(row.getAttribute('data-warehouse')||currentWarehouse);
@@ -2436,6 +3314,22 @@
                 return; 
             }
 
+            // Проверка для перемещения со склада на самосвал: отремонтированные шины нельзя на ПП/ПЛ
+            if (currentDragData.source === 'warehouse' && currentDropTarget.type === 'truck') {
+                const srcWarehouse = currentDragData.warehouse || currentWarehouse;
+                const list = warehouseStore[srcWarehouse];
+                const idx = list.findIndex(x => x.id === currentDragData.tireId);
+                
+                if (idx !== -1) {
+                    const item = list[idx];
+                    // Проверяем, является ли шина отремонтированной и целевая позиция - ПП или ПЛ
+                    if (item.repaired && (currentDropTarget.position === 'ПП' || currentDropTarget.position === 'ПЛ')) {
+                        alert('Отремонтированные шины нельзя устанавливать на позиции ПП и ПЛ');
+                        return;
+                    }
+                }
+            }
+
             const replacementActive=document.getElementById('replacementSection').classList.contains('active');
             let replacement=null;
             
@@ -2532,6 +3426,11 @@
                     
                     if (!allowed.has(sizeNorm)) {
                         throw new Error(`Нельзя установить размер ${item.size} на модель ${truckMetaStore[dropTarget.truckId].model}.`);
+                    }
+
+                    // Дополнительная проверка: отремонтированные шины нельзя на ПП/ПЛ
+                    if (item.repaired && (dropTarget.position === 'ПП' || dropTarget.position === 'ПЛ')) {
+                        throw new Error('Отремонтированные шины нельзя устанавливать на позиции ПП и ПЛ');
                     }
 
                     const existing = (truckStore[dropTarget.truckId] || []).find(t => t.position === dropTarget.position);
@@ -2745,7 +3644,7 @@
             });
             document.getElementById('btnRecs').addEventListener('click',openRecommendationsModal);
             document.getElementById('btnAdd').addEventListener('click',openAddMenu);
-            document.getElementById('btnFilter').addEventListener('click',()=>alert('Функционал фильтра будет реализован позже'));
+            document.getElementById('btnFilter').addEventListener('click',openFilterModal);
             document.getElementById('btnResetFilter').addEventListener('click',resetWarehouseFilter);
             
             // Обработчики для меню добавления
@@ -2754,6 +3653,35 @@
             document.getElementById('addSubstockBtn').addEventListener('click', () => openAddSimpleModal('substock'));
             document.getElementById('addRowBtn').addEventListener('click', () => openAddSimpleModal('row'));
             document.getElementById('addPlaceBtn').addEventListener('click', () => openAddSimpleModal('place'));
+            
+            // Обработчики для кнопок экспорта, печати и настроек
+            document.querySelector('.export').addEventListener('click', openExportModal);
+            document.querySelector('.print').addEventListener('click', openPrintModal);
+            document.querySelector('.settings').addEventListener('click', openSettingsModal);
+
+            // Обработчики для модальных окон фильтра, экспорта, печати и настроек
+            document.getElementById('closeFilterModal').addEventListener('click', closeFilterModal);
+            document.getElementById('cancelFilter').addEventListener('click', closeFilterModal);
+            document.getElementById('applyFilter').addEventListener('click', applyWarehouseFilter);
+            document.getElementById('resetFilter').addEventListener('click', resetWarehouseFilter);
+
+            document.getElementById('closeExportModal').addEventListener('click', closeExportModal);
+            document.getElementById('cancelExport').addEventListener('click', closeExportModal);
+            document.getElementById('confirmExport').addEventListener('click', confirmExport);
+
+            document.getElementById('closePrintModal').addEventListener('click', closePrintModal);
+            document.getElementById('cancelPrint').addEventListener('click', closePrintModal);
+            document.getElementById('confirmPrint').addEventListener('click', confirmPrint);
+
+            document.getElementById('closeSettingsModal').addEventListener('click', closeSettingsModal);
+            document.getElementById('cancelSettings').addEventListener('click', closeSettingsModal);
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+
+            // Обработчик для типа склада
+            document.getElementById('warehouseType').addEventListener('change', function() {
+                const specialConditions = document.getElementById('specialConditions');
+                specialConditions.style.display = this.value === 'special' ? 'block' : 'none';
+            });
         }
 
         function navigateTo(section){
@@ -2805,5 +3733,270 @@
             setTimeout(()=>{ initDragAndDrop(); },100);
         });
     </script>
+
+<script id="patch-rules-ogp-scroll-selection">
+(function(){
+
+  // === OGP in mm based on mileage (linear) ===
+  function ogpFactMm(planMm, mileage, maxMileage){
+    var plan = Number(planMm||0);
+    var m = Math.max(0, Number(mileage||0));
+    var maxM = Math.max(1, Number(maxMileage||140000));
+    if (plan <= 0) return 0;
+    if (m >= maxM) return 0;
+    var ratio = 1 - (m / maxM);   // 1..0
+    var fact = plan * ratio;      // mm
+    return Math.max(0, Math.round(fact * 10) / 10); // one decimal, not negative
+  }
+  function wearPercentFromMm(planMm, factMm){
+    var p = Number(planMm||0);
+    var f = Math.max(0, Number(factMm||0));
+    if (p <= 0) return 0;
+    var w = Math.round(((p - f) / p) * 100);
+    if (w < 0) w = 0;
+    if (w > 100) w = 100;
+    return w;
+  }
+
+  // === OGP modelling helpers (correct linear model) ===
+  function mapFactLinear(plan, m, maxM){
+    plan = Number(plan||0);
+    m = Math.max(0, Number(m||0));
+    maxM = Math.max(1, Number(maxM||140000));
+    if (plan <= 0) return 0;
+    const ratio = 1 - Math.min(1, m / maxM); // 1..0
+    const fact = plan * ratio;               // 0..plan (float)
+    return Math.round(fact * 10) / 10;       // 1 decimal mm
+  }
+  
+  function mapWearPercent(plan, fact){
+    plan = Number(plan||0);
+    fact = Math.max(0, Number(fact||0));
+    if (plan <= 0) return 0;
+    return Math.round(((plan - fact) / plan) * 100);
+  }
+
+  // === RULES, управляемые из настроек (если есть чекбоксы — подхватим позже) ===
+  window.RULES = Object.assign({
+    forbidRepairedOnFront: true,
+    enforcePairBrand: true,
+    enforcePairModel: true,
+    enforcePairSize:  true,
+    enforceSizeByModel: true,
+    forbidMoveFromImmovable: true
+  }, window.RULES || {});
+
+  // Помощники
+  const pairOf = { 'ПП':'ПЛ','ПЛ':'ПП','ЗПВ':'ЗПН','ЗПН':'ЗПВ','ЗЛВ':'ЗЛН','ЗЛН':'ЗЛВ' };
+  const IMMOVABLE_WAREHOUSES = ['Нефункциональные','Списанные'];
+  function normalizeSize(s){ return String(s||'').replace(/[\s-]/g,'').toUpperCase(); }
+
+  // Мягкая подстройка ОГП факт под 30–90 мм с обратной зависимостью от пробега
+  function mapDepthFromTruckMileage(total){ return Math.round( mapFactLinear(90, total, 40000) ); }
+  
+  function mapFactFromWarehouseMileage(m, plan, maxM){ return mapFactLinear(plan||90, m, maxM||140000); }
+
+  function adjustOGPIfPossible(){
+    try{
+      if (window.truckStore && typeof truckStore === 'object') {
+        Object.keys(truckStore).forEach(truckId=>{
+          const tires = truckStore[truckId];
+          const meta  = (window.truckMetaStore||{})[truckId] || {};
+          const total = Math.max(10000, Math.min(40000, Number(meta.totalKm)||30000));
+          tires.forEach(t=>{
+            const plan = (typeof t.initDepth === 'number') ? t.initDepth : (t.planOGP || t.plan || 90);
+            const maxM = (typeof meta.maxKm === 'number') ? meta.maxKm : 40000;
+            const tireMileage = (t.mileage != null ? t.mileage : (t.km != null ? t.km : total));
+            const fact = ogpFactMm(plan, tireMileage, maxM);
+            if (typeof t.initDepth === 'number') {
+              t.currentDepth = fact;
+            } else {
+              t.factOGP = fact;
+            }
+            t.wear = wearPercentFromMm(plan, fact);
+            t.factOGP = fact;
+          });
+        });
+      }
+      
+      if (window.warehouseStore && typeof warehouseStore === 'object') {
+        Object.keys(warehouseStore).forEach(wh=>{
+          warehouseStore[wh].forEach(item=>{
+            if (IMMOVABLE_WAREHOUSES.includes(wh)) { 
+              item.factOGP = 0; 
+              item.wearPercentage = 100;
+              return; 
+            }
+            const m = Number(item.mileage||item.km||item.total||50000);
+            const planVal = Number(item.planOGP != null ? item.planOGP : (item.plan || item.initDepth || 90));
+            if (item.planOGP == null) item.planOGP = planVal;
+            item.factOGP = ogpFactMm(planVal, m, item.maxMileage || 140000);
+            item.wearPercentage = wearPercentFromMm(planVal, item.factOGP);
+          });
+        });
+      }
+    }catch(e){ /* silent */ }
+  }
+
+  // Переназначение performTireMove с проверкой правил, если исходная функция существует
+  if (typeof window.performTireMove === 'function') {
+    const _origPerform = window.performTireMove;
+    window.performTireMove = function(dragData, dropTarget, payload){
+      // Выполним проверки только для направления склад -> самосвал
+      try{
+        if (dragData && dragData.source === 'warehouse' && dropTarget && dropTarget.type === 'truck') {
+          const srcWarehouse = dragData.warehouse || (window.currentWarehouse || '');
+          const ws = (window.warehouseStore||{})[srcWarehouse] || [];
+          const idx = ws.findIndex(x=>x.id===dragData.tireId);
+          const item = idx>=0 ? ws[idx] : null;
+
+          if (RULES.forbidMoveFromImmovable && IMMOVABLE_WAREHOUSES.includes(srcWarehouse)) {
+            throw new Error(`Запрещено перемещать шины со склада "${srcWarehouse}".`);
+          }
+
+          if (item) {
+            if (RULES.enforceSizeByModel) {
+              const allowedSet = ((window.truckMetaStore||{})[dropTarget.truckId]||{}).allowed;
+              if (allowedSet && typeof allowedSet.has === 'function') {
+                const sizeNorm = normalizeSize(item.size);
+                if (!allowedSet.has(sizeNorm)) {
+                  throw new Error(`Нельзя установить размер ${item.size} на выбранную модель самосвала.`);
+                }
+              }
+            }
+            if (RULES.forbidRepairedOnFront && item.repaired && (dropTarget.position==='ПП'||dropTarget.position==='ПЛ')) {
+              throw new Error('Отремонтированные шины запрещены на позициях ПП и ПЛ.');
+            }
+            const p = pairOf[dropTarget.position];
+            if (p && window.truckStore && truckStore[dropTarget.truckId]) {
+              const pairTire = truckStore[dropTarget.truckId].find(t=>t.position===p);
+              if (pairTire) {
+                if (RULES.enforcePairBrand && (pairTire.brand||'').toLowerCase() !== (item.brand||'').toLowerCase()) {
+                  throw new Error(`Запрещено смешивать бренды в паре (${pairTire.brand} ≠ ${item.brand}).`);
+                }
+                if (RULES.enforcePairModel && pairTire.model !== item.model) {
+                  throw new Error(`Запрещено смешивать модели в паре (${pairTire.model} ≠ ${item.model}).`);
+                }
+                if (RULES.enforcePairSize && (String(pairTire.size||'').replace(/[\s-]/g,'').toUpperCase()) !== (String(item.size||'').replace(/[\s-]/g,'').toUpperCase())) {
+                  throw new Error(`Запрещено смешивать размеры в паре (${pairTire.size} ≠ ${item.size}).`);
+                }
+              }
+            }
+          }
+        }
+      }catch(err){
+        if (window.showToast) { showToast(String(err.message||err), 'error'); }
+        else { alert(String(err.message||err)); }
+        return; // блокируем исходный move
+      }
+      return _origPerform.apply(this, arguments);
+    };
+  }
+
+  // Делегированное выделение строк на складе
+  function initWarehouseSelection(){
+    var tbody = document.getElementById('warehouseTbody');
+    if (!tbody) return;
+    if (tbody.__selectionBound) return;
+    tbody.__selectionBound = true;
+    tbody.addEventListener('click', function(e){
+      const tr = e.target.closest('tr');
+      if(!tr) return;
+      tbody.querySelectorAll('tr.selected').forEach(x=>x.classList.remove('selected'));
+      tr.classList.add('selected');
+    });
+  }
+
+  // Обертка скролла для перечня шин, если вёрстка без внутреннего контейнера
+  function wrapTireTablesForScroll(root){
+    const host = root || document;
+    const cells = host.querySelectorAll('td.tire-details-cell');
+    cells.forEach(td=>{
+      if (td.querySelector('.tire-details-scroll')) return;
+      const tbl = td.querySelector('table');
+      if (!tbl) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'tire-details-scroll';
+      tbl.parentNode.insertBefore(wrap, tbl);
+      wrap.appendChild(tbl);
+    });
+  }
+
+  // Наблюдатель за добавлением раскрытых блоков
+  const mo = new MutationObserver((muts)=>{
+    muts.forEach(m=>{
+      m.addedNodes && m.addedNodes.forEach(n=>{
+        if (!(n instanceof HTMLElement)) return;
+        if (n.matches && n.matches('.tires-details-container, .tire-details-cell')) {
+          wrapTireTablesForScroll(n);
+        }
+      });
+    });
+  });
+  
+  window.addEventListener('load', function(){
+    adjustOGPIfPossible();
+    initWarehouseSelection();
+    wrapTireTablesForScroll(document);
+    try{
+      mo.observe(document.body, {childList:true, subtree:true});
+    }catch(e){}
+  });
+})();
+</script>
+
+<script id="patch-render-wear-from-values">
+(function(){
+  if (!window.formatWearFromValues){
+    window.formatWearFromValues = function(plan, fact){
+      plan = Number(plan||0);
+      fact = Number(fact||0);
+      if (plan <= 0) return '—';
+      const p = Math.round(((plan - fact) / plan) * 100);
+      return (p < 0 ? 0 : p) + '%';
+    };
+  }
+  if (!window.formatMM){
+    window.formatMM = function(v){
+      if (v == null || v === '') return '—';
+      const s = (Math.round(Number(v)*10)/10).toFixed(1);
+      return s.replace('.', ',') + ' мм';
+    };
+  }
+  if (!window.formatKM){
+    window.formatKM = function(v){
+      v = Math.max(0, Math.round(Number(v||0)));
+      return v.toLocaleString('ru-RU') + ' км';
+    };
+  }
+})();
+</script>
+
+<script id="patch-format-mm-km-wear">
+(function(){
+  if (!window.formatMM){
+    window.formatMM = function(v){
+      if (v == null || v === '') return '—';
+      const s = (Math.round(Number(v)*10)/10).toFixed(1);
+      return s.replace('.', ',') + ' мм';
+    };
+  }
+  if (!window.formatKM){
+    window.formatKM = function(v){
+      v = Math.max(0, Math.round(Number(v||0)));
+      return v.toLocaleString('ru-RU') + ' км';
+    };
+  }
+  if (!window.formatWearFromValues){
+    window.formatWearFromValues = function(plan, fact){
+      plan = Number(plan||0);
+      fact = Number(fact||0);
+      if (plan <= 0) return '—';
+      const p = Math.round(((plan - fact) / plan) * 100);
+      return (p < 0 ? 0 : (p>100?100:p)) + '%';
+    };
+  }
+})();
+</script>
 </body>
 </html>
