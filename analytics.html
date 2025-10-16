@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ПАЗЛ — Система в разработке</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+    body{background-color:#f8f9fa;color:#333;line-height:1.5;overflow-x:hidden;height:100vh}
+    .header{background:linear-gradient(135deg,#1a2b47,#2c3e50);color:#fff;padding:1.2rem 2rem;box-shadow:0 2px 10px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .header-title{display:flex;align-items:center;gap:15px}
+    .logo-title-container{display:flex;align-items:center;gap:15px}
+    .logo{height:100px;width:auto;cursor:pointer;transition:all .5s ease;border-radius:8px;filter:brightness(1) drop-shadow(0 2px 4px rgba(0,0,0,.3));animation:logoEntrance 1s ease-out}
+    .logo:hover{transform:scale(1.1) rotate(5deg);filter:brightness(1.2) drop-shadow(0 5px 15px rgba(0,0,0,.4));animation:pulse 1.5s infinite}
+    .logo:active{transform:scale(.95) rotate(-5deg);transition:all .1s ease}
+    @keyframes pulse{0%{transform:scale(1.1) rotate(5deg)}50%{transform:scale(1.15) rotate(5deg)}100%{transform:scale(1.1) rotate(5deg)}}
+    @keyframes logoEntrance{0%{opacity:0;transform:scale(.5) rotate(-180deg)}70%{transform:scale(1.1) rotate(10deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+    .title-text{display:flex;flex-direction:column}
+    .header-title h1{font-size:1.8rem;margin-bottom:.3rem}
+    .header-title p{font-size:1rem;opacity:.9}
+    .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    select,button{padding:.5rem 1rem;border:1px solid #ccc;border-radius:4px;background:#fff;font-size:.95rem;cursor:pointer;transition:all .2s ease}
+    select:hover,button:hover{border-color:#1a2b47;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+    button.export{background:#28a745;color:#fff;border-color:#218838}
+    button.print{background:#17a2b8;color:#fff;border-color:#138496}
+    button.settings{background:#6c757d;color:#fff;border-color:#545b62}
+    .container{max-width:1600px;margin:1.5rem auto;padding:0 1.5rem;height:calc(90vh - 150px)}
+    .menu-button{background:#1a2b47;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:.5rem;transition:all .3s ease;margin-bottom:1rem}
+    .menu-button:hover{background:#2c4061;transform:translateY(-1px)}
+    .menu-dropdown{display:none;position:absolute;background:#fff;min-width:220px;box-shadow:0 8px 16px rgba(0,0,0,.15);border-radius:6px;z-index:1000;margin-top:.5rem;border:1px solid #ddd}
+    .menu-dropdown.show{display:block}
+    .menu-item{padding:.75rem 1.2rem;cursor:pointer;transition:background-color .2s;display:flex;align-items:center;gap:.7rem;font-size:.95rem}
+    .menu-item:hover{background:#f8f9fa}
+    .menu-item.active{background:#e3f2fd;color:#1a2b47;font-weight:bold}
+    
+    /* Стили для сообщения о разработке */
+    .development-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 60vh;
+        text-align: center;
+        padding: 2rem;
+    }
+    .development-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #6c757d;
+    }
+    .development-title {
+        font-size: 2rem;
+        color: #1a2b47;
+        margin-bottom: 1rem;
+    }
+    .development-text {
+        font-size: 1.2rem;
+        color: #6c757d;
+        max-width: 600px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px){
+        .header{padding:.8rem 1rem}
+        .header-title h1{font-size:1.3rem}
+        .header-title p{font-size:.8rem}
+        .controls{width:100%;justify-content:flex-start}
+        .header-title{flex-direction:column;align-items:flex-start}
+        .logo-title-container{margin-bottom:5px}
+        .container{padding:0 .8rem; height:calc(85vh - 150px)}
+        .development-title {
+            font-size: 1.5rem;
+        }
+        .development-text {
+            font-size: 1rem;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="header">
+    <div class="header-title">
+        <div class="logo-title-container">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231a2b47'/%3E%3Ctext x='50' y='60' font-family='Arial' font-size='24' fill='white' text-anchor='middle'%3EПАЗЛ%3C/text%3E%3C/svg%3E" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
+            <div class="title-text">
+                <h1>ПАЗЛ</h1>
+                <p>Программный Аналитический модуль Зондирования и Логического управления СКГШ</p>
+                <p>УК УГОЛЬНЫЙ РАЗРЕЗ</p>
+            </div>
+        </div>
+    </div>
+    <div class="controls">
+        <select id="regionSelect">
+            <option>Регион: Все</option><option>Регион 1</option><option>Регион 2</option>
+        </select>
+        <select id="enterpriseSelect">
+            <option>Предприятие: Все</option><option>Разрез 1</option><option>Разрез 2</option><option>Разрез 3</option>
+        </select>
+        <button class="export" id="exportBtn">Экспорт</button>
+        <button class="print" id="printBtn">Печать</button>
+        <button class="settings" id="settingsBtn">Настройки</button>
+    </div>
+</div>
+
+<div class="container">
+    <button class="menu-button" id="menuButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+        Меню системы
+    </button>
+
+    <div class="menu-dropdown" id="menuDropdown">
+        <div class="menu-item" onclick="window.location.href='slide3.html'">Главный экран</div>
+        <div class="menu-item" onclick="window.location.href='accounting.html'">Блок учета</div>
+        <div class="menu-item" onclick="window.location.href='monitoring.html'">Мониторинг</div>
+        <div class="menu-item" onclick="navigateTo('engineer')">Блок шинного инженера</div>
+        <div class="menu-item" onclick="navigateTo('analytics')">Аналитика</div>
+        <div class="menu-item" onclick="navigateTo('forecast')">Прогноз потребности</div>
+        <div class="menu-item" onclick="navigateTo('constructor')">Конструкор отчетов</div>
+        <div class="menu-item" onclick="navigateTo('quality')">Качество дорог</div>
+        <div class="menu-item" onclick="navigateTo('documents')">Документы и литература</div>
+    </div>
+
+    <!-- Сообщение о разработке -->
+    <div class="development-message">
+        <div class="development-icon">🚧</div>
+        <h1 class="development-title">Раздел находится в разработке</h1>
+        <p class="development-text">
+            Данный функционал находится в стадии активной разработки. 
+            Мы работаем над созданием удобного и функционального интерфейса. 
+            Пожалуйста, ожидайте обновлений в ближайшее время.
+        </p>
+    </div>
+</div>
+
+<script>
+function initMenu(){
+    const btn = document.getElementById('menuButton');
+    const dd = document.getElementById('menuDropdown');
+    if (btn && dd) {
+        btn.addEventListener('click', e => {
+            e.stopPropagation(); 
+            dd.classList.toggle('show');
+        });
+        document.addEventListener('click', e => {
+            if (!btn.contains(e.target) && !dd.contains(e.target)) {
+                dd.classList.remove('show');
+            }
+        });
+    }
+}
+
+function navigateTo(section){
+    const pages = {
+        engineer: 'engineer.html',
+        analytics: 'analytics.html',
+        forecast: 'forecast.html',
+        constructor: 'constructor.html',
+        quality: 'quality.html',
+        documents: 'documents.html'
+    };
+    if (pages[section]) {
+        window.location.href = pages[section]; 
+    } else {
+        alert(`Раздел "${section}" в разработке`);
+    }
+    document.getElementById('menuDropdown').classList.remove('show');
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    initMenu();
+    
+    // Добавляем обработчики для кнопок экспорта, печати и настроек
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        alert('Функция экспорта временно недоступна. Раздел в разработке.');
+    });
+    
+    document.getElementById('printBtn').addEventListener('click', () => {
+        alert('Функция печати временно недоступна. Раздел в разработке.');
+    });
+    
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+        alert('Функция настроек временно недоступна. Раздел в разработке.');
+    });
+});
+</script>
+</body>
+</html>
