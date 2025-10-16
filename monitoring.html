@@ -33,7 +33,7 @@
     .menu-item{padding:.75rem 1.2rem;cursor:pointer;transition:background-color .2s;display:flex;align-items:center;gap:.7rem;font-size:.95rem}
     .menu-item:hover{background:#f8f9fa}
     .menu-item.active{background:#e3f2fd;color:#1a2b47;font-weight:bold}
-
+ 
     /* Панель фильтров */
     .filters-panel {
         display: flex;
@@ -73,13 +73,13 @@
         background: #c82333;
         border-color: #bd2130;
     }
-
+ 
     /* ОПТИМИЗИРОВАННЫЙ МАКЕТ - горизонтальное расположение */
     .monitoring-container{display:flex;gap:1rem;margin-bottom:1rem;width:100%;height:100%}
     .monitoring-main{flex:0 0 60%;background:#fff;border-radius:8px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;display:flex;flex-direction:column}
     .monitoring-stats{flex:0 0 40%;background:#fff;border-radius:8px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;display:flex;flex-direction:column}
     .monitoring-main h3,.monitoring-stats h3{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;color:#1a2b47;border-bottom:1px solid #eee;padding-bottom:.5rem;font-size:1rem;flex-shrink:0}
-
+ 
     /* ОПТИМИЗИРОВАННЫЕ ТАБЛИЦЫ - убрана горизонтальная прокрутка */
     .monitoring-table-container{overflow-y:auto;overflow-x:hidden;border:1px solid #e0e0e0;border-radius:8px;background:#fff;width:100%;flex:1}
     .monitoring-table{width:100%;border-collapse:collapse;font-size:.75rem;table-layout:fixed}
@@ -94,14 +94,14 @@
     .monitoring-table th.sortable.desc::after{content:"▼";opacity:.8}
     .monitoring-table tr:hover{background:#f8f9fa}
     .monitoring-table tr.selected{background:#e3f2fd!important}
-
+ 
     /* УМЕНЬШЕННЫЕ ШИРИНЫ КОЛОНОК */
     .model-column{width:12%}
     .number-column{width:10%}
     .skdsh-column{width:8%}
     .tkvch-column{width:10%}
     .pressure-cell{width:8%}
-
+ 
     /* НОВЫЕ СТИЛИ ПРИОРИТЕТОВ И ТУЛТИПОВ */
     :root{
       --no-truck-gradient: linear-gradient(135deg,#e9ecef,#dee2e6);
@@ -110,44 +110,44 @@
       --good-color: #fff3cd;
       --poor-color: #f8d7da;
     }
-
+ 
     /* 1) Нет связи с самосвалом — приоритет №1, серый градиент по всей строке */
     .row-no-truck {
       background: var(--no-truck-gradient) !important;
       color: #6c757d !important;
     }
-
+ 
     /* 2) Нет плана — УЛУЧШЕННАЯ анимация с внутренней рамкой и пульсирующим текстом */
     @keyframes border-pulse-inner {
       0%, 100% { box-shadow: inset 0 0 0 2px var(--no-plan-color); }
       50% { box-shadow: inset 0 0 0 3px rgba(220, 53, 69, 0.4); }
     }
-    
+   
     @keyframes text-pulse {
-      0%, 100% { 
+      0%, 100% {
         color: var(--no-plan-color);
         font-weight: bold;
         transform: scale(1);
       }
-      50% { 
+      50% {
         color: #ff6b7a;
         font-weight: bolder;
         transform: scale(1.05);
       }
     }
-    
+   
     .cell-no-plan {
       position: relative;
       background: transparent !important;
       animation: border-pulse-inner 1.5s infinite !important;
       border-radius: 4px;
     }
-    
+   
     .cell-no-plan .no-plan-text {
       animation: text-pulse 1.5s infinite !important;
       font-weight: bold !important;
     }
-
+ 
     /* 3) Нет связи с датчиком — серый фон ячейки + иконка */
     .cell-no-sensor {
       background: #f2f3f5 !important;
@@ -159,26 +159,26 @@
       position:absolute; top:2px; right:4px;
       font-size:.7rem; opacity:.8;
     }
-
+ 
     /* 4) Раскраска по отклонениям */
     .tkvch-excellent,.pressure-excellent { background: var(--excellent-color) !important; color:#155724 !important; }
     .tkvch-good,.pressure-good { background: var(--good-color) !important; color:#856404 !important; }
     .tkvch-poor,.pressure-poor { background: var(--poor-color) !important; color:#721c24 !important; }
-    
+   
     /* Раскраска КТГ в статистике */
     .ktg-excellent { background: var(--excellent-color) !important; color:#155724 !important; }
     .ktg-good { background: var(--good-color) !important; color:#856404 !important; }
     .ktg-poor { background: var(--poor-color) !important; color:#721c24 !important; }
-
+ 
     /* Тултипы — непрозрачный фон, поверх всех */
-    .tooltip{ 
-        position:relative; 
-        display:inline-block; 
-        cursor:pointer; 
+    .tooltip{
+        position:relative;
+        display:inline-block;
+        cursor:pointer;
         width:100%;
         height: 100%;
     }
-
+ 
     .tooltip .tooltip-text{
       visibility: hidden;
       position: fixed;
@@ -189,7 +189,7 @@
       box-shadow: 0 8px 22px rgba(0,0,0,.25);
       padding: 12px 15px;
       border-radius: 6px;
-      font-size: .8rem; 
+      font-size: .8rem;
       line-height: 1.4;
       opacity: 0;
       transform: translateY(10px);
@@ -201,13 +201,13 @@
       word-wrap: break-word;
       text-align: left;
     }
-
+ 
     .tooltip:hover .tooltip-text{
       opacity: 1;
       transform: translateY(0);
       visibility: visible;
     }
-
+ 
     /* Статистика - ОПТИМИЗИРОВАННАЯ */
     .stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:0.8rem;margin-top:1rem;flex-shrink:0}
     .stat-card{padding:0.8rem;background:#f8f9fa;border-radius:6px;text-align:center;cursor:pointer;transition:all .2s ease}
@@ -215,7 +215,7 @@
     .stat-card.active{background:#e3f2fd;border:2px solid #1a2b47}
     .stat-card h4{margin-bottom:.4rem;color:#1a2b47;font-size:.8rem}
     .stat-value{font-size:1rem;font-weight:bold;color:#1a2b47}
-
+ 
     /* Уведомления и обновление */
     .notification{position:fixed;top:20px;right:20px;padding:15px 20px;background:#28a745;color:white;border-radius:5px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:10000;transition:all .3s ease}
     .notification.error{background:#dc3545}
@@ -223,7 +223,7 @@
     .update-info{display:flex;align-items:center;gap:8px;font-size:0.75rem;color:#6c757d;flex-wrap:wrap}
     .refresh-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all .2s ease;color:#6c757d;font-size:0.8rem}
     .refresh-btn:hover{background:#e9ecef;color:#1a2b47}
-
+ 
     /* Модальное окно */
     .modal-overlay {
         position: fixed;
@@ -350,13 +350,13 @@
     .btn-primary:hover{background:#2c4061;border-color:#2c4061}
     .btn-secondary{background:#6c757d;color:#fff;border-color:#6c757d}
     .btn-secondary:hover{background:#5a6268;border-color:#545b62}
-
+ 
     /* Компактные стили для статистики */
     .stats-table-compact th, .stats-table-compact td {
         padding: 0.2rem 0.3rem;
         font-size: 0.7rem;
     }
-
+ 
     /* Стили для графика */
     .chart-container {
         height: 250px;
@@ -366,14 +366,14 @@
         padding: 10px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    
+   
     .chart-controls {
         display: flex;
         gap: 5px;
         margin-bottom: 10px;
         flex-wrap: wrap;
     }
-    
+   
     .chart-control-btn {
         padding: 0.3rem 0.6rem;
         background: #f8f9fa;
@@ -383,31 +383,31 @@
         font-size: 0.7rem;
         transition: all 0.2s ease;
     }
-    
+   
     .chart-control-btn:hover {
         background: #e9ecef;
     }
-    
+   
     .chart-control-btn.active {
         background: #1a2b47;
         color: #fff;
         border-color: #1a2b47;
     }
-
+ 
     .period-selector {
         display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 10px;
     }
-
+ 
     .period-selector select {
         padding: 0.3rem 0.6rem;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 0.8rem;
     }
-
+ 
     @media (max-width: 1400px) {
         .monitoring-container {
             gap: 0.8rem;
@@ -427,7 +427,7 @@
         .tkvch-column{width:12%}
         .pressure-cell{width:8%}
     }
-
+ 
     @media (max-width: 1200px){
         .monitoring-container{flex-direction:column}
         .monitoring-main,.monitoring-stats{flex:1}
@@ -438,7 +438,7 @@
         .tkvch-column{width:14%}
         .pressure-cell{width:9%}
     }
-
+ 
     @media (max-width: 992px) {
         .container {
             padding: 0 1rem;
@@ -459,7 +459,7 @@
             font-size: 0.7rem;
         }
     }
-
+ 
     @media (max-width: 768px){
         .header{padding:.8rem 1rem}
         .header-title h1{font-size:1.3rem}
@@ -492,7 +492,7 @@
             align-items: flex-start;
         }
     }
-
+ 
     @media (max-width: 576px) {
         .monitoring-table {
             font-size: 0.6rem;
@@ -515,7 +515,7 @@
 <div class="header">
     <div class="header-title">
         <div class="logo-title-container">
-           <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
+            <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
             <div class="title-text">
                 <h1>ПАЗЛ</h1>
                 <p>Программный Аналитический модуль Зондирования и Логического управления СКГШ</p>
@@ -535,7 +535,7 @@
         <button class="settings" id="settingsBtn">Настройки</button>
     </div>
 </div>
-
+ 
 <div class="container">
     <button class="menu-button" id="menuButton">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -543,8 +543,8 @@
         </svg>
         Меню системы
     </button>
-
- <div class="menu-dropdown" id="menuDropdown">
+ 
+<div class="menu-dropdown" id="menuDropdown">
             <div class="menu-item" onclick="window.location.href='slide3.html'">Главный экран</div>
             <div class="menu-item" onclick="window.location.href='accounting.html'">Блок учета</div>
             <div class="menu-item active" onclick="window.location.href='monitoring.html'">Мониторинг</div>
@@ -555,7 +555,7 @@
             <div class="menu-item" onclick="window.location.href='quality.html'">Качество дорог</div>
             <div class="menu-item" onclick="window.location.href='documents.html'">Документы и литература</div>
         </div>
-
+ 
     <div class="monitoring-container">
         <!-- ЛЕВЫЙ БЛОК - Мониторинг (60%) -->
         <div class="monitoring-main">
@@ -566,7 +566,7 @@
                     <button class="refresh-btn" id="manualRefreshBtn" title="Обновить данные">⟳</button>
                 </div>
             </h3>
-            
+           
             <!-- Панель фильтров -->
             <div class="filters-panel">
                 <button class="filter-btn" data-filter="exceedTKVCH">Превышение ТКВЧ</button>
@@ -576,7 +576,7 @@
                 <button class="filter-btn" data-filter="noSensorConnection">Нет связи с ДД</button>
                 <button class="filter-btn" data-filter="clear">Сбросить фильтры</button>
             </div>
-            
+           
             <div class="monitoring-table-container">
                 <table class="monitoring-table" id="trucksTable">
                     <colgroup>
@@ -616,7 +616,7 @@
                 </table>
             </div>
         </div>
-
+ 
         <!-- ПРАВЫЙ БЛОК - Статистика (40%) -->
         <div class="monitoring-stats">
             <h3>Статистика системы мониторинга</h3>
@@ -639,7 +639,7 @@
                     <tbody id="statsTableBody"></tbody>
                 </table>
             </div>
-            
+           
             <!-- Управление графиком -->
             <div class="chart-controls">
                 <div class="period-selector">
@@ -651,14 +651,14 @@
                         <option value="24" selected>24 месяца</option>
                     </select>
                 </div>
-               
+              
                 <button class="chart-control-btn" data-system="total">Всего</button>
                 <button class="chart-control-btn" data-system="skt">СКТ</button>
                 <button class="chart-control-btn" data-system="eva">EVA</button>
                 <button class="chart-control-btn" data-system="koda">Кода</button>
                 <button class="chart-control-btn" data-system="prepro">Pre.pro.</button>
             </div>
-            
+           
             <!-- График статистики -->
             <div class="chart-container">
                 <canvas id="statsChart"></canvas>
@@ -666,7 +666,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Модальное окно настроек -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
@@ -678,7 +678,7 @@
             <!-- НАСТРОЙКА ВИЗУАЛИЗАЦИИ -->
             <div class="form-section">
                 <h4>Настройка визуализации</h4>
-                
+               
                 <!-- Тип заливки при отсутствии связи с А/С -->
                 <div class="form-group">
                     <label for="noTruckGradientType">Тип заливки при отсутствии связи с А/С</label>
@@ -688,7 +688,7 @@
                         <option value="pattern">Штриховка</option>
                     </select>
                 </div>
-                
+               
                 <div class="form-row">
                     <div class="form-group">
                         <label for="noTruckGradientStart">Цвет начала</label>
@@ -701,7 +701,7 @@
                         <div class="color-preview" id="noTruckGradientEndPreview" style="background-color: #dee2e6;"></div>
                     </div>
                 </div>
-                
+               
                 <!-- Тип анимации отсутствия плана -->
                 <div class="form-group">
                     <label for="noPlanAnimation">Тип анимации отсутствия плана</label>
@@ -711,17 +711,17 @@
                         <option value="glow">Свечение</option>
                         <option value="breathe">Дыхание</option>
                         <option value="shake">Дрожание</option>
-                        <option value="flash">Мигание</option>
+                       <option value="flash">Мигание</option>
                     </select>
                     <div class="animation-preview" id="animationPreview">Предпросмотр анимации</div>
                 </div>
-                
+               
                 <div class="form-group">
                     <label for="noPlanColor">Цвет анимации отсутствия плана</label>
                     <input type="color" id="noPlanColor" class="form-control" value="#dc3545">
                     <div class="color-preview" id="noPlanColorPreview" style="background-color: #dc3545;"></div>
                 </div>
-                
+               
                 <!-- Основные цвета -->
                 <div class="form-row">
                     <div class="form-group">
@@ -741,7 +741,7 @@
                     </div>
                 </div>
             </div>
-
+ 
             <!-- Пороги КТГ -->
             <div class="form-section">
                 <h4>Пороги КТГ (%)</h4>
@@ -764,18 +764,18 @@
                     <div class="threshold-label">100%</div>
                 </div>
             </div>
-            
+           
             <!-- Пороги ТКВЧ -->
             <div class="form-section">
-                <h4>Пороги ТКВЧ (±°C)</h4>
+                <h4>Пороги ТКВЧ (±)</h4>
                 <div class="form-group">
                     <label>Зеленый (отличный)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="tkvchGreenLower" class="form-control" value="-50" placeholder="От">
+                            <input type="number" id="tkvchGreenLower" class="form-control" value="-50000" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="tkvchGreenUpper" class="form-control" value="50" placeholder="До">
+                            <input type="number" id="tkvchGreenUpper" class="form-control" value="50000" placeholder="До">
                         </div>
                     </div>
                 </div>
@@ -783,10 +783,10 @@
                     <label>Желтый (хороший)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="tkvchYellowLower" class="form-control" value="-100" placeholder="От">
+                            <input type="number" id="tkvchYellowLower" class="form-control" value="-50000" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="tkvchYellowUpper" class="form-control" value="100" placeholder="До">
+                            <input type="number" id="tkvchYellowUpper" class="form-control" value="50000" placeholder="До">
                         </div>
                     </div>
                 </div>
@@ -794,20 +794,20 @@
                     <label>Красный (плохой)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="tkvchRedLower" class="form-control" value="-150" placeholder="От">
+                            <input type="number" id="tkvchRedLower" class="form-control" value="-50000" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="tkvchRedUpper" class="form-control" value="150" placeholder="До">
+                            <input type="number" id="tkvchRedUpper" class="form-control" value="50000" placeholder="До">
                         </div>
                     </div>
                 </div>
                 <div class="threshold-preview">
-                    <div class="threshold-label">-150°C</div>
+                    <div class="threshold-label">-50000</div>
                     <div class="threshold-bar" id="tkvchThresholdBar"></div>
-                    <div class="threshold-label">+150°C</div>
+                    <div class="threshold-label">+50000</div>
                 </div>
             </div>
-            
+           
             <!-- Пороги давления -->
             <div class="form-section">
                 <h4>Пороги давления (±бар)</h4>
@@ -815,10 +815,10 @@
                     <label>Зеленый (отличный)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="pressureGreenLower" class="form-control" min="0" step="0.1" value="-0.3" placeholder="От">
+                            <input type="number" id="pressureGreenLower" class="form-control" min="-10" step="0.1" value="10" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="pressureGreenUpper" class="form-control" min="0" step="0.1" value="0.3" placeholder="До">
+                            <input type="number" id="pressureGreenUpper" class="form-control" min="-10" step="0.1" value="10" placeholder="До">
                         </div>
                     </div>
                 </div>
@@ -826,10 +826,10 @@
                     <label>Желтый (хороший)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="pressureYellowLower" class="form-control" min="0" step="0.1" value="-0.6" placeholder="От">
+                            <input type="number" id="pressureYellowLower" class="form-control" min="-10" step="0.1" value="10" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="pressureYellowUpper" class="form-control" min="0" step="0.1" value="0.6" placeholder="До">
+                            <input type="number" id="pressureYellowUpper" class="form-control" min="-10" step="0.1" value="10" placeholder="До">
                         </div>
                     </div>
                 </div>
@@ -837,20 +837,20 @@
                     <label>Красный (плохой)</label>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="number" id="pressureRedLower" class="form-control" min="0" step="0.1" value="-1.0" placeholder="От">
+                            <input type="number" id="pressureRedLower" class="form-control" min="-10" step="0.1" value="10" placeholder="От">
                         </div>
                         <div class="form-group">
-                            <input type="number" id="pressureRedUpper" class="form-control" min="0" step="0.1" value="1.0" placeholder="До">
+                            <input type="number" id="pressureRedUpper" class="form-control" min="-10" step="0.1" value="10" placeholder="До">
                         </div>
                     </div>
                 </div>
                 <div class="threshold-preview">
-                    <div class="threshold-label">-1.0 бар</div>
+                    <div class="threshold-label">-10 бар</div>
                     <div class="threshold-bar" id="pressureThresholdBar"></div>
-                    <div class="threshold-label">+1.0 бар</div>
+                    <div class="threshold-label">+10 бар</div>
                 </div>
             </div>
-            
+           
             <!-- Период статистики датчиков -->
             <div class="form-section">
                 <h4>Период статистики датчиков</h4>
@@ -886,7 +886,7 @@
                     </div>
                 </div>
             </div>
-            
+           
             <!-- Период данных мониторинга -->
             <div class="form-section">
                 <h4>Период данных мониторинга</h4>
@@ -908,7 +908,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Модальное окно экспорта -->
 <div class="modal-overlay" id="exportModal">
     <div class="modal">
@@ -925,7 +925,7 @@
                     <option value="word">Word</option>
                 </select>
             </div>
-            
+           
             <div class="form-group">
                 <label for="exportFileName">Наименование файла</label>
                 <input type="text" id="exportFileName" class="form-control" value="Отчет_мониторинга">
@@ -937,7 +937,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Модальное окно печати -->
 <div class="modal-overlay" id="printModal">
     <div class="modal">
@@ -954,7 +954,7 @@
                     <option value="printer2">Принтер 2</option>
                 </select>
             </div>
-            
+           
             <div class="form-group">
                 <label>Диапазон печати</label>
                 <select id="printRange" class="form-control">
@@ -963,7 +963,7 @@
                     <option value="selected">Выбранные элементы</option>
                 </select>
             </div>
-            
+           
             <div class="form-group">
                 <label for="copies">Количество копий</label>
                 <input type="number" id="copies" class="form-control" min="1" value="1">
@@ -975,7 +975,7 @@
         </div>
     </div>
 </div>
-
+ 
 <script>
 /* === Константы (как в XLSX) === */
 const POS_LABELS = ['ПП','ПЛ','ЗЛН','ЗЛВ','ЗПВ','ЗПН'];
@@ -996,15 +996,15 @@ const DEFAULT_SETTINGS={
     startDate: null,
     endDate: null,
     monitoringPeriod: 72,
-    tkvchThresholds: { 
+    tkvchThresholds: {
         greenLower: -50, greenUpper: 50,
-        yellowLower: -100, yellowUpper: 100, 
-        redLower: -150, redUpper: 150 
+        yellowLower: -100, yellowUpper: 100,
+        redLower: -150, redUpper: 150
     },
-    pressureThresholds: { 
+    pressureThresholds: {
         greenLower: -0.3, greenUpper: 0.3,
-        yellowLower: -0.6, yellowUpper: 0.6, 
-        redLower: -1.0, redUpper: 1.0 
+        yellowLower: -0.6, yellowUpper: 0.6,
+        redLower: -1.0, redUpper: 1.0
     },
     noPlanAnimation: 'pulse-gentle',
     noTruckGradientType: 'gradient',
@@ -1017,16 +1017,16 @@ const DEFAULT_SETTINGS={
         poor: '#f8d7da'
     },
     chartPeriod: 24,
-    currentSystem: 'all'
+    currentSystem: 'total'
 };
-
+ 
 const rndInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const rndFloat=(a,b,d=1)=>parseFloat((Math.random()*(b-a)+a).toFixed(d));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-
+ 
 /* === Настройки === */
 let settings = {...DEFAULT_SETTINGS};
-
+ 
 /* === Глобальные переменные === */
 let trucksData = [];
 let statsData = [];
@@ -1034,14 +1034,14 @@ let sortState = {key:'model', dir:'asc'};
 let currentFilter = null;
 let activeFilters = new Map();
 let statsChart = null;
-
+ 
 /* === Функции для определения классов ТКВЧ и давления === */
 function getTKVCHClass(factValue, planValue) {
     if (!factValue || factValue === '-' || !planValue) return '';
-    
+   
     const deviation = factValue - planValue;
     const thresholds = settings.tkvchThresholds;
-    
+   
     if (deviation >= thresholds.greenLower && deviation <= thresholds.greenUpper) {
         return 'tkvch-excellent';
     } else if (deviation >= thresholds.yellowLower && deviation <= thresholds.yellowUpper) {
@@ -1050,13 +1050,13 @@ function getTKVCHClass(factValue, planValue) {
         return 'tkvch-poor';
     }
 }
-
+ 
 function getPressureClass(factValue, planValue) {
     if (!factValue || factValue === '-' || !planValue) return '';
-    
+   
     const deviation = parseFloat(factValue) - planValue;
     const thresholds = settings.pressureThresholds;
-    
+   
     if (deviation >= thresholds.greenLower && deviation <= thresholds.greenUpper) {
         return 'pressure-excellent';
     } else if (deviation >= thresholds.yellowLower && deviation <= thresholds.yellowUpper) {
@@ -1065,7 +1065,7 @@ function getPressureClass(factValue, planValue) {
         return 'pressure-poor';
     }
 }
-
+ 
 function getKTGClass(ktgValue) {
     if (ktgValue >= settings.ktgThresholds.excellent) {
         return 'ktg-excellent';
@@ -1075,7 +1075,7 @@ function getKTGClass(ktgValue) {
         return 'ktg-poor';
     }
 }
-
+ 
 /* === Применение настроек к CSS переменным === */
 function applySettingsToCSS() {
     let gradientValue;
@@ -1086,30 +1086,30 @@ function applySettingsToCSS() {
     } else {
         gradientValue = `repeating-linear-gradient(45deg, ${settings.colors.noTruckGradientStart}, ${settings.colors.noTruckGradientStart} 4px, ${settings.colors.noTruckGradientEnd} 4px, ${settings.colors.noTruckGradientEnd} 8px)`;
     }
-    
+   
     document.documentElement.style.setProperty('--no-truck-gradient', gradientValue);
     document.documentElement.style.setProperty('--no-plan-color', settings.colors.noPlanColor);
     document.documentElement.style.setProperty('--excellent-color', settings.colors.excellent);
     document.documentElement.style.setProperty('--good-color', settings.colors.good);
     document.documentElement.style.setProperty('--poor-color', settings.colors.poor);
 }
-
+ 
 /* === Адаптивная система тултипов === */
 function initAdaptiveTooltips() {
     document.addEventListener('mouseover', function(e) {
         const tooltip = e.target.closest('.tooltip');
         if (!tooltip) return;
-
+ 
         const tooltipText = tooltip.querySelector('.tooltip-text');
         if (!tooltipText) return;
-
+ 
         // Сбрасываем классы позиционирования
         tooltipText.classList.remove('top', 'left', 'right', 'bottom');
-        
+       
         // Получаем позиции элементов
         const tooltipRect = tooltip.getBoundingClientRect();
         const tooltipTextRect = tooltipText.getBoundingClientRect();
-        
+       
         // Доступное пространство вокруг элемента
         const space = {
             top: tooltipRect.top,
@@ -1117,18 +1117,18 @@ function initAdaptiveTooltips() {
             left: tooltipRect.left,
             right: window.innerWidth - tooltipRect.right
         };
-        
+       
         let finalTop = tooltipRect.bottom + 5;
         let finalLeft = tooltipRect.left;
         let positionClass = 'bottom';
-        
+       
         // Определяем лучшую позицию для отображения
         if (space.bottom < tooltipTextRect.height && space.top > space.bottom) {
             // Показываем сверху
             finalTop = tooltipRect.top - tooltipTextRect.height - 5;
             positionClass = 'top';
         }
-        
+       
         if (space.right < tooltipTextRect.width && space.left > space.right) {
             // Показываем слева
             finalLeft = tooltipRect.right - tooltipTextRect.width;
@@ -1138,26 +1138,26 @@ function initAdaptiveTooltips() {
             finalLeft = 10;
             positionClass += ' right';
         }
-        
+       
         // Ограничиваем позиционирование в пределах окна
         finalTop = Math.max(10, Math.min(finalTop, window.innerHeight - tooltipTextRect.height - 10));
         finalLeft = Math.max(10, Math.min(finalLeft, window.innerWidth - tooltipTextRect.width - 10));
-        
+       
         // Применяем позиционирование
         tooltipText.style.top = finalTop + 'px';
         tooltipText.style.left = finalLeft + 'px';
         tooltipText.classList.add(positionClass);
     });
 }
-
+ 
 /* === Генерация данных для всплывающих подсказок === */
 function generateTruckTooltipData(truck) {
     const conditions = ['исправен', 'требует осмотра', 'в ремонте', 'резерв'];
     const loadPlaces = ['Карьер №1', 'Карьер №2', 'Карьер №3', 'Разрез Северный'];
     const unloadPlaces = ['Обогатительная фабрика', 'Склад', 'Перегрузочный пункт'];
-    
+   
     const noTruckConnection = Math.random() < 0.1;
-    
+   
     return {
         capacity: truck.capacity || MODELS[truck.model.replace('БелАЗ ', '')]?.capacity || 130,
         volume: truck.volume || MODELS[truck.model.replace('БелАЗ ', '')]?.volume || 102,
@@ -1169,21 +1169,21 @@ function generateTruckTooltipData(truck) {
         avgLoad: rndFloat(80, 95, 1),
         minLoad: rndFloat(70, 85, 1),
         maxLoad: rndFloat(95, 105, 1),
-        lastSignal: noTruckConnection ? 
-            new Date(Date.now() - rndInt(2, 10) * 86400000).toLocaleString('ru-RU') : 
+        lastSignal: noTruckConnection ?
+            new Date(Date.now() - rndInt(2, 10) * 86400000).toLocaleString('ru-RU') :
             new Date(Date.now() - rndInt(5, 120) * 60000).toLocaleString('ru-RU'),
         noTruckConnection: noTruckConnection
     };
 }
-
+ 
 function generateTKVCHTooltipData(tkvchValue, axleType, model) {
     const tireBrands = ['MICHELIN', 'BRIDGESTONE', 'GOODYEAR', 'CONTINENTAL'];
     const tireModels = ['XDR2', 'XDR3', 'VSDL', 'G177'];
     const compounds = ['ROCK', 'QUARRY', 'HD', 'EXTREME'];
-    
+   
     const noPlan = Math.random() < 0.2;
     const planValue = MODELS[model.replace('БелАЗ ', '')]?.normTKVCH || 700;
-    
+   
     return {
         plan: noPlan ? null : planValue,
         fact: tkvchValue,
@@ -1203,23 +1203,23 @@ function generateTKVCHTooltipData(tkvchValue, axleType, model) {
         noPlan: noPlan
     };
 }
-
+ 
 function generatePressureTooltipData(pressureValue, position) {
     const tireBrands = ['MICHELIN', 'BRIDGESTONE', 'GOODYEAR', 'CONTINENTAL'];
     const tireModels = ['XDR2', 'XDR3', 'VSDL', 'G177'];
     const compounds = ['ROCK', 'QUARRY', 'HD', 'EXTREME'];
-    
+   
     const noPlan = Math.random() < 0.2;
     const noSensorConnection = Math.random() < 0.15;
     const planValue = 7.3;
-    
-    const lastReadingTime = noSensorConnection ? 
-        new Date(Date.now() - rndInt(1, 24) * 3600000) : 
+   
+    const lastReadingTime = noSensorConnection ?
+        new Date(Date.now() - rndInt(1, 24) * 3600000) :
         new Date(Date.now() - rndInt(1, 10) * 60000);
-    
-    const lastReadingValue = noSensorConnection ? 
+   
+    const lastReadingValue = noSensorConnection ?
         rndFloat(6.5, 7.5, 1) : pressureValue;
-    
+   
     return {
         plan: noPlan ? null : planValue,
         fact: pressureValue,
@@ -1240,7 +1240,7 @@ function generatePressureTooltipData(pressureValue, position) {
         noSensorConnection: noSensorConnection
     };
 }
-
+ 
 function generateStatsTooltipData(skdsh, column) {
     const data = {
         total: {
@@ -1273,17 +1273,17 @@ function generateStatsTooltipData(skdsh, column) {
             reliability: rndInt(75, 85) + '%'
         }
     };
-    
+   
     return data[column] || data.total;
 }
-
+ 
 /* === Функции для создания HTML всплывающих подсказок === */
 function createTruckTooltipHTML(tooltipData) {
     let connectionInfo = '';
     if (tooltipData.noTruckConnection) {
         connectionInfo = `<br><strong style="color:#dc3545">ОТСУТСТВУЕТ СВЯЗЬ С А/С</strong><br>Последний сигнал: ${tooltipData.lastSignal}`;
     }
-    
+   
     return `
         <strong>Информация по самосвалу</strong><br>
         Грузоподъемность: ${tooltipData.capacity} тн<br>
@@ -1293,25 +1293,25 @@ function createTruckTooltipHTML(tooltipData) {
         Место погрузки: ${tooltipData.lastLoadPlace}<br>
         Место разгрузки: ${tooltipData.lastUnloadPlace}<br>
         Загрузка: ${tooltipData.lastLoad}% (крайний)/${tooltipData.avgLoad}% (сред. 24ч)<br>
-        Мин/макс загрузка (24ч): ${tooltipData.minLoad}%/${tooltipData.maxLoad}%<br>
+       Мин/макс загрузка (24ч): ${tooltipData.minLoad}%/${tooltipData.maxLoad}%<br>
         Последний сигнал: ${tooltipData.lastSignal}
         ${connectionInfo}
     `;
 }
-
+ 
 function createTKVCHTooltipHTML(tooltipData, axleType) {
     let planInfo = '';
     if (tooltipData.noPlan) {
         planInfo = `<br><strong style="color:#dc3545">ПЛАНОВЫЙ ПОКАЗАТЕЛЬ НЕ УСТАНОВЛЕН</strong>`;
     }
-    
-    const deviationInfo = tooltipData.plan ? 
-        `<br>Отклонение: ${tooltipData.deviation > 0 ? '+' : ''}${tooltipData.deviation.toFixed(1)}°C` : 
+   
+    const deviationInfo = tooltipData.plan ?
+        `<br>Отклонение: ${tooltipData.deviation > 0 ? '+' : ''}${tooltipData.deviation.toFixed(1)}` :
         '';
-    
+   
     return `
         <strong>ТКВЧ ${axleType} ось</strong><br>
-        План/факт: ${tooltipData.plan ? tooltipData.plan + '°C/' + tooltipData.fact + '°C' : 'НЕТ ПЛАНА/' + tooltipData.fact + '°C'}${planInfo}${deviationInfo}<br>
+        План/факт: ${tooltipData.plan ? tooltipData.plan + '/' + tooltipData.fact + '' : 'НЕТ ПЛАНА/' + tooltipData.fact + ''}${planInfo}${deviationInfo}<br>
         Длительность превышения: ${tooltipData.exceedDuration}<br>
         Дата/время нарушения: ${tooltipData.violationTime}<br>
         Расстояние рейса: ${tooltipData.tripDistance}<br>
@@ -1320,20 +1320,20 @@ function createTKVCHTooltipHTML(tooltipData, axleType) {
         Уклон: ${tooltipData.slope}<br>
         Рейсов с нарушением: ${tooltipData.violationCount}<br>
         Средняя длительность: ${tooltipData.avgDuration}<br>
-        Среднее за 24ч: ${tooltipData.avg24h}°C<br>
+        Среднее за 24ч: ${tooltipData.avg24h}<br>
         Шина: ${tooltipData.tireBrand} ${tooltipData.tireModel}<br>
         Компаунд: ${tooltipData.tireCompound}
     `;
 }
-
+ 
 function createPressureTooltipHTML(tooltipData, position) {
     let planInfo = '';
     let sensorInfo = '';
-    
+   
     if (tooltipData.noPlan) {
         planInfo = `<br><strong style="color:#dc3545">ПЛАНОВЫЙ ПОКАЗАТЕЛЬ НЕ УСТАНОВЛЕН</strong>`;
     }
-    
+   
     if (tooltipData.noSensorConnection) {
         sensorInfo = `
             <br><strong style="color:#6c757d">ОТСУТСТВУЕТ СВЯЗЬ С ДАТЧИКОМ ДАВЛЕНИЯ</strong><br>
@@ -1341,11 +1341,11 @@ function createPressureTooltipHTML(tooltipData, position) {
             Время получения: ${tooltipData.lastPressureTime}
         `;
     }
-    
-    const deviationInfo = tooltipData.plan ? 
-        `<br>Отклонение: ${tooltipData.deviation > 0 ? '+' : ''}${tooltipData.deviation.toFixed(1)} бар` : 
+   
+    const deviationInfo = tooltipData.plan ?
+        `<br>Отклонение: ${tooltipData.deviation > 0 ? '+' : ''}${tooltipData.deviation.toFixed(1)} бар` :
         '';
-    
+   
     return `
         <strong>Давление ${position}</strong><br>
         Давление план/факт: ${tooltipData.plan ? tooltipData.plan + ' бар/' + tooltipData.fact + ' бар' : 'НЕТ ПЛАНА/' + tooltipData.fact + ' бар'}${planInfo}${deviationInfo}<br>
@@ -1362,7 +1362,7 @@ function createPressureTooltipHTML(tooltipData, position) {
         ${sensorInfo}
     `;
 }
-
+ 
 function createStatsColumnTooltipHTML(tooltipData) {
     return `
         <strong>${tooltipData.title}</strong><br>
@@ -1374,25 +1374,25 @@ function createStatsColumnTooltipHTML(tooltipData) {
         ${tooltipData.features ? `Функции: ${tooltipData.features.join(', ')}` : ''}
     `;
 }
-
+ 
 /* === Генерация данных === */
 function generateTKVCH(type){
     return (type==='сотки')
       ? {front:rndInt(500,745), rear:rndInt(500,745)}
       : {front:rndInt(900,1200), rear:rndInt(900,1200)};
 }
-
+ 
 function generateTruckList(){
-    const trucks=[]; 
+    const trucks=[];
     const dist={'75131':8,'7513D':8,'75306':7,'7530G':7};
-    
+   
     Object.keys(MODELS).forEach(m=>{
-        const cnt=dist[m]; 
+        const cnt=dist[m];
         const meta=MODELS[m];
         for(let i=0;i<cnt;i++){
             const tkv=generateTKVCH(meta.type);
             const pressures=Array.from({length:6},()=>rndFloat(6.7,9.0).toFixed(1));
-            
+           
             const truck = {
                 id:1000+trucks.length+1,
                 model:`БелАЗ ${m}`,
@@ -1405,35 +1405,35 @@ function generateTruckList(){
                 volume: meta.volume,
                 ktg: rndInt(70, 100) // Добавляем КТГ для каждого самосвала
             };
-            
+           
             // Генерация данных для всплывающих подсказок
             truck.truckTooltipData = generateTruckTooltipData(truck);
             truck.tkvchFrontTooltipData = generateTKVCHTooltipData(tkv.front, 'передняя', truck.model);
             truck.tkvchRearTooltipData = generateTKVCHTooltipData(tkv.rear, 'задняя', truck.model);
-            truck.pressureTooltipData = pressures.map((p, index) => 
+            truck.pressureTooltipData = pressures.map((p, index) =>
                 generatePressureTooltipData(parseFloat(p), POS_LABELS[index])
             );
-            
+           
             trucks.push(truck);
         }
     });
     return trucks;
 }
-
+ 
 /* === НОВАЯ ЛОГИКА СТАТИСТИКИ === */
 function generateStatsData() {
     const stats = [];
-    
+   
     // Группируем самосвалы по моделям
     const modelGroups = {};
-    
+   
     trucksData.forEach(truck => {
         if (!modelGroups[truck.model]) {
             modelGroups[truck.model] = [];
         }
         modelGroups[truck.model].push(truck);
     });
-    
+   
     // Считаем статистику по каждой модели
     Object.keys(modelGroups).forEach(model => {
         const trucks = modelGroups[model];
@@ -1446,7 +1446,7 @@ function generateStatsData() {
             koda: { systems: 0, ktg: 0 },
             prepro: { systems: 0, ktg: 0 }
         };
-        
+       
         // Считаем по системам СКДШ
         const systemKtg = {
             'СКТ': { total: 0, count: 0 },
@@ -1454,9 +1454,9 @@ function generateStatsData() {
             'Кода': { total: 0, count: 0 },
             'pre.pro.': { total: 0, count: 0 }
         };
-        
+       
         let totalKtg = 0;
-        
+       
         trucks.forEach(truck => {
             totalKtg += truck.ktg;
             if (systemKtg[truck.skdsh]) {
@@ -1464,7 +1464,7 @@ function generateStatsData() {
                 systemKtg[truck.skdsh].count += 1;
             }
         });
-        
+       
         // Заполняем данные
         stat.total.ktg = Math.round(totalKtg / trucks.length);
         stat.skt.systems = systemKtg['СКТ'].count;
@@ -1475,10 +1475,10 @@ function generateStatsData() {
         stat.koda.ktg = systemKtg['Кода'].count > 0 ? Math.round(systemKtg['Кода'].total / systemKtg['Кода'].count) : 0;
         stat.prepro.systems = systemKtg['pre.pro.'].count;
         stat.prepro.ktg = systemKtg['pre.pro.'].count > 0 ? Math.round(systemKtg['pre.pro.'].total / systemKtg['pre.pro.'].count) : 0;
-        
+       
         stats.push(stat);
     });
-    
+   
     // Добавляем строку "Всего"
     const totalStat = {
         model: 'Всего',
@@ -1489,16 +1489,16 @@ function generateStatsData() {
         koda: { systems: 0, ktg: 0 },
         prepro: { systems: 0, ktg: 0 }
     };
-    
+   
     const totalSystemKtg = {
         'СКТ': { total: 0, count: 0 },
         'Ева': { total: 0, count: 0 },
         'Кода': { total: 0, count: 0 },
         'pre.pro.': { total: 0, count: 0 }
     };
-    
+   
     let grandTotalKtg = 0;
-    
+   
     trucksData.forEach(truck => {
         grandTotalKtg += truck.ktg;
         if (totalSystemKtg[truck.skdsh]) {
@@ -1506,7 +1506,7 @@ function generateStatsData() {
             totalSystemKtg[truck.skdsh].count += 1;
         }
     });
-    
+   
     totalStat.total.ktg = Math.round(grandTotalKtg / trucksData.length);
     totalStat.skt.systems = totalSystemKtg['СКТ'].count;
     totalStat.skt.ktg = totalSystemKtg['СКТ'].count > 0 ? Math.round(totalSystemKtg['СКТ'].total / totalSystemKtg['СКТ'].count) : 0;
@@ -1516,31 +1516,31 @@ function generateStatsData() {
     totalStat.koda.ktg = totalSystemKtg['Кода'].count > 0 ? Math.round(totalSystemKtg['Кода'].total / totalSystemKtg['Кода'].count) : 0;
     totalStat.prepro.systems = totalSystemKtg['pre.pro.'].count;
     totalStat.prepro.ktg = totalSystemKtg['pre.pro.'].count > 0 ? Math.round(totalSystemKtg['pre.pro.'].total / totalSystemKtg['pre.pro.'].count) : 0;
-    
+   
     stats.unshift(totalStat);
-    
+   
     return stats;
 }
-
+ 
 /* === Применение фильтров === */
 function applyFilters(trucks) {
     if (activeFilters.size === 0 && !currentFilter) return trucks;
-    
+   
     let filtered = trucks;
-    
+   
     // Применяем фильтр по модели из статистики
     if (currentFilter && currentFilter.type === 'model') {
         filtered = filtered.filter(truck => truck.model === currentFilter.value);
     }
-    
+   
     // Применяем остальные фильтры
     if (activeFilters.size > 0) {
         filtered = filtered.filter(truck => {
             let includeTruck = true;
-            
+           
             activeFilters.forEach((mode, filterType) => {
                 let matchesFilter = false;
-                
+               
                 switch(filterType) {
                     case 'exceedTKVCH':
                         const frontPlan = MODELS[truck.model.replace('БелАЗ ', '')]?.normTKVCH || 700;
@@ -1551,47 +1551,47 @@ function applyFilters(trucks) {
                         const rearExceed = Math.abs(rearDeviation) > settings.tkvchThresholds.redUpper;
                         matchesFilter = frontExceed || rearExceed;
                         break;
-                        
+                       
                     case 'exceedPressure':
                         const pressurePlan = 7.3;
-                        const pressureExceed = truck.pressures.some(p => {
+                       const pressureExceed = truck.pressures.some(p => {
                             const deviation = Math.abs(parseFloat(p) - pressurePlan);
                             return deviation > settings.pressureThresholds.redUpper;
                         });
                         matchesFilter = pressureExceed;
                         break;
-                        
+                       
                     case 'noPlan':
-                        const hasNoPlan = truck.tkvchFrontTooltipData.noPlan || 
-                                         truck.tkvchRearTooltipData.noPlan || 
+                        const hasNoPlan = truck.tkvchFrontTooltipData.noPlan ||
+                                         truck.tkvchRearTooltipData.noPlan ||
                                          truck.pressureTooltipData.some(p => p.noPlan);
                         matchesFilter = hasNoPlan;
                         break;
-                        
+                       
                     case 'noTruckConnection':
                         matchesFilter = truck.truckTooltipData.noTruckConnection;
                         break;
-                        
+                       
                     case 'noSensorConnection':
                         const hasNoSensorConnection = truck.pressureTooltipData.some(p => p.noSensorConnection);
                         matchesFilter = hasNoSensorConnection;
                         break;
                 }
-                
+               
                 if (mode === 'include') {
                     includeTruck = includeTruck && matchesFilter;
                 } else if (mode === 'exclude') {
                     includeTruck = includeTruck && !matchesFilter;
                 }
             });
-            
+           
             return includeTruck;
         });
     }
-    
+   
     return filtered;
 }
-
+ 
 /* === Рендер таблицы мониторинга === */
 function renderTrucksTable(){
     const tbody = document.getElementById('trucksTableBody');
@@ -1599,50 +1599,50 @@ function renderTrucksTable(){
         console.error('Element trucksTableBody not found');
         return;
     }
-    
+   
     tbody.innerHTML = '';
-
+ 
     let data = [...trucksData];
     data = applyFilters(data);
-
+ 
     if (currentFilter){
         data = data.filter(t => {
             if (currentFilter.type === 'skdsh') return t.skdsh.includes(currentFilter.value);
             return true;
         });
     }
-
+ 
     data.sort((a,b) => {
         let av = a[sortState.key], bv = b[sortState.key];
-        if (sortState.key === 'pressures'){ 
-            av = parseFloat(a.pressures?.[0] || 0); 
-            bv = parseFloat(b.pressures?.[0] || 0); 
+        if (sortState.key === 'pressures'){
+            av = parseFloat(a.pressures?.[0] || 0);
+            bv = parseFloat(b.pressures?.[0] || 0);
         }
         if (av < bv) return sortState.dir === 'asc' ? -1 : 1;
         if (av > bv) return sortState.dir === 'asc' ? 1 : -1;
         return 0;
     });
-
+ 
     data.forEach(truck => {
         const tr = document.createElement('tr');
-
+ 
         // ПРИОРИТЕТ 1: нет связи с самосвалом — красим строку
         const rowNoTruck = !!truck.truckTooltipData.noTruckConnection;
         if (rowNoTruck) tr.classList.add('row-no-truck');
-
+ 
         // Получаем плановые значения для ТКВЧ
         const tkvchPlan = MODELS[truck.model.replace('БелАЗ ', '')]?.normTKVCH || 700;
-        
+       
         // Логика окраски ТКВЧ - на основе отклонения от плана
-        const tkvchFrontClass = !rowNoTruck && !truck.tkvchFrontTooltipData.noPlan ? 
+        const tkvchFrontClass = !rowNoTruck && !truck.tkvchFrontTooltipData.noPlan ?
             getTKVCHClass(truck.tkvchFront, tkvchPlan) : '';
-        const tkvchRearClass = !rowNoTruck && !truck.tkvchRearTooltipData.noPlan ? 
+        const tkvchRearClass = !rowNoTruck && !truck.tkvchRearTooltipData.noPlan ?
             getTKVCHClass(truck.tkvchRear, tkvchPlan) : '';
-
+ 
         // Флаги «нет плана»
         const noPlanFront = truck.tkvchFrontTooltipData.noPlan;
         const noPlanRear  = truck.tkvchRearTooltipData.noPlan;
-
+ 
         tr.innerHTML = `
             <td class="model-column">${truck.model}</td>
             <td class="number-column">
@@ -1652,7 +1652,7 @@ function renderTrucksTable(){
                 </div>
             </td>
             <td class="skdsh-column">${truck.skdsh}</td>
-
+ 
             <td class="tkvch-column ${noPlanFront ? 'cell-no-plan' : (rowNoTruck ? '' : tkvchFrontClass)}">
                 <div class="tooltip">
                     <span class="${noPlanFront ? 'no-plan-text' : ''}">${truck.tkvchFront}</span>
@@ -1666,14 +1666,14 @@ function renderTrucksTable(){
                 </div>
             </td>
         `;
-
+ 
         // Давление — 6 ячеек по приоритетам
         const pressurePlan = 7.3;
         truck.pressures.forEach((p,i) => {
             const info = truck.pressureTooltipData[i];
             let tdClass = '';
             let textClass = '';
-
+ 
             if (rowNoTruck) {
                 // приоритет 1 уже покрасил строку — ячейка без доп.цветов
                 tdClass = '';
@@ -1688,7 +1688,7 @@ function renderTrucksTable(){
                 // приоритет 4 — отклонения от плана
                 tdClass = getPressureClass(parseFloat(p), pressurePlan);
             }
-
+ 
             const td = document.createElement('td');
             td.className = `pressure-cell ${tdClass}`;
             td.innerHTML = `
@@ -1699,13 +1699,13 @@ function renderTrucksTable(){
             `;
             tr.appendChild(td);
         });
-
+ 
         tbody.appendChild(tr);
     });
-
+ 
     updateSortIndicators('trucksTable');
 }
-
+ 
 /* === Рендер таблицы статистики === */
 function renderStatsTable(){
     const tbody = document.getElementById('statsTableBody');
@@ -1713,13 +1713,13 @@ function renderStatsTable(){
         console.error('Element statsTableBody not found');
         return;
     }
-    
+   
     tbody.innerHTML = '';
-    
+   
     let sortedStats = [...statsData];
     sortedStats.sort((a, b) => {
         let av, bv;
-        
+       
         switch(sortState.key) {
             case 'model':
                 av = a.model;
@@ -1756,21 +1756,21 @@ function renderStatsTable(){
                 av = a.model;
                 bv = b.model;
         }
-        
+       
         if (av < bv) return sortState.dir === 'asc' ? -1 : 1;
         if (av > bv) return sortState.dir === 'asc' ? 1 : -1;
         return 0;
     });
-
+ 
     sortedStats.forEach(stat => {
         const tr = document.createElement('tr');
         tr.setAttribute('data-model', stat.model);
-        
+       
         // Добавляем класс для строки "Всего"
         if (stat.model === 'Всего') {
             tr.classList.add('total-row');
         }
-        
+       
         tr.innerHTML = `
             <td class="clickable model-cell">${stat.model}</td>
             <td class="clickable">${stat.truckCount}</td>
@@ -1792,13 +1792,13 @@ function renderStatsTable(){
         `;
         tbody.appendChild(tr);
     });
-    
+   
     // Добавляем обработчики кликов для фильтрации
     document.querySelectorAll('#statsTable .model-cell').forEach(cell => {
         cell.addEventListener('click', function() {
             const row = this.closest('tr');
             const model = row.getAttribute('data-model');
-            
+           
             if (model === 'Всего') {
                 // Сброс фильтра
                 currentFilter = null;
@@ -1810,14 +1810,14 @@ function renderStatsTable(){
                 document.querySelectorAll('#statsTable tr').forEach(r => r.classList.remove('selected'));
                 row.classList.add('selected');
             }
-            
+           
             renderTrucksTable();
         });
     });
-    
+   
     updateSortIndicators('statsTable');
 }
-
+ 
 /* === График статистики === */
 function initChartControls() {
     // Обработчики для кнопок систем
@@ -1830,62 +1830,166 @@ function initChartControls() {
             renderStatsChart();
         });
     });
-    
+   
     // Обработчик для выбора периода
     document.getElementById('chartPeriod').addEventListener('change', function() {
         settings.chartPeriod = parseInt(this.value);
         renderStatsChart();
     });
+ 
+// Активируем кнопку "Всего" по умолчанию
+document.querySelector('.chart-control-btn[data-system="total"]').classList.add('active');
+ 
 }
-
-
+ 
+function generateChartData(months, system) {
+    const labels = [];
+    const sensorPlan = [];
+    const sensorFact = [];
+    const ktg = [];
+   
+    if (system === 'total') {
+        // Режим "Всего" - текущие данные по всем системам из таблицы статистики
+        const totalStat = statsData.find(stat => stat.model === 'Всего');
+       
+        if (totalStat) {
+            // Данные для всех систем СКДШ
+            labels.push('СКТ', 'EVA', 'Кода', 'Pre.pro.', 'Всего');
+            sensorPlan.push(
+                totalStat.skt.systems,
+                totalStat.eva.systems,
+                totalStat.koda.systems,
+                totalStat.prepro.systems,
+                totalStat.total.systems
+            );
+            sensorFact.push(
+                totalStat.skt.ktg,
+                totalStat.eva.ktg,
+                totalStat.koda.ktg,
+                totalStat.prepro.ktg,
+                totalStat.total.ktg
+            );
+            ktg.push(
+                totalStat.skt.ktg,
+                totalStat.eva.ktg,
+                totalStat.koda.ktg,
+                totalStat.prepro.ktg,
+                totalStat.total.ktg
+            );
+        }
+    } else {
+        // Режим конкретной системы - ретроспектива по месяцам
+        const today = new Date();
+       
+        // Генерируем подписи месяцев
+        for (let i = months - 1; i >= 0; i--) {
+            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            labels.push(date.toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' }));
+        }
+       
+        // Базовые значения в зависимости от системы
+        let basePlan, baseFact, baseKtg;
+       
+        switch(system) {
+            case 'skt':
+                basePlan = 85;
+                baseFact = 82;
+                baseKtg = 80;
+                break;
+            case 'eva':
+                basePlan = 75;
+                baseFact = 72;
+                baseKtg = 70;
+                break;
+            case 'koda':
+                basePlan = 65;
+                baseFact = 62;
+                baseKtg = 60;
+                break;
+            case 'prepro':
+                basePlan = 55;
+                baseFact = 52;
+                baseKtg = 50;
+                break;
+            default:
+                basePlan = 70;
+                baseFact = 67;
+                baseKtg = 65;
+        }
+       
+        // Генерируем данные с трендом и сезонными колебаниями
+        for (let i = 0; i < months; i++) {
+            // Добавляем небольшой тренд роста
+            const trend = i * 0.5;
+            // Сезонные колебания (синусоида с периодом 12 месяцев)
+            const seasonal = Math.sin(i * 2 * Math.PI / 12) * 3;
+            // Случайные колебания
+            const random = rndInt(-2, 2);
+           
+            sensorPlan.push(Math.max(0, basePlan + trend + seasonal + random));
+            sensorFact.push(Math.max(0, baseFact + trend + seasonal + random - 3)); // Факт обычно ниже плана
+            ktg.push(Math.max(0, Math.min(100, baseKtg + trend + seasonal + random)));
+        }
+    }
+   
+    return {
+        labels,
+        sensorPlan,
+        sensorFact,
+        ktg,
+        title: system === 'total'
+            ? 'Текущие показатели по всем системам СКДШ'
+            : `Ретроспектива системы ${system.toUpperCase()} за ${months} месяцев`
+    };
+}
+ 
 function renderStatsChart() {
     const ctx = document.getElementById('statsChart');
     if (!ctx) return;
-    
+   
     if (statsChart) {
         statsChart.destroy();
     }
-    
+   
     const months = settings.chartPeriod;
     const system = settings.currentSystem;
-    
+   
     // Генерируем данные для графика
     const chartData = generateChartData(months, system);
-    
+   
     statsChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: chartData.labels,
             datasets: [
-                {
-                    label: 'План',
-                    data: chartData.sensorPlan,
-                    backgroundColor: system === 'total' ? 'rgba(54, 162, 235, 0.7)' : 'transparent',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: system === 'total' ? 1 : 2,
-                    borderDash: system === 'total' ? [] : [5, 5],
-                    yAxisID: 'y'
-                },
-                {
-                    label: 'Факт',
-                    data: chartData.sensorFact,
-                    backgroundColor: system === 'total' ? 'rgba(75, 192, 192, 0.7)' : 'transparent',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: system === 'total' ? 1 : 2,
-                    yAxisID: 'y'
-                },
-                {
-                    label: 'КТГ',
-                    data: chartData.ktg,
-                    type: 'line',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderWidth: 2,
-                    fill: false,
-                    yAxisID: 'y1'
-                }
-            ]
+    {
+        label: 'План',
+        data: chartData.sensorPlan,
+        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        yAxisID: 'y'
+    },
+    {
+        label: 'Факт',
+        data: chartData.sensorFact,
+        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        yAxisID: 'y'
+    },
+    {
+        label: 'КТГ',
+        data: chartData.ktg,
+        type: 'line',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 2,
+        fill: false,
+        yAxisID: 'y1'
+    }
+]
+ 
         },
         options: {
             responsive: true,
@@ -1907,7 +2011,7 @@ function renderStatsChart() {
                     position: 'left',
                     title: {
                         display: true,
-                        text: system === 'total' ? 'Количество датчиков' : 'Количество'
+                        text: 'Количество'
                     },
                     beginAtZero: true,
                 },
@@ -1938,110 +2042,7 @@ function renderStatsChart() {
         }
     });
 }
-
-
-function generateChartData(months, system) {
-    const labels = [];
-    const sensorPlan = [];
-    const sensorFact = [];
-    const ktg = [];
-    
-    if (system === 'total') {
-        // Режим "Всего" - текущие данные по всем системам из таблицы статистики
-        const totalStat = statsData.find(stat => stat.model === 'Всего');
-        
-        if (totalStat) {
-            // Данные для всех систем СКДШ
-            labels.push('СКТ', 'EVA', 'Кода', 'Pre.pro.', 'Всего');
-            sensorPlan.push(
-                totalStat.skt.systems,
-                totalStat.eva.systems, 
-                totalStat.koda.systems,
-                totalStat.prepro.systems,
-                totalStat.total.systems
-            );
-            sensorFact.push(
-                totalStat.skt.ktg,
-                totalStat.eva.ktg,
-                totalStat.koda.ktg, 
-                totalStat.prepro.ktg,
-                totalStat.total.ktg
-            );
-            ktg.push(
-                totalStat.skt.ktg,
-                totalStat.eva.ktg,
-                totalStat.koda.ktg,
-                totalStat.prepro.ktg,
-                totalStat.total.ktg
-            );
-        }
-    } else {
-        // Режим конкретной системы - ретроспектива по месяцам
-        const today = new Date();
-        
-        // Генерируем подписи месяцев
-        for (let i = months - 1; i >= 0; i--) {
-            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            labels.push(date.toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' }));
-        }
-        
-        // Базовые значения в зависимости от системы
-        let basePlan, baseFact, baseKtg;
-        
-        switch(system) {
-            case 'skt':
-                basePlan = 85;
-                baseFact = 82;
-                baseKtg = 80;
-                break;
-            case 'eva':
-                basePlan = 75;
-                baseFact = 72;
-                baseKtg = 70;
-                break;
-            case 'koda':
-                basePlan = 65;
-                baseFact = 62;
-                baseKtg = 60;
-                break;
-            case 'prepro':
-                basePlan = 55;
-                baseFact = 52;
-                baseKtg = 50;
-                break;
-            default:
-                basePlan = 70;
-                baseFact = 67;
-                baseKtg = 65;
-        }
-        
-        // Генерируем данные с трендом и сезонными колебаниями
-        for (let i = 0; i < months; i++) {
-            // Добавляем небольшой тренд роста
-            const trend = i * 0.5;
-            // Сезонные колебания (синусоида с периодом 12 месяцев)
-            const seasonal = Math.sin(i * 2 * Math.PI / 12) * 3;
-            // Случайные колебания
-            const random = rndInt(-2, 2);
-            
-            sensorPlan.push(Math.max(0, basePlan + trend + seasonal + random));
-            sensorFact.push(Math.max(0, baseFact + trend + seasonal + random - 3)); // Факт обычно ниже плана
-            ktg.push(Math.max(0, Math.min(100, baseKtg + trend + seasonal + random)));
-        }
-    }
-    
-    return {
-        labels,
-        sensorPlan,
-        sensorFact,
-        ktg,
-        title: system === 'total' 
-            ? 'Текущие показатели по всем системам СКДШ' 
-            : `Ретроспектива системы ${system.toUpperCase()} за ${months} месяцев`
-    };
-}
-
-
+ 
 /* === Сортировка === */
 function initSorting(){
     document.querySelectorAll('.monitoring-table th.sortable').forEach(th => {
@@ -2050,17 +2051,17 @@ function initSorting(){
             const tableId = this.closest('table').id;
             if (sortState.key === key) {
                 sortState.dir = (sortState.dir === 'asc') ? 'desc' : 'asc';
-            } else { 
-                sortState.key = key; 
-                sortState.dir = 'asc'; 
+            } else {
+                sortState.key = key;
+                sortState.dir = 'asc';
             }
-            
+           
             if (tableId === 'trucksTable') renderTrucksTable();
             else if (tableId === 'statsTable') renderStatsTable();
         });
     });
 }
-
+ 
 function updateSortIndicators(tableId){
     document.querySelectorAll(`#${tableId} th.sortable`).forEach(th => {
         const key = th.getAttribute('data-key');
@@ -2068,14 +2069,14 @@ function updateSortIndicators(tableId){
         if (key === sortState.key) th.classList.add(sortState.dir);
     });
 }
-
+ 
 /* === Инициализация фильтров === */
 function initFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             const filterType = this.getAttribute('data-filter');
-            
+           
             if (filterType === 'clear') {
                 activeFilters.clear();
                 filterButtons.forEach(b => {
@@ -2102,14 +2103,14 @@ function initFilters() {
         });
     });
 }
-
+ 
 /* === Инициализация меню === */
 function initMenu(){
     const btn = document.getElementById('menuButton');
     const dd = document.getElementById('menuDropdown');
     if (btn && dd) {
         btn.addEventListener('click', e => {
-            e.stopPropagation(); 
+            e.stopPropagation();
             dd.classList.toggle('show');
         });
         document.addEventListener('click', e => {
@@ -2119,7 +2120,7 @@ function initMenu(){
         });
     }
 }
-
+ 
 /* === Инициализация модального окна настроек === */
 function initSettingsModal() {
     const modal = document.getElementById('settingsModal');
@@ -2127,9 +2128,9 @@ function initSettingsModal() {
     const closeBtn = document.getElementById('closeSettingsModal');
     const cancelBtn = document.getElementById('cancelSettings');
     const saveBtn = document.getElementById('saveSettings');
-    
+   
     if (!modal || !settingsBtn) return;
-    
+   
     // Заполняем текущие значения
     document.getElementById('ktgExcellent').value = settings.ktgThresholds.excellent;
     document.getElementById('ktgGood').value = settings.ktgThresholds.good;
@@ -2138,34 +2139,34 @@ function initSettingsModal() {
     document.getElementById('sensorMonths').value = settings.sensorMonths;
     document.getElementById('monitoringPeriod').value = settings.monitoringPeriod;
     document.getElementById('noTruckGradientType').value = settings.noTruckGradientType;
-    
+   
     document.getElementById('tkvchGreenLower').value = settings.tkvchThresholds.greenLower;
     document.getElementById('tkvchGreenUpper').value = settings.tkvchThresholds.greenUpper;
     document.getElementById('tkvchYellowLower').value = settings.tkvchThresholds.yellowLower;
     document.getElementById('tkvchYellowUpper').value = settings.tkvchThresholds.yellowUpper;
     document.getElementById('tkvchRedLower').value = settings.tkvchThresholds.redLower;
     document.getElementById('tkvchRedUpper').value = settings.tkvchThresholds.redUpper;
-    
+   
     document.getElementById('pressureGreenLower').value = settings.pressureThresholds.greenLower;
     document.getElementById('pressureGreenUpper').value = settings.pressureThresholds.greenUpper;
     document.getElementById('pressureYellowLower').value = settings.pressureThresholds.yellowLower;
     document.getElementById('pressureYellowUpper').value = settings.pressureThresholds.yellowUpper;
     document.getElementById('pressureRedLower').value = settings.pressureThresholds.redLower;
     document.getElementById('pressureRedUpper').value = settings.pressureThresholds.redUpper;
-    
+   
     document.getElementById('noPlanAnimation').value = settings.noPlanAnimation;
-    
+   
     document.getElementById('noTruckGradientStart').value = settings.colors.noTruckGradientStart;
     document.getElementById('noTruckGradientEnd').value = settings.colors.noTruckGradientEnd;
     document.getElementById('noPlanColor').value = settings.colors.noPlanColor;
     document.getElementById('excellentColor').value = settings.colors.excellent;
     document.getElementById('goodColor').value = settings.colors.good;
     document.getElementById('poorColor').value = settings.colors.poor;
-    
+   
     // Обновляем предпросмотр
     updateColorPreviews();
     updateThresholdPreviews();
-    
+   
     // Добавляем обработчики для обновления предпросмотра в реальном времени
     document.getElementById('noTruckGradientStart').addEventListener('input', updateColorPreviews);
     document.getElementById('noTruckGradientEnd').addEventListener('input', updateColorPreviews);
@@ -2174,15 +2175,29 @@ function initSettingsModal() {
     document.getElementById('goodColor').addEventListener('input', updateColorPreviews);
     document.getElementById('poorColor').addEventListener('input', updateColorPreviews);
     document.getElementById('noTruckGradientType').addEventListener('change', updateColorPreviews);
-    
+   
     document.getElementById('ktgExcellent').addEventListener('input', updateThresholdPreviews);
     document.getElementById('ktgGood').addEventListener('input', updateThresholdPreviews);
-    
+   
+    // Обработчик для переключения между типами периодов
+    document.getElementById('sensorPeriodType').addEventListener('change', function() {
+        const monthsSection = document.getElementById('monthsPeriodSection');
+        const customSection = document.getElementById('customPeriodSection');
+        
+        if (this.value === 'months') {
+            monthsSection.style.display = 'block';
+            customSection.style.display = 'none';
+        } else {
+            monthsSection.style.display = 'none';
+            customSection.style.display = 'block';
+        }
+    });
+   
     // Обработчики событий
     settingsBtn.addEventListener('click', () => modal.classList.add('active'));
-    closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+   closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
-    
+   
     saveBtn.addEventListener('click', () => {
         // Сохраняем настройки
         settings.ktgThresholds.excellent = parseInt(document.getElementById('ktgExcellent').value);
@@ -2193,42 +2208,42 @@ function initSettingsModal() {
         settings.endDate = document.getElementById('endDate').value;
         settings.monitoringPeriod = parseInt(document.getElementById('monitoringPeriod').value);
         settings.noTruckGradientType = document.getElementById('noTruckGradientType').value;
-        
+       
         settings.tkvchThresholds.greenLower = parseInt(document.getElementById('tkvchGreenLower').value);
         settings.tkvchThresholds.greenUpper = parseInt(document.getElementById('tkvchGreenUpper').value);
         settings.tkvchThresholds.yellowLower = parseInt(document.getElementById('tkvchYellowLower').value);
         settings.tkvchThresholds.yellowUpper = parseInt(document.getElementById('tkvchYellowUpper').value);
         settings.tkvchThresholds.redLower = parseInt(document.getElementById('tkvchRedLower').value);
         settings.tkvchThresholds.redUpper = parseInt(document.getElementById('tkvchRedUpper').value);
-        
+       
         settings.pressureThresholds.greenLower = parseFloat(document.getElementById('pressureGreenLower').value);
         settings.pressureThresholds.greenUpper = parseFloat(document.getElementById('pressureGreenUpper').value);
         settings.pressureThresholds.yellowLower = parseFloat(document.getElementById('pressureYellowLower').value);
         settings.pressureThresholds.yellowUpper = parseFloat(document.getElementById('pressureYellowUpper').value);
         settings.pressureThresholds.redLower = parseFloat(document.getElementById('pressureRedLower').value);
         settings.pressureThresholds.redUpper = parseFloat(document.getElementById('pressureRedUpper').value);
-        
+       
         settings.noPlanAnimation = document.getElementById('noPlanAnimation').value;
-        
+       
         settings.colors.noTruckGradientStart = document.getElementById('noTruckGradientStart').value;
         settings.colors.noTruckGradientEnd = document.getElementById('noTruckGradientEnd').value;
         settings.colors.noPlanColor = document.getElementById('noPlanColor').value;
         settings.colors.excellent = document.getElementById('excellentColor').value;
         settings.colors.good = document.getElementById('goodColor').value;
         settings.colors.poor = document.getElementById('poorColor').value;
-        
+       
         // Применяем настройки к CSS
         applySettingsToCSS();
-        
+       
         // Перерисовываем таблицы с новыми настройками
         renderStatsTable();
-        renderTrucksTable();
-        
+       renderTrucksTable();
+       
         modal.classList.remove('active');
         showNotification('Настройки сохранены', 'success');
     });
 }
-
+ 
 /* === Инициализация модальных окон экспорта и печати === */
 function initExportModal() {
     const modal = document.getElementById('exportModal');
@@ -2236,104 +2251,104 @@ function initExportModal() {
     const closeBtn = document.getElementById('closeExportModal');
     const cancelBtn = document.getElementById('cancelExport');
     const confirmBtn = document.getElementById('confirmExport');
-    
+   
     if (!modal || !exportBtn) return;
-    
+   
     // Обработчики событий
     exportBtn.addEventListener('click', () => modal.classList.add('active'));
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
-    
+   
     confirmBtn.addEventListener('click', () => {
         const fileName = document.getElementById('exportFileName').value;
         const exportFormat = document.getElementById('exportFormat').value;
-        
+       
         showNotification(`Экспорт в ${exportFormat.toUpperCase()} выполнен: ${fileName}`, 'success');
         modal.classList.remove('active');
     });
 }
-
+ 
 function initPrintModal() {
     const modal = document.getElementById('printModal');
     const printBtn = document.getElementById('printBtn');
     const closeBtn = document.getElementById('closePrintModal');
     const cancelBtn = document.getElementById('cancelPrint');
     const confirmBtn = document.getElementById('confirmPrint');
-    
+   
     if (!modal || !printBtn) return;
-    
+   
     // Обработчики событий
     printBtn.addEventListener('click', () => modal.classList.add('active'));
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
-    
+   
     confirmBtn.addEventListener('click', () => {
         const printer = document.getElementById('printerSelect').value;
         const printRange = document.getElementById('printRange').value;
         const copies = document.getElementById('copies').value;
-        
+       
         showNotification(`Печать на ${printer} (${copies} копий, ${printRange})`, 'success');
         modal.classList.remove('active');
-        
+       
         // Имитация печати
         setTimeout(() => {
             window.print();
         }, 500);
     });
 }
-
+ 
 /* === Функция обновления предпросмотра цветов === */
 function updateColorPreviews() {
     const gradientType = document.getElementById('noTruckGradientType').value;
     const startColor = document.getElementById('noTruckGradientStart').value;
     const endColor = document.getElementById('noTruckGradientEnd').value;
-    
+   
     if (gradientType === 'gradient') {
-        document.getElementById('noTruckGradientStartPreview').style.background = 
+        document.getElementById('noTruckGradientStartPreview').style.background =
             `linear-gradient(135deg, ${startColor}, ${endColor})`;
-        document.getElementById('noTruckGradientEndPreview').style.background = 
+        document.getElementById('noTruckGradientEndPreview').style.background =
             `linear-gradient(135deg, ${startColor}, ${endColor})`;
     } else if (gradientType === 'solid') {
         document.getElementById('noTruckGradientStartPreview').style.backgroundColor = startColor;
         document.getElementById('noTruckGradientEndPreview').style.backgroundColor = startColor;
     } else {
-        document.getElementById('noTruckGradientStartPreview').style.background = 
+        document.getElementById('noTruckGradientStartPreview').style.background =
             `repeating-linear-gradient(45deg, ${startColor}, ${startColor} 4px, ${endColor} 4px, ${endColor} 8px)`;
-        document.getElementById('noTruckGradientEndPreview').style.background = 
+        document.getElementById('noTruckGradientEndPreview').style.background =
             `repeating-linear-gradient(45deg, ${startColor}, ${startColor} 4px, ${endColor} 4px, ${endColor} 8px)`;
     }
-    
+   
     document.getElementById('noPlanColorPreview').style.backgroundColor = document.getElementById('noPlanColor').value;
     document.getElementById('excellentColorPreview').style.backgroundColor = document.getElementById('excellentColor').value;
     document.getElementById('goodColorPreview').style.backgroundColor = document.getElementById('goodColor').value;
     document.getElementById('poorColorPreview').style.backgroundColor = document.getElementById('poorColor').value;
-    
+   
     const animationPreview = document.getElementById('animationPreview');
     if (animationPreview) {
         animationPreview.style.animation = 'border-pulse-inner 1.5s infinite';
         animationPreview.style.setProperty('--no-plan-color', document.getElementById('noPlanColor').value);
     }
 }
-
+ 
 /* === Функция обновления предпросмотра порогов === */
 function updateThresholdPreviews() {
     const ktgExcellent = parseInt(document.getElementById('ktgExcellent').value) || 95;
     const ktgGood = parseInt(document.getElementById('ktgGood').value) || 80;
-    
+   
     // Обновляем предпросмотр КТГ
     const ktgBar = document.getElementById('ktgThresholdBar');
     if (ktgBar) {
         ktgBar.style.background = `linear-gradient(to right, var(--poor-color) 0%, var(--poor-color) ${ktgGood}%, var(--good-color) ${ktgGood}%, var(--good-color) ${ktgExcellent}%, var(--excellent-color) ${ktgExcellent}%, var(--excellent-color) 100%)`;
     }
-    
+   
     document.getElementById('ktgPoor').value = ktgGood;
-    
+   
     // Обновляем предпросмотр ТКВЧ
     const tkvchGreenLower = parseInt(document.getElementById('tkvchGreenLower').value) || -50;
     const tkvchGreenUpper = parseInt(document.getElementById('tkvchGreenUpper').value) || 50;
     const tkvchYellowLower = parseInt(document.getElementById('tkvchYellowLower').value) || -100;
     const tkvchYellowUpper = parseInt(document.getElementById('tkvchYellowUpper').value) || 100;
-    
+   
     const tkvchBar = document.getElementById('tkvchThresholdBar');
     if (tkvchBar) {
         const totalRange = 300; // от -150 до +150
@@ -2341,21 +2356,21 @@ function updateThresholdPreviews() {
         const greenEnd = (tkvchGreenUpper + 150) / totalRange * 100;
         const yellowStart = (tkvchYellowLower + 150) / totalRange * 100;
         const yellowEnd = (tkvchYellowUpper + 150) / totalRange * 100;
-        
-        tkvchBar.style.background = `linear-gradient(to right, 
+       
+        tkvchBar.style.background = `linear-gradient(to right,
             var(--poor-color) 0%, var(--poor-color) ${yellowStart}%,
             var(--good-color) ${yellowStart}%, var(--good-color) ${greenStart}%,
             var(--excellent-color) ${greenStart}%, var(--excellent-color) ${greenEnd}%,
             var(--good-color) ${greenEnd}%, var(--good-color) ${yellowEnd}%,
             var(--poor-color) ${yellowEnd}%, var(--poor-color) 100%)`;
     }
-    
+   
     // Обновляем предпросмотр давления
     const pressureGreenLower = parseFloat(document.getElementById('pressureGreenLower').value) || -0.3;
     const pressureGreenUpper = parseFloat(document.getElementById('pressureGreenUpper').value) || 0.3;
     const pressureYellowLower = parseFloat(document.getElementById('pressureYellowLower').value) || -0.6;
     const pressureYellowUpper = parseFloat(document.getElementById('pressureYellowUpper').value) || 0.6;
-    
+   
     const pressureBar = document.getElementById('pressureThresholdBar');
     if (pressureBar) {
         const totalRange = 2.0; // от -1.0 до +1.0
@@ -2363,8 +2378,8 @@ function updateThresholdPreviews() {
         const greenEnd = (pressureGreenUpper + 1.0) / totalRange * 100;
         const yellowStart = (pressureYellowLower + 1.0) / totalRange * 100;
         const yellowEnd = (pressureYellowUpper + 1.0) / totalRange * 100;
-        
-        pressureBar.style.background = `linear-gradient(to right, 
+       
+        pressureBar.style.background = `linear-gradient(to right,
             var(--poor-color) 0%, var(--poor-color) ${yellowStart}%,
             var(--good-color) ${yellowStart}%, var(--good-color) ${greenStart}%,
             var(--excellent-color) ${greenStart}%, var(--excellent-color) ${greenEnd}%,
@@ -2372,15 +2387,15 @@ function updateThresholdPreviews() {
             var(--poor-color) ${yellowEnd}%, var(--poor-color) 100%)`;
     }
 }
-
+ 
 /* === Уведомления === */
 function showNotification(message, type = 'success', duration = 2500){
-    const n = document.createElement('div'); 
-    n.className = `notification ${type}`; 
-    n.textContent = message; 
+    const n = document.createElement('div');
+    n.className = `notification ${type}`;
+    n.textContent = message;
     document.body.appendChild(n);
     setTimeout(() => {
-        n.style.opacity = '0'; 
+        n.style.opacity = '0';
         setTimeout(() => {
             if (document.body.contains(n)) {
                 document.body.removeChild(n);
@@ -2388,7 +2403,7 @@ function showNotification(message, type = 'success', duration = 2500){
         }, 300);
     }, duration);
 }
-
+ 
 /* === Навигация === */
 function navigateTo(section){
     const pages = {
@@ -2400,13 +2415,13 @@ function navigateTo(section){
         documents: 'documents.html'
     };
     if (pages[section]) {
-        window.location.href = pages[section]; 
+        window.location.href = pages[section];
     } else {
         alert(`Раздел "${section}" в разработке`);
     }
     document.getElementById('menuDropdown').classList.remove('show');
 }
-
+ 
 /* === Основная инициализация === */
 function initControls(){
     // Кнопка обновления
@@ -2425,7 +2440,7 @@ function initControls(){
             showNotification('Данные обновлены вручную','success');
         });
     }
-    
+   
     // Инициализация всех компонентов
     initMenu();
     initFilters();
@@ -2437,7 +2452,7 @@ function initControls(){
     applySettingsToCSS();
     updateThresholdPreviews();
 }
-
+ 
 /* === Инициализация при загрузке === */
 document.addEventListener('DOMContentLoaded', () => {
     // Генерация данных
@@ -2447,20 +2462,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Рендер интерфейса
     renderTrucksTable();
     renderStatsTable();
-    
+   
     // Инициализация функционала
     initSorting();
     initControls();
-    
+   
     // Инициализация графика
     renderStatsChart();
-    
+   
     // Обновление информации
     const lastUpdateInfo = document.getElementById('lastUpdateInfo');
     if (lastUpdateInfo) {
         lastUpdateInfo.textContent = `Обновлено: ${new Date().toLocaleTimeString()} (авто: 5 мин)`;
     }
-    
+   
     console.log('Система мониторинга инициализирована успешно');
 });
 </script>
