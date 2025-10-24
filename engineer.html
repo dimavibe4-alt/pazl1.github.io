@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ПАЗЛ — Система в разработке</title>
+<title>ПАЗЛ — Блок шинного инженера</title>
 <style>
+    /* ---- БАЗОВЫЕ СТИЛИ ---- */
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
     body{background-color:#f8f9fa;color:#333;line-height:1.5;overflow-x:hidden;height:100vh}
     .header{background:linear-gradient(135deg,#1a2b47,#2c3e50);color:#fff;padding:1.2rem 2rem;box-shadow:0 2px 10px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
@@ -24,7 +25,15 @@
     button.export{background:#28a745;color:#fff;border-color:#218838}
     button.print{background:#17a2b8;color:#fff;border-color:#138496}
     button.settings{background:#6c757d;color:#fff;border-color:#545b62}
-    .container{max-width:1600px;margin:1.5rem auto;padding:0 1.5rem;height:calc(90vh - 150px)}
+    .container{max-width:1585px;margin:1.5rem auto;padding:0 1.5rem;height:calc(90vh - 150px);position:relative}
+    /* ДОБАВЬ ЭТОТ СТИЛЬ ПОСЛЕ СТИЛЯ .container */
+#details.container-details {
+    max-width: 1200px;  /* Новая ширина для блока деталей */
+    margin: 1.5rem auto;
+    padding: 0 1.5rem;
+}
+
+
     .menu-button{background:#1a2b47;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:.5rem;transition:all .3s ease;margin-bottom:1rem}
     .menu-button:hover{background:#2c4061;transform:translateY(-1px)}
     .menu-dropdown{display:none;position:absolute;background:#fff;min-width:220px;box-shadow:0 8px 16px rgba(0,0,0,.15);border-radius:6px;z-index:1000;margin-top:.5rem;border:1px solid #ddd}
@@ -32,34 +41,115 @@
     .menu-item{padding:.75rem 1.2rem;cursor:pointer;transition:background-color .2s;display:flex;align-items:center;gap:.7rem;font-size:.95rem}
     .menu-item:hover{background:#f8f9fa}
     .menu-item.active{background:#e3f2fd;color:#1a2b47;font-weight:bold}
-    
-    /* Стили для сообщения о разработке */
-    .development-message {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 60vh;
-        text-align: center;
-        padding: 2rem;
-    }
-    .development-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        color: #6c757d;
-    }
-    .development-title {
-        font-size: 2rem;
-        color: #1a2b47;
-        margin-bottom: 1rem;
-    }
-    .development-text {
-        font-size: 1.2rem;
-        color: #6c757d;
-        max-width: 600px;
-        line-height: 1.6;
-    }
 
+    /* ---- ГЛАВНЫЙ ЭКРАН: СЕТКА САМОСВАЛОВ ---- */
+    .toolbar{display:flex;gap:.75rem;align-items:center;margin:.5rem 0 1rem 0;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding-bottom:12px}
+    .truck-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:10px;transition:.2s}
+    .truck-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
+    .truck-head{display:flex;justify-content:space-between;align-items:center}
+    .truck-title{font-weight:700}
+    .ok{color:#28a745;font-weight:700}
+    .warn{color:#dc3545;font-weight:900}
+    
+    .mini-wheel{border:1px solid #e5e7eb;border-radius:8px;padding:8px;text-align:center}
+    
+    .mini-wheel .p{font-size:.85rem}
+    .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;border:1px solid #e5e7eb;padding:2px 8px;font-size:.8rem;background:#fafafa}
+    .muted{opacity:.8}
+
+    /* ---- ДЕТАЛИ САМОСВАЛА ---- */
+.layout {
+    display: grid;
+    grid-template-columns: .5fr 1.5fr;
+    gap: 15px; 
+    height: 93%; 
+    justify-content: center;
+    max-width: 1300px;  /* ДОБАВЬ ЭТУ СТРОКУ */
+    margin: 0 auto;     /* ДОБАВЬ ЭТУ СТРОКУ */
+width: 100%;
+}
+
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;display:flex;flex-direction:column;width: 100%;min-width: 0;}
+.panel-header{padding:10px 12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.panel-body{padding:12px;overflow:visible; flex: 1;}
+.btn{padding:.45rem .9rem;border:1px solid #cbd5e1;background:#f8fafc;border-radius:6px;font-size:.9rem}
+.btn-primary{background:#1a2b47;color:#fff;border-color:#1a2b47}
+.btn-danger{background:#dc3545;color:#fff;border-color:#dc3545}
+.btn-success{background:#28a745;color:#fff;border-color:#28a745}
+.btn-link{background:transparent;border:none;color:#1a2b47;text-decoration:underline;cursor:pointer}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:200px 1fr;gap:1px;margin-bottom:1px}
+.kv .k{opacity:.7}
+.kv .v{font-weight:600;font-size:0.85rem;}
+
+
+    /* Схема колес */
+    .axle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .tire{position:relative;border:1px dashed #cbd5e1;border-radius:10px;min-height:110px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .tire .badge{position:absolute;top:6px;right:6px;font-size:.75rem;border-radius:999px;background:#fff;border:1px solid #e5e7eb;padding:2px 6px}
+    .tire .center{position:absolute;inset:auto auto 6px 6px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:4px 6px;font-size:.8rem;line-height:1.2}
+    .tire .points{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:6px}
+    .point{background:#e9ecef;border:1px solid #cbd5e1;border-radius:6px;font-size:.8rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .point.active{outline:2px solid #1a2b47}
+    .tire.selected{outline:2px solid #1a2b47}
+
+    /* Правый блок: список осмотров */
+    .inspections-wrapper {
+        flex: 1;
+        overflow-y: auto;
+        max-height: calc(100% - 60px);
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 8px;
+        background: #fafafa;
+    }
+    .inspections-wrapper::-webkit-scrollbar {
+        width: 8px;
+    }
+    .inspections-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    .inspections-wrapper::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    .inspections-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    .inspections{display:flex;flex-direction:column;gap:4px; min-height: min-content;}
+
+    /* ИСПРАВЛЕННЫЙ СТИЛЬ ДЛЯ СПИСКА ОСМОТРОВ */
+    .inspection-item{border:1px solid #e5e7eb;border-radius:6px;padding:6px;display:flex;justify-content:space-between;align-items:center;background:#fff; min-height: 40px; cursor: pointer;}
+    .inspection-item .meta{display:flex;gap:8px;align-items:center; flex-wrap: wrap;}
+    .tag{border:1px solid #e5e7eb;border-radius:999px;padding:2px 6px;background:#fff;font-size:.75rem}
+    .inspection-item.saved{background:#eefbf0}
+    .inspection-item.unsaved{background:#fff7e6}
+
+    /* Форма замеров */
+    .form{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .form .fld{display:flex;flex-direction:column;gap:4px}
+    .form input,.form select,.form textarea{padding:.4rem .5rem;border:1px solid #cbd5e1;border-radius:4px;font-size:.9rem;background:#fff}
+    .form textarea{min-height:50px;grid-column:1/3}
+    .form .group-title{grid-column:1/3;margin-top:4px;font-weight:700;color:#1a2b47; font-size: .9rem;}
+    .hint{font-size:.75rem;opacity:.8}
+    .compact-input{width: 70px; padding: .3rem .4rem !important; font-size: .85rem !important;}
+
+    /* Модалки */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:2000}
+    .modal{background:#fff;max-width:900px;width:95%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden}
+    .modal-head{padding:12px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+    .modal-body{padding:12px 14px;max-height:70vh;overflow:auto}
+    .close-x{background:transparent;border:none;font-size:1.2rem;cursor:pointer}
+
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border:1px solid #e5e7eb;padding:6px 8px;text-align:left;font-size:.92rem}
+    .table th{background:#f1f5f9}
+
+    @media (max-width: 1024px){
+        .layout{grid-template-columns:.1fr}
+    }
     @media (max-width: 768px){
         .header{padding:.8rem 1rem}
         .header-title h1{font-size:1.3rem}
@@ -68,20 +158,319 @@
         .header-title{flex-direction:column;align-items:flex-start}
         .logo-title-container{margin-bottom:5px}
         .container{padding:0 .8rem; height:calc(85vh - 150px)}
-        .development-title {
-            font-size: 1.5rem;
-        }
-        .development-text {
-            font-size: 1rem;
-        }
     }
+
+    /* ---- ВИЗУАЛИЗАЦИЯ ПО ПОРОГАМ ---- */
+    .value-chip{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:2px 6px;font-size:.8rem;border:1px solid #e5e7eb;background:#fff}
+    .badge-red{background:#ffe6e6;border-color:#ffb3b3}
+    .badge-yellow{background:#fff7cc;border-color:#ffe680}
+    .badge-green{background:#e7f8e9;border-color:#b6e2bd}
+    .badge-gray{background:#f1f5f9;border-color:#e5e7eb}
+    .days-chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 8px;border:1px solid #e5e7eb;background:#fff}
+    .attn{font-weight:900; padding:2px 6px; border-radius:6px}
+    .blink{animation:blink 1s linear infinite}
+    .pulse-strong{animation:pulseStrong 1.2s ease-in-out infinite}
+    @keyframes blink{50%{opacity:.15}}
+    @keyframes pulseStrong{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+    .missing-tire{background:linear-gradient(135deg,#f8f9fa,#ffecec); border:1px dashed #ff9e9e}
+
+    /* ---- Компактные мини-блоки шин на карточке ---- */
+    
+    .mini-wheel{padding:6px;border-radius:8px}
+     /* скрываем заголовок позиции/размера на карточке */
+    .mini-wheel .vals{display:flex;gap:6px;align-items:center;justify-content:space-between;white-space:nowrap}
+    .mini-wheel .val{border-radius:6px;padding:2px 6px;font-size:.8rem;border:1px solid #e5e7eb;background:#fff;line-height:1}
+    .val.badge-red{background:#ffe6e6;border-color:#ffb3b3}
+    .val.badge-yellow{background:#fff7cc;border-color:#ffe680}
+    .val.badge-green{background:#e7f8e9;border-color:#b6e2bd}
+
+    /* ---- Режимы отображения карточек ---- */
+    .grid.compact{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));}
+    .grid.classic{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));}
+    .grid.row6{grid-template-columns:repeat(auto-fill,minmax(420px,1fr));}
+    .grid.table{grid-template-columns:repeat(auto-fill,minmax(380px,1fr));}
+    .grid.tall{grid-template-columns:repeat(auto-fill,minmax(420px,1fr));}
+    .mini-wheel.table-cell{padding:4px}
+    .wheel-row6{display:flex;gap:6px;flex-wrap:nowrap;overflow:auto}
+    .pill{border:1px solid #e5e7eb;border-radius:999px;padding:2px 8px;font-size:.8rem;background:#fff;white-space:nowrap}
+
+/* === НОВАЯ СХЕМА ШИН - УВЕЛИЧЕННАЯ И ПЕРЕРАСПОЛОЖЕННАЯ === */
+.tire-scheme{background:transparent;border:none;padding:6px;display:flex;align-items:center;justify-content:center; height: 100%;}
+.truck-diagram{position:relative;width:100%;height:100%;border:none;max-width: 100%;}
+.truck-bg{position:absolute;top:30%;left:60%;transform:translate(-50%,-50%);width:100%;max-width: 500px;height:350px;background-image:url('самосвал1.png');background-size:contain;background-repeat:no-repeat;background-position:center;z-index:-5;opacity:0.1;}
+.tire-backgrounds{position:absolute;top:-15;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.tire-bg{position:absolute;background-image:url('шина.png');background-size:contain;background-repeat:no-repeat;background-position:center;width:150px;height:150px;opacity:.9}
+.tire-bg-front-left{top:-2%;left:-17.7%}
+.tire-bg-front-right{top:-2%;right:-36%}
+.tire-bg-rear-left-outer{top:65%;left:-18%}
+.tire-bg-rear-left-inner{top:65%;left:4.3%}
+.tire-bg-rear-right-outer{top:65%;right:-36.2%}
+.tire-bg-rear-right-inner{top:65%;right:-13.8%} /* расположение изображения шин */
+
+.wheel{position:absolute;width:100px;height:100px;background:rgba(255, 255, 255, 0.7);border:2px solid #1a2b47;border-radius:40%;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:all .2s ease;z-index:2;cursor:pointer}
+.wheel.selected{border:3px solid #ffc107;box-shadow:0 0 15px rgba(255,193,7,.7)}
+.wheel-front-left{top:15%;left:1.5%}
+.wheel-front-right{top:15%;right:-16.8%}
+.wheel-rear-left-outer{top:82%;left:23.4%}
+.wheel-rear-left-inner{top:82%;left:1.1%}
+.wheel-rear-right-outer{top:82%;right:-17%}
+.wheel-rear-right-inner{top:82%;right:5.3%}
+
+.wheel-info{font-size:1.5rem;text-align:center}
+.pressure-value{font-weight:700;color:#1a2b47}
+.temperature-value{color:#dc3545}
+
+/* Measure points positioned around wheel as in integrated visual */
+.measure-point{position:absolute;width:32px;height:32px;background:#17a2b8;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;cursor:pointer;z-index:3}
+.point-1,.point-5,.point-9,.point-13,.point-17,.point-21{top:-120px;left:0}
+.point-2,.point-6,.point-10,.point-14,.point-18,.point-22{top:-120px;right:0}
+.point-3,.point-7,.point-11,.point-15,.point-19,.point-23{bottom:-120px;left:0}
+.point-4,.point-8,.point-12,.point-16,.point-20,.point-24{bottom:-120px;right:0}
+
+:root{
+    --scheme-scale: 0.85; /* Увеличен масштаб */
+    --wheel-size: 98px;
+    --mp-offset: 110px;
+    --tire-bg-size: 300px;
+    --diagram-height: 650px; /* Увеличена высота схемы */
+}
+.tire-scheme{transform:scale(var(--scheme-scale)); transform-origin: top left;}
+.truck-diagram{height: calc(var(--diagram-height) * var(--scheme-scale));}
+.wheel{width: var(--wheel-size); height: var(--wheel-size);}
+.tire-bg{width: var(--tire-bg-size); height: var(--tire-bg-size);}
+.point-1,.point-5,.point-9,.point-13,.point-17,.point-21{top: calc(-1 * var(--mp-offset)); left:0}
+.point-2,.point-6,.point-10,.point-14,.point-18,.point-22{top: calc(-1 * var(--mp-offset)); right:0}
+.point-3,.point-7,.point-11,.point-15,.point-19,.point-23{bottom: calc(-1 * var(--mp-offset)); left:0}
+.point-4,.point-8,.point-12,.point-16,.point-20,.point-24{bottom: calc(-1 * var(--mp-offset)); right:0}
+
+.scheme-wrap{position:relative;min-height:230px; height: 100%;} /* Увеличена минимальная высота */
+.mini-modal{position:absolute;top:-20px;left:50%;transform: translatex(-50%);right:auto;background:#ffffffd0;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);width:540px;max-width:60%;backdrop-filter:saturate(1.1) blur(2px);}
+.mini-modal-head{padding:3px 10px;border-bottom:1px solid #eee;font-size:.9rem;background:#f9fbff;color: black;border-radius:8px 8px 0 0}
+.mini-modal-body{padding:15px 15px;font-size:.85rem;color: black;max-height:750px;overflow:auto}
+#details{grid-template-columns: .9fr 1.1fr !important}
+#leftSchemePanel .panel-body{padding:18px; height: 100%;} /* Добавлена высота 100% */
+
+.mini-wheels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+
+/* Новые стили для формы осмотра */
+.inspection-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e5e7eb}
+.inspection-nav{display:flex;gap:8px;align-items:center}
+.points-container{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.point-input-wrapper{display:flex;flex-direction:column;gap:2px}
+.point-label{font-size:.75rem;opacity:.8}
+.error-message{color:#dc3545;font-size:.7rem;margin-top:2px}
+.compact-form-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+
+/* Фиксированная высота для мини-модального окна */
+.mini-modal-fixed {
+    height: 300px;
+    overflow-y: auto;
+}
+
+/* Стиль для отображения пробега в осмотре */
+.mileage-display {
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.mileage-value {
+    font-weight: bold;
+    color: #1a2b47;
+}
+
+/* Стили для ошибок валидации */
+.input-error {
+    border-color: #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
+.error-text {
+    color: #dc3545;
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+/* Новые стили для заголовка осмотра */
+.inspection-header-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.inspection-title-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.inspection-nav-section {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Увеличено расстояние между элементами */
+    margin-left: auto; /* Прижимаем к правому краю */
+    padding: 4px 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.inspection-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #1a2b47;
+    min-width: 50px; /* Фиксированная ширина для номера */
+    text-align: center;
+}
+
+/* Стили для общих параметров с новыми подписями - ИЗМЕНЕНО */
+.compact-form-row-aligned {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.compact-form-row-aligned .fld {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.compact-form-row-aligned .label-row {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+
+.compact-form-row-aligned .main-label {
+    font-weight: 600;
+    color: #1a2b47;
+    margin-bottom: 2px;
+}
+
+.compact-form-row-aligned .prev-value {
+    color: #6c757d;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+.compact-form-row-aligned .input-row {
+    display: flex;
+    justify-content: center;
+}
+
+/* Новые стили для точек замера с подписями */
+.point-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.point-label-wrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+}
+
+.point-main-label {
+    font-weight: 600;
+    color: #1a2b47;
+    margin-bottom: 2px;
+}
+
+.point-prev-value {
+    color: #6c757d;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+/* НОВЫЕ СТИЛИ ДЛЯ ПОИСКА И СОРТИРОВКИ ОСМОТРОВ */
+.inspections-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 150px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #1a2b47;
+}
+
+.sort-select {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+.date-input {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 140px;
+}
+
+/* УЛУЧШЕННЫЙ СКРОЛЛ ДЛЯ СПИСКА ОСМОТРОВ */
+.inspections-wrapper-fixed {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 400px); /* Увеличена максимальная высота */
+    min-height: 300px; /* Минимальная высота для видимости */
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px;
+    background: #fafafa;
+}
+
+/* Стили для улучшенного скролла */
+.inspections-wrapper-fixed::-webkit-scrollbar {
+    width: 10px;
+}
+
+.inspections-wrapper-fixed::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.inspections-wrapper-fixed::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.inspections-wrapper-fixed::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
 </style>
 </head>
 <body>
 <div class="header">
     <div class="header-title">
         <div class="logo-title-container">
-           <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
+            <img src="пазл.png" alt="Логотип ПАЗЛ" class="logo" onclick="window.location.href='slide2.html'">
             <div class="title-text">
                 <h1>ПАЗЛ</h1>
                 <p>Программный Аналитический модуль Зондирования и Логического управления СКГШ</p>
@@ -109,12 +498,11 @@
         </svg>
         Меню системы
     </button>
-
     <div class="menu-dropdown" id="menuDropdown">
         <div class="menu-item" onclick="window.location.href='slide3.html'">Главный экран</div>
         <div class="menu-item" onclick="window.location.href='accounting.html'">Блок учета</div>
         <div class="menu-item" onclick="window.location.href='monitoring.html'">Мониторинг</div>
-        <div class="menu-item" onclick="navigateTo('engineer')">Блок шинного инженера</div>
+        <div class="menu-item active">Блок шинного инженера</div>
         <div class="menu-item" onclick="navigateTo('analytics')">Аналитика</div>
         <div class="menu-item" onclick="navigateTo('forecast')">Прогноз потребности</div>
         <div class="menu-item" onclick="navigateTo('constructor')">Конструкор отчетов</div>
@@ -122,19 +510,398 @@
         <div class="menu-item" onclick="navigateTo('documents')">Документы и литература</div>
     </div>
 
-    <!-- Сообщение о разработке -->
-    <div class="development-message">
-        <div class="development-icon">🚧</div>
-        <h1 class="development-title">Раздел находится в разработке</h1>
-        <p class="development-text">
-            Данный функционал находится в стадии активной разработки. 
-            Мы работаем над созданием удобного и функционального интерфейса. 
-            Пожалуйста, ожидайте обновлений в ближайшее время.
-        </p>
+    <!-- Панель инструментов -->
+    <div class="toolbar" id="toolbar">
+        <label class="chip">Показать:
+            <select id="showCount">
+                <option>5</option><option>10</option><option selected>14</option><option>20</option><option>25</option><option>30</option>
+            </select>
+        </label>
+        <button class="btn" id="openGuide">Классификация повреждений КГШ</button>
+        <span class="chip muted" id="stats"></span>
+        <button class="btn btn-link" id="backToGrid" style="display:none">← К списку самосвалов</button>
+    </div>
+
+    <!-- ГЛАВНЫЙ ЭКРАН: СЕТКА САМОСВАЛОВ -->
+    <div class="grid" id="grid"></div>
+
+    <!-- ДЕТАЛИ САМОСВАЛА -->
+    <div class="layout" id="details" style="display:none" class="container-details">
+        <div class="panel" id="leftSchemePanel">
+            <div class="panel-header">
+                <!-- УДАЛЕНЫ КНОПКИ ПАРАМЕТРОВ -->
+                <div><strong id="leftTitle">Схема шин</strong></div>
+            </div>
+            <div class="panel-body">
+                <div class="scheme-wrap">
+                    <!-- COMPACT OVERLAY (dynamic modal) -->
+                    <div class="mini-modal mini-modal-fixed" id="miniInfo">
+                        <div class="mini-modal-head">
+                            <strong id="miniInfoTitle">Параметры А/С</strong>
+                        </div>
+                        <div class="mini-modal-body" id="miniInfoBody"></div>
+                    </div>
+
+                    <!-- Tire scheme -->
+                    <div class="tire-scheme">
+                        <div class="truck-diagram">
+                            <div class="truck-bg"></div>
+                            <div class="tire-backgrounds">
+                                <div class="tire-bg tire-bg-front-left"></div>
+                                <div class="tire-bg tire-bg-front-right"></div>
+                                <div class="tire-bg tire-bg-rear-left-outer"></div>
+                                <div class="tire-bg tire-bg-rear-left-inner"></div>
+                                <div class="tire-bg tire-bg-rear-right-outer"></div>
+                                <div class="tire-bg tire-bg-rear-right-inner"></div>
+                            </div>
+
+                            <div class="wheel wheel-front-left" data-pos="ПЛ">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ПЛ"></div>
+                                    <div class="temperature-value" data-t="ПЛ"></div>
+                                </div>
+                                <div class="measure-point point-21" data-idx="21">21</div>
+                                <div class="measure-point point-22" data-idx="22">22</div>
+                                <div class="measure-point point-23" data-idx="23">23</div>
+                                <div class="measure-point point-24" data-idx="24">24</div>
+                            </div>
+
+                            <div class="wheel wheel-front-right" data-pos="ПП">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ПП"></div>
+                                    <div class="temperature-value" data-t="ПП"></div>
+                                </div>
+                                <div class="measure-point point-1" data-idx="1">1</div>
+                                <div class="measure-point point-2" data-idx="2">2</div>
+                                <div class="measure-point point-3" data-idx="3">3</div>
+                                <div class="measure-point point-4" data-idx="4">4</div>
+                            </div>
+
+                            <div class="wheel wheel-rear-left-outer" data-pos="ЗЛН">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ЗЛН"></div>
+                                    <div class="temperature-value" data-t="ЗЛН"></div>
+                                </div>
+                                <div class="measure-point point-5" data-idx="5">5</div>
+                                <div class="measure-point point-6" data-idx="6">6</div>
+                                <div class="measure-point point-7" data-idx="7">7</div>
+                                <div class="measure-point point-8" data-idx="8">8</div>
+                            </div>
+
+                            <div class="wheel wheel-rear-left-inner" data-pos="ЗЛВ">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ЗЛВ"></div>
+                                    <div class="temperature-value" data-t="ЗЛВ"></div>
+                                </div>
+                                <div class="measure-point point-9" data-idx="9">9</div>
+                                <div class="measure-point point-10" data-idx="10">10</div>
+                                <div class="measure-point point-11" data-idx="11">11</div>
+                                <div class="measure-point point-12" data-idx="12">12</div>
+                            </div>
+
+                            <div class="wheel wheel-rear-right-outer" data-pos="ЗПН">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ЗПН"></div>
+                                    <div class="temperature-value" data-t="ЗПН"></div>
+                                </div>
+                                <div class="measure-point point-17" data-idx="17">17</div>
+                                <div class="measure-point point-18" data-idx="18">18</div>
+                                <div class="measure-point point-19" data-idx="19">19</div>
+                                <div class="measure-point point-20" data-idx="20">20</div>
+                            </div>
+
+                            <div class="wheel wheel-rear-right-inner" data-pos="ЗПВ">
+                                <div class="wheel-info">
+                                    <div class="pressure-value" data-p="ЗПВ"></div>
+                                    <div class="temperature-value" data-t="ЗПВ"></div>
+                                </div>
+                                <div class="measure-point point-13" data-idx="13">13</div>
+                                <div class="measure-point point-14" data-idx="14">14</div>
+                                <div class="measure-point point-15" data-idx="15">15</div>
+                                <div class="measure-point point-16" data-idx="16">16</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <div><strong>Осмотры</strong></div>
+                <div class="row">
+                    <button class="btn btn-primary" id="newInspection">Новый осмотр</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <!-- НОВЫЕ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ОСМОТРАМИ -->
+                <div class="inspections-controls">
+                    <input type="text" id="searchInspection" class="search-input" placeholder="Поиск по номеру, пробегу...">
+                    <input type="date" id="searchDate" class="date-input">
+                    <select id="sortInspections" class="sort-select">
+                        <option value="date-desc">Сначала новые</option>
+                        <option value="date-asc">Сначала старые</option>
+                        <option value="mileage-desc">Пробег по убыв.</option>
+                        <option value="mileage-asc">Пробег по возр.</option>
+                        <option value="number-desc">Номер по убыв.</option>
+                        <option value="number-asc">Номер по возр.</option>
+                    </select>
+                </div>
+                
+                <!-- Контейнер с прокруткой для списка осмотров - ИСПРАВЛЕННЫЙ -->
+                <div class="inspections-wrapper-fixed" id="inspectionsWrapper">
+                    <div id="inspectionsList" class="inspections"></div>
+                </div>
+                <div id="inspectionFormWrap" style="display:none;margin-top:10px">
+                    <div class="panel" style="border:1px solid #1a2b47">
+                        <div class="panel-header">
+                            <!-- Новый заголовок осмотра с исправленной навигацией -->
+                            <div class="inspection-header-new">
+                                <div class="inspection-title-section">
+                                    <button class="btn" id="backToInspections">← К списку</button>
+                                    <span class="tag" id="inspectionStatus">не сохранен</span>
+                                    <span id="inspectionDate">01.01.2023</span>
+                                </div>
+                                <!-- ОТДЕЛЬНЫЙ БЛОК НАВИГАЦИИ С ФИКСИРОВАННОЙ ШИРИНОЙ -->
+                                <div class="inspection-nav-section">
+                                    <button class="btn" id="prevInspection">←</button>
+                                    <span class="inspection-number">#<span id="inspectionNumber">1</span></span>
+                                    <button class="btn" id="nextInspection">→</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <!-- Блок с информацией о пробеге -->
+                            <div class="mileage-display">
+                                <span>Пробег шины в момент осмотра:</span>
+                                <span class="mileage-value" id="currentMileageDisplay">0 км</span>
+                            </div>
+                            
+                            <div class="form" id="inspectionForm">
+                                <div class="group-title">Точки замера (выберите шину на схеме)</div>
+                                <div id="measurePointsContainer" class="points-container">
+                                    <!-- 4 поля будут добавлены динамически -->
+                                </div>
+                                
+                                <div class="group-title">Общие параметры</div>
+                                <!-- Новый формат общих параметров -->
+                                <div class="compact-form-row-aligned">
+                                    <div class="fld">
+                                        <div class="label-row">
+                                            <span class="main-label">Манометр</span>
+                                            <span class="prev-value" id="manometerPrev"></span>
+                                        </div>
+                                        <div class="input-row">
+                                            <input type="text" id="manometer" class="compact-input" placeholder="">
+                                        </div>
+                                        <div class="error-text" id="manometerError" style="display:none">Заполните поле</div>
+                                    </div>
+                                    <div class="fld">
+                                        <div class="label-row">
+                                            <span class="main-label">СКДШ</span>
+                                            <span class="prev-value" id="skdshFirmPrev"></span>
+                                        </div>
+                                        <div class="input-row">
+                                            <input type="text" id="skdshFirm" class="compact-input" placeholder="">
+                                        </div>
+                                        <div class="error-text" id="skdshFirmError" style="display:none">Заполните поле</div>
+                                    </div>
+                                    <div class="fld">
+                                        <div class="label-row">
+                                            <span class="main-label">Кл.п.</span>
+                                            <span class="prev-value" id="damageClassPrev"></span>
+                                        </div>
+                                        <div class="input-row">
+                                            <select id="damageClass" class="compact-input">
+                                                <option value="">—</option>
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                            </select>
+                                        </div>
+                                        <div class="error-text" id="damageClassError" style="display:none">Выберите класс</div>
+                                    </div>
+                                    <div class="fld">
+                                        <div class="label-row">
+                                            <span class="main-label">P бар</span>
+                                            <span class="prev-value" id="pressureManualPrev"></span>
+                                        </div>
+                                        <div class="input-row">
+                                            <input type="number" id="pressureManual" class="compact-input" step="0.1" placeholder="">
+                                        </div>
+                                        <div class="error-text" id="pressureManualError" style="display:none">Заполните поле</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="fld" style="grid-column:1/3">
+                                    <label>Особые отметки</label>
+                                    <textarea id="notesShort" placeholder="Введите особые отметки"></textarea>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px; justify-content: space-between;">
+                                <div>
+                                    <button class="btn btn-success" id="btnSave">Сохранить осмотр</button>
+                                    <button class="btn" id="btnPhoto">Сфотографировать</button>
+                                    <button class="btn" id="btnGallery">Архив фотографий</button>
+                                </div>
+                                <div id="errorMessage" class="error-message" style="display:none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-backdrop" id="guideModal">
+    <div class="modal">
+        <div class="modal-head">
+            <strong>Классификация повреждений КГШ</strong>
+            <button class="close-x" data-close="#guideModal">✕</button>
+        </div>
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:60px">Степень</th>
+                        <th>Описание</th>
+                        <th>Характеристика</th>
+                        <th>Решение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Порывы/порезы/трещины и пр., <u>не достигшие</u> 1-го слоя металлокорда.</td>
+                        <td>Косметические, не критичны для продолжения эксплуатации.</td>
+                        <td>Эксплуатация.</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Повреждения, <u>достигшие</u> 1-го слоя металлокорда, <u>без отслоения</u>.</td>
+                        <td>Требуют отслеживания на предмет увеличения размеров.</td>
+                        <td>Отслеживать увеличение повреждения.</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Повреждения, достигшие 1-го слоя с <u>отслоением</u> либо <u>повреждением</u> 1-го слоя металлокорда.</td>
+                        <td>Критично для эксплуатации, приводит к выходу КГШ из строя.</td>
+                        <td>
+                            Если пробег шины &lt; 70% — рассматривать ремонт. <br/>
+                            Если пробег &gt; 70% — рассматривать ремонт при износе протектора ≤ 80%.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Любые повреждения при пробеге &gt; 95% либо при нулевой высоте протектора (0 мм).</td>
+                        <td>Неремонтопригодно.</td>
+                        <td>Не принимать к учёту.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="hint" style="margin-top:8px">
+                Тексты соответствуют регламенту из Документ1. Цвета заливки классов на главном экране настраиваются через «Настройки». 
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+        <div class="modal-head">
+            <strong>Настройки визуализации</strong>
+            <button class="close-x" data-close="#settingsModal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form" id="settingsForm">
+                <div class="group-title">Отображаемые параметры на карточке</div>
+                <div class="fld"><label><input type="checkbox" id="showPressureChk" checked> Давление</label></div>
+                <div class="fld"><label><input type="checkbox" id="showTempChk" checked> Температура</label></div>
+                <div class="fld"><label><input type="checkbox" id="showDamageChk" checked> Класс повреждения</label></div>
+                <div class="fld"><label><input type="checkbox" id="showDaysChk" checked> Дни с последнего осмотра</label></div>
+
+                <div class="group-title">Пороги (давление, бар)</div>
+                <div class="fld">
+                    <label>Зеленая зона (минимум)</label>
+                    <input type="number" id="pGreenMin" min="0" step="0.1" value="7.3">
+                </div>
+                <div class="fld">
+                    <label>Желтая зона (минимум)</label>
+                    <input type="number" id="pYellowMin" min="0" step="0.1" value="7.0">
+                </div>
+                <div class="hint" style="grid-column:1/3">Логика: [0..RedMax)&rarr;красный, [YellowMin..GreenMin)&rarr;желтый, [GreenMin..∞)&rarr;зеленый. RedMax = YellowMin.</div>
+
+                <div class="group-title">Пороги (температура, °C)</div>
+                <div class="fld">
+                    <label>Зеленая зона (минимум)</label>
+                    <input type="number" id="tGreenMin" min="0" step="1" value="90">
+                </div>
+                <div class="fld">
+                    <label>Желтая зона (минимум)</label>
+                    <input type="number" id="tYellowMin" min="0" step="1" value="70">
+                </div>
+                <div class="hint" style="grid-column:1/3">По умолчанию: 0–70 красный, 70–90 желтый, 90–100 зеленый (значения &gt;100 считаются зелеными).</div>
+
+                <div class="group-title">Классы повреждения — цвета (из Документ1)</div>
+                <div class="fld"><label>Класс 1</label><input type="color" id="damageC1" value="#b7f0c0"></div>
+                <div class="fld"><label>Класс 2</label><input type="color" id="damageC2" value="#fff7a8"></div>
+                <div class="fld"><label>Класс 3</label><input type="color" id="damageC3" value="#ffd1a8"></div>
+                <div class="fld"><label>Класс 4</label><input type="color" id="damageC4" value="#ffb3b3"></div>
+                <div class="hint" style="grid-column:1/3">Подберите цвета в соответствии с регламентом.</div>
+
+                <div class="group-title">Маркер внимания "!!!"</div>
+                <div class="fld">
+                    <label>Цвет маркера</label>
+                    <input type="color" id="attnColor" value="#dc3545">
+                </div>
+                <div class="fld">
+                    <label>Эффект</label>
+                    <select id="attnEffect">
+                        <option value="none">Без эффекта</option>
+                        <option value="blink" selected>Мигание</option>
+                        <option value="pulse-strong">Пульс</option>
+                    </select>
+                </div>
+
+                <div class="group-title">Отсутствие шины</div>
+                <div class="fld">
+                    <label>Цвет подложки</label>
+                    <input type="color" id="missingColor" value="#ffecec">
+                </div>
+                <div class="fld">
+                    <label>Цвет обводки</label>
+                    <input type="color" id="missingBorder" value="#ff9e9e">
+                </div>
+
+                <div class="group-title">Режим отображения карточек</div>
+                <div class="fld" style="grid-column:1/3">
+                    <label>Вид</label>
+                    <select id="viewMode">
+                        <option value="compact">Компактный (три плашки)</option>
+                        <option value="classic">Классический (позиция/размер + значения)</option>
+                        <option value="row6">Одна строка 6 шин (P|T|K)</option>
+                        <option value="table">Таблица 2×3 (P/T/K столбцами)</option>
+                        <option value="tall">Детальный (по осям)</option>
+                    </select>
+                </div>
+                <div class="group-title">Применение</div>
+                
+                <div class="row" style="grid-column:1/3">
+                    <button class="btn btn-success" id="applySettings">Применить</button>
+                    <button class="btn" id="resetSettings">Сбросить по умолчанию</button>
+                    <span class="hint">Изменения сразу применяются к карточкам самосвалов.</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+/* ======= Навигация ======= */
 function initMenu(){
     const btn = document.getElementById('menuButton');
     const dd = document.getElementById('menuDropdown');
@@ -160,32 +927,1488 @@ function navigateTo(section){
         quality: 'quality.html',
         documents: 'documents.html'
     };
-    if (pages[section]) {
-        window.location.href = pages[section]; 
-    } else {
-        alert(`Раздел "${section}" в разработке`);
-    }
+    if (pages[section]) window.location.href = pages[section];
     document.getElementById('menuDropdown').classList.remove('show');
 }
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', () => {
+/* ======= Доменные справочники ======= */
+const MODELS_130T = ['75131','7513D'];
+const MODELS_220T = ['75306','7530G'];
+const SIZES_130T = ['33.00-51','33.00R51'];
+const SIZES_220T = ['40.00-57','40.00R57','46/90R57'];
+const BRANDS = ['Goodyear','Yokohama','Continental','Bridgestone','Michelin'];
+const TREADS = ['XDS','XDR3','L5','VRNP','DM3'];
+const COMPOUNDS = ['E3','E4','E4A','L5','S'];
+const POSITIONS = ['ПП','ПЛ','ЗЛН','ЗЛВ','ЗПВ','ЗПН'];
+const POSITION_PAIRS = [['ПП','ПЛ'],['ЗЛН','ЗЛВ'],['ЗПВ','ЗПН']];
+const POINT_RANGES = {
+    'ПП':[1,4],'ЗЛН':[5,8],'ЗЛВ':[9,12],'ЗПВ':[13,16],'ЗПН':[17,20],'ПЛ':[21,24]
+};
+
+/* ======= Конфиг визуализации (сохраняется в localStorage) ======= */
+const DEFAULT_CFG = {
+    show: { pressure:true, temperature:true, damage:true, days:true },
+    pressure: { green_min: 7.3, yellow_min: 7.0 },
+    temperature: { green_min: 90, yellow_min: 70 },
+    attention: { color: '#dc3545', effect: 'blink' },
+    damageColors: { '1':'#b7f0c0','2':'#fff7a8','3':'#ffd1a8','4':'#ffb3b3' },
+    missing: { bg: '#ffecec', border: '#ff9e9e' },
+    view: { mode: 'compact' }
+};
+
+let CFG = JSON.parse(localStorage.getItem('engineer_cfg_v1')||'null') || structuredClone(DEFAULT_CFG);
+
+function saveCfg(){ 
+    localStorage.setItem('engineer_cfg_v1', JSON.stringify(CFG)); 
+}
+
+function pickBand(value, greenMin, yellowMin){
+    if(value >= greenMin) return 'green';
+    if(value >= yellowMin) return 'yellow';
+    return 'red';
+}
+
+function chipClassFor(type, value){
+    if(type==='pressure'){
+        const band = pickBand(value, CFG.pressure.green_min, CFG.pressure.yellow_min);
+        return band==='green' ? 'badge-green' : band==='yellow' ? 'badge-yellow' : 'badge-red';
+    }
+    if(type==='temperature'){
+        const band = pickBand(value, CFG.temperature.green_min, CFG.temperature.yellow_min);
+        return band==='green' ? 'badge-green' : band==='yellow' ? 'badge-yellow' : 'badge-red';
+    }
+    if(type==='days'){
+        const band = pickBand(value, CFG.pressure.green_min, CFG.pressure.yellow_min);
+        return band==='green' ? 'badge-green' : band==='yellow' ? 'badge-yellow' : 'badge-red';
+    }
+    return 'badge-gray';
+}
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[rand(0,arr.length-1)];}
+function chance(p){return Math.random()<p;}
+
+/* ======= Генерация самосвалов (30 шт.) ======= */
+let TRUCKS = [];
+
+(function generateTrucks(){
+    for(let i=1;i<=30;i++){
+        const is130 = chance(.5);
+        const model = is130 ? pick(MODELS_130T) : pick(MODELS_220T);
+        const sizes = is130 ? SIZES_130T : SIZES_220T;
+        const capacity = is130 ? 130 : 220;
+        const brandAS = pick(BRANDS);
+        const allowedSizes = sizes.join(', ');
+        const skdsh = pick(['СКТ','КОДА','Pre.pro.','EVA']);
+        const days = rand(0,10);
+        const tires = {};
+        
+        POSITIONS.forEach(pos=>{
+            const missing = chance(.07);
+            if(missing){ tires[pos]=null; return; }
+            tires[pos] = {
+                size: pick(sizes),
+                brand: pick(BRANDS),
+                model: pick(TREADS),
+                compound: pick(COMPOUNDS),
+                pressure: +(Math.random()*2+6.5).toFixed(1),
+                temp: rand(18,65),
+                damage: rand(1,2),
+                ogpInit: 98
+            };
+        });
+        
+        const truck = {
+            id: i,
+            number: String(100+i),
+            model,
+            sizes,
+            capacity,
+            brandAS,
+            allowedSizes,
+            skdsh,
+            days,
+            tires,
+            inspections: []
+        };
+        TRUCKS.push(truck);
+    }
+})();
+
+/* ======= Внимание/ОК флаг ======= */
+function hasPairMismatch(truck){
+    for(const [a,b] of POSITION_PAIRS){
+        const t1 = truck.tires[a], t2 = truck.tires[b];
+        if(!t1 || !t2) continue;
+        if(t1.size!==t2.size || t1.brand!==t2.brand || t1.model!==t2.model || t1.compound!==t2.compound) return true;
+    }
+    return false;
+}
+
+function needsAttention(truck){
+    // В первую очередь проверяем явный флаг
+    if (truck._forceAttention === true) return true;
+    
+    // Затем остальная логика (на всякий случай)
+    if(truck.days > 14) return true;
+    for(const pos of POSITIONS){
+        const t = truck.tires[pos];
+        if(!t) return true;
+        if(t.pressure < 7.3) return true;
+        if(t.damage >= 3) return true;
+    }
+    if(hasPairMismatch(truck)) return true;
+    return false;
+}
+
+/* ======= Генерация осмотров для самосвалов ======= */
+function generateInspections(truck){
+    const today = new Date();
+    const base = new Date(); 
+    base.setDate(base.getDate()-180);
+    let currentTime = base.getTime();    
+    let currentMileage = 0;
+    const savedIndices = [];
+    
+    // Инициализация начальных значений ОГП для каждой точки (98 мм)
+    let currentOgp = {};
+    for(let point = 1; point <= 24; point++) {
+        currentOgp[point] = 98;
+    }
+    
+    // Создаем уникальные коэффициенты износа для каждой точки (1-3 мм на 1000 км)
+    const wearRates = {};
+    for(let point = 1; point <= 24; point++) {
+        wearRates[point] = 1 + Math.random() * 2; // 1-3 мм на 1000 км
+    }
+
+    for(let i=0;i<30;i++){
+        const dayStep = rand(14, 30);
+        currentTime += dayStep*24*3600*1000; 
+        
+        // Ограничиваем дату осмотра текущей датой
+        if (currentTime > today.getTime()) {
+            break;
+        }
+        
+        const dt = new Date(currentTime);
+
+        const saved = chance(.7);
+        if(saved) savedIndices.push(i);
+        
+        let prevSavedIdx = -1;
+        for(let j=i-1;j>=0;j--) if(savedIndices.includes(j)){ prevSavedIdx = j; break; }
+        
+        const prevSaved = (prevSavedIdx>=0) ? `#${30-prevSavedIdx}` : '—';
+        
+        // Генерация данных осмотра
+        let measurements = null;
+        if(saved) {
+            // Рассчитываем пробег: в сутки 100-300 км
+            const dailyMileage = rand(100, 300);
+            const mileageIncrease = dayStep * dailyMileage;
+            currentMileage += mileageIncrease;
+            
+            // Ограничиваем максимальный пробег 130000 км
+            if (currentMileage > 130000) currentMileage = 130000;
+            
+            // Рассчитываем изменение ОГП в зависимости от пробега
+            const ogpValues = {};
+            for(let point = 1; point <= 24; point++) {
+                const wearRate = wearRates[point];
+                // Изменение ОГП = пробег * коэффициент износа / 1000
+                const ogpChange = (mileageIncrease * wearRate) / 1000;
+                
+                // Новое значение ОГП с учетом износа
+                let newOgp = currentOgp[point] - ogpChange;
+                
+                // Ограничиваем ОГП диапазоном 10-98
+                if (newOgp < 10) newOgp = 10;
+                if (newOgp > 98) newOgp = 98;
+                
+                ogpValues[point] = Math.round(newOgp);
+                // Обновляем текущее значение для следующего осмотра
+                currentOgp[point] = newOgp;
+            }
+            
+            measurements = {
+                mileage: currentMileage,
+                ogp: ogpValues,
+                manometer: 'MN-' + rand(100, 199),
+                skdshFirm: truck.skdsh,
+                damageClass: String(rand(1,4)),
+                pressureManual: +(Math.random()*4+5).toFixed(1),
+                notesShort: 'Осмотр в норме'
+            };
+        }
+        
+        const item = {
+            id: i+1,
+            date: dt.toISOString().slice(0,10),
+            saved,
+            prevSavedRef: prevSaved,
+            measurements: measurements,
+            noteCategory: '',
+            noteText: '',
+            photos: []
+        };
+        truck.inspections.push(item);
+        // 30% осмотров имеют 1-2 фото заглушки
+        if(chance(0.30)){
+            item.photos.push('photo1.png');
+            if(chance(0.5)) item.photos.push('photo2.png');
+        }
+    }
+    
+    if(!truck.inspections.some(x=>x.saved)){
+        truck.inspections[truck.inspections.length-1].saved = true;
+    }
+    truck.inspections.reverse();
+    
+    let nextSavedId = null;
+    for (let i = truck.inspections.length - 1; i >= 0; i--) {
+        truck.inspections[i].prevSavedRef = nextSavedId ? `#${nextSavedId}` : '—';
+        if (truck.inspections[i].saved) nextSavedId = truck.inspections[i].id;
+    }
+}
+
+// Вызов функции для всех самосвалов
+TRUCKS.forEach(generateInspections);
+
+/* Пересчитать и форсировать ТОЧНЫЙ процент с вниманием */
+(function enforceExactAttentionShare(){
+    const desiredPercentage = 0.30; // РОВНО 30% самосвалов с вниманием
+    const desiredCount = Math.floor(TRUCKS.length * desiredPercentage); // Округляем вниз для точности
+    
+    console.log('=== НАСТРОЙКА ВНИМАНИЯ ===');
+    console.log('Цель:', desiredCount, 'самосвалов с вниманием из', TRUCKS.length);
+    
+    // 1. Сначала ВЫКЛЮЧАЕМ внимание у ВСЕХ самосвалов
+    TRUCKS.forEach(tr => {
+        tr._forceAttention = false; // Явный флаг ВЫКЛЮЧЕН
+        tr.days = 5; // Мало дней - норма
+        // Все шины в идеальном состоянии
+        POSITIONS.forEach(pos => {
+            if(tr.tires[pos]) {
+                tr.tires[pos].pressure = 7.5; // Идеальное давление
+                tr.tires[pos].damage = 1;     // Минимальный урон
+            }
+        });
+    });
+    
+    // 2. Теперь ВКЛЮЧАЕМ внимание только для нужного количества
+    const shuffledTrucks = [...TRUCKS];
+    // Тщательно перемешиваем массив
+    for (let i = shuffledTrucks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledTrucks[i], shuffledTrucks[j]] = [shuffledTrucks[j], shuffledTrucks[i]];
+    }
+    
+    // Включаем внимание для первых desiredCount самосвалов
+    for(let i = 0; i < desiredCount; i++){
+        const tr = shuffledTrucks[i];
+        tr._forceAttention = true; // Явно ВКЛЮЧАЕМ флаг
+        
+        // Дополнительно портим данные для гарантии
+        tr.days = 25; // Много дней с осмотра
+        
+        const availablePositions = POSITIONS.filter(p => tr.tires[p]);
+        if(availablePositions.length > 0) {
+            const randomPos = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+            tr.tires[randomPos].pressure = 6.0; // Очень низкое давление
+            tr.tires[randomPos].damage = 3;     // Критический урон
+        }
+    }
+    
+    // 3. Проверяем результат
+    const finalCount = TRUCKS.filter(t => t._forceAttention === true).length;
+    console.log('Результат:', finalCount, 'самосвалов с вниманием');
+    console.log('Процент:', Math.round((finalCount/TRUCKS.length)*100) + '%');
+})();
+
+/* УПРОЩЕННАЯ И НАДЕЖНАЯ ФУНКЦИЯ ПРОВЕРКИ ВНИМАНИЯ */
+function needsAttention(truck){
+    // ТОЛЬКО проверяем явный флаг - больше ничего!
+    return truck._forceAttention === true;
+}
+
+/* ВРЕМЕННО ОТКЛЮЧАЕМ ПРОВЕРКУ НЕСООТВЕТСТВИЯ ПАР */
+function hasPairMismatch(truck){
+    return false; // На время отладки всегда возвращаем false
+}
+
+/* ======= РЕНДЕР ГЛАВНОГО ЭКРАНА ======= */
+const grid = document.getElementById('grid');
+const showCountSel = document.getElementById('showCount');
+const statsEl = document.getElementById('stats');
+const backToGridBtn = document.getElementById('backToGrid');
+let filteredCount = 14;
+
+/* ======= Построение карточек по режимам ======= */
+function buildWheelsHTML(tr){
+    const mode = CFG.view.mode;
+    
+    if(mode==='classic'){
+        return POSITIONS.map(pos=>{
+            const t = tr.tires[pos];
+            if(!t){
+                return `<div class="mini-wheel missing-tire" style="background:linear-gradient(135deg,#f8f9fa,${CFG.missing.bg});border:1px dashed ${CFG.missing.border}">
+                            <h4>${pos}</h4>
+                            <div class="p">—</div><div class="p">нет шины</div>
+                        </div>`;
+            }
+            const pPart = CFG.show.pressure ? `<div class="p value-chip ${chipClassFor('pressure', t.pressure)}">P: ${t.pressure}</div>` : '';
+            const tPart = CFG.show.temperature ? `<div class="p value-chip ${chipClassFor('temperature', t.temp)}">T: ${t.temp}</div>` : '';
+            const dPart = CFG.show.damage ? `<div class="p value-chip" style="background:${CFG.damageColors[String(t.damage)]};border-color:#e5e7eb">Класс: ${t.damage}</div>` : '';
+            return `<div class="mini-wheel">
+                        <h4>${pos} • ${t.size}</h4>
+                        ${pPart}${tPart}${dPart}
+                    </div>`;
+        }).join('');
+    }
+    
+    if(mode==='row6'){
+        const cells = POSITIONS.map(pos=>{
+            const t = tr.tires[pos];
+            if(!t) return `<span class="pill" style="background:linear-gradient(135deg,#f8f9fa,${CFG.missing.bg});border:1px dashed ${CFG.missing.border}">—</span>`;
+            const parts = [];
+            if(CFG.show.pressure) parts.push(`<span class="${chipClassFor('pressure', t.pressure)}" style="padding:0 4px;border-radius:4px;border:1px solid #e5e7eb;background:#fff">P:${t.pressure}</span>`);
+            if(CFG.show.temperature) parts.push(`<span class="${chipClassFor('temperature', t.temp)}" style="padding:0 4px;border-radius:4px;border:1px solid #e5e7eb;background:#fff">T:${t.temp}</span>`);
+            if(CFG.show.damage) parts.push(`<span style="padding:0 4px;border-radius:4px;border:1px solid #e5e7eb;background:${CFG.damageColors[String(t.damage)]}">K:${t.damage}</span>`);
+            if(parts.length===0) parts.push('·');
+            return `<span class="pill">${parts.join('|')}</span>`;
+        }).join('');
+        return `<div class="wheel-row6">${cells}</div>`;
+    }
+    
+    if(mode==='table'){
+        const rowA = ['ПП','ПЛ','ЗЛН'];
+        const rowB = ['ЗЛВ','ЗПВ','ЗПН'];
+        const cell = (pos)=>{
+            const t = tr.tires[pos];
+            if(!t) return `<div class="mini-wheel table-cell missing-tire" style="background:linear-gradient(135deg,#f8f9fa,${CFG.missing.bg});border:1px dashed ${CFG.missing.border}"><div class="vals"><span class="val badge-gray">—</span></div></div>`;
+            const p = CFG.show.pressure ? `<div class="val ${chipClassFor('pressure', t.pressure)}">P ${t.pressure}</div>`:'';
+            const tm = CFG.show.temperature ? `<div class="val ${chipClassFor('temperature', t.temp)}">T ${t.temp}</div>`:'';
+            const k = CFG.show.damage ? `<div class="val" style="background:${CFG.damageColors[String(t.damage)]};border-color:#e5e7eb">K ${t.damage}</div>`:'';
+            return `<div class="mini-wheel table-cell"><div class="vals" style="gap:4px">${p}${tm}${k}</div></div>`;
+        };
+        return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+                    ${rowA.map(cell).join('')}
+                    ${rowB.map(cell).join('')}
+                </div>`;
+    }
+    
+    if(mode==='tall'){
+        const pairs = [['ПП','ПЛ'],['ЗЛН','ЗЛВ'],['ЗПВ','ЗПН']];
+        const block = (a,b,ttl)=>{
+            const cell = (pos)=>{
+                const t = tr.tires[pos];
+                if(!t) return `<div class="mini-wheel missing-tire" style="background:linear-gradient(135deg,#f8f9fa,${CFG.missing.bg});border:1px dashed ${CFG.missing.border}"><div class="vals"><span class="val badge-gray">—</span><span class="val badge-gray">—</span><span class="val badge-gray">—</span></div></div>`;
+                const p = CFG.show.pressure ? `<span class="val ${chipClassFor('pressure', t.pressure)}">${t.pressure}</span>`:'';
+                const tm = CFG.show.temperature ? `<span class="val ${chipClassFor('temperature', t.temp)}">${t.temp}</span>`:'';
+                const k = CFG.show.damage ? `<span class="val" style="background:${CFG.damageColors[String(t.damage)]};border-color:#e5e7eb">${t.damage}</span>`:'';
+                return `<div class="mini-wheel"><div class="vals">${p}${tm}${k}</div></div>`;
+            };
+            return `<div class="panel" style="padding:6px;border:1px dashed #e5e7eb">
+                        <div class="panel-header"><strong>${ttl}</strong></div>
+                        <div class="panel-body" style="padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                            ${cell(a)}${cell(b)}
+                        </div>
+                    </div>`;
+        };
+        return block('ПП','ПЛ','Передняя ось') + block('ЗЛН','ЗЛВ','Средняя левая') + block('ЗПВ','ЗПН','Задняя правая');
+    }
+    
+    // default compact
+    return POSITIONS.map(pos=>{
+        const t = tr.tires[pos];
+        if(!t){
+            return `<div class="mini-wheel missing-tire" style="background:linear-gradient(135deg,#f8f9fa,${CFG.missing.bg});border:1px dashed ${CFG.missing.border}">
+                        <div class="vals">
+                            <span class="val badge-gray">—</span>
+                            <span class="val badge-gray">—</span>
+                            <span class="val badge-gray">—</span>
+                        </div>
+                    </div>`;
+        }
+        const pVal = CFG.show.pressure ? `<span class="val ${chipClassFor('pressure', t.pressure)}">${t.pressure}</span>` : '';
+        const tVal = CFG.show.temperature ? `<span class="val ${chipClassFor('temperature', t.temp)}">${t.temp}</span>` : '';
+        const dVal = CFG.show.damage ? `<span class="val" style="background:${CFG.damageColors[String(t.damage)]};border-color:#e5e7eb">${t.damage}</span>` : '';
+        const stub = '<span class="val badge-gray" style="opacity:.4">·</span>';
+        return `<div class="mini-wheel">
+                    <div class="vals">
+                        ${pVal || stub}
+                        ${tVal || stub}
+                        ${dVal || stub}
+                    </div>
+                </div>`;
+    }).join('');
+}
+
+function applyGridModeClass(){
+    grid.classList.remove('compact','classic','row6','table','tall');
+    grid.classList.add(CFG.view.mode);
+}
+
+function renderGrid(){
+    grid.innerHTML = '';
+    applyGridModeClass();
+    const total = TRUCKS.length;
+    
+    // ПРОСТАЯ И НАДЕЖНАЯ ПРОВЕРКА
+    const att = TRUCKS.filter(truck => truck._forceAttention === true).length;
+    
+    statsEl.textContent = `Всего: ${total} • Внимание: ${att} (${Math.round(att/total*100)}%)`;
+    
+    // Остальной код без изменений...
+    TRUCKS.slice(0,filteredCount).forEach(tr=>{
+        const card = document.createElement('div');
+        card.className='truck-card';
+        
+        // ИСПОЛЬЗУЕМ ТОЛЬКО ЯВНЫЙ ФЛАГ
+        const attn = tr._forceAttention === true;
+        const attnClass = CFG.attention.effect==='none' ? '' : CFG.attention.effect;
+        const attnSpan = attn ? `<span class="attn ${attnClass}" style="color:${CFG.attention.color}">!!!</span>` : '<span class="ok">✔</span>';
+
+        const daysClass = chipClassFor('days', tr.days);
+        const daysChip = CFG.show.days ? `<span class="days-chip ${daysClass}">Дней с осмотра: <strong>${tr.days}</strong></span>` : '';
+        const wheelsHtml = buildWheelsHTML(tr);
+        
+        card.innerHTML = `
+            <div class="truck-head">
+                <div class="truck-title">Самосвал №${tr.number} — ${tr.model}</div>
+                <div>${attnSpan}</div>
+            </div>
+            <div class="row">
+                ${daysChip}
+                <span class="chip">Г/п: <strong>${tr.capacity} т</strong></span>
+            </div>
+            <div class="mini-wheels">
+                ${wheelsHtml}
+            </div>
+        `;
+        card.addEventListener('click',()=>openDetails(tr.id));
+        grid.appendChild(card);
+    });
+}
+
+/* ======= ДЕТАЛИ САМОСВАЛА ======= */
+const details = document.getElementById('details');
+const miniInfoTitle = document.getElementById('miniInfoTitle');
+const miniInfoBody = document.getElementById('miniInfoBody');
+let currentTruck = null;
+let selectedPos = null;
+let selectedPointIdx = null;
+let openedInspection = null;
+
+// НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ПОИСКА И СОРТИРОВКИ
+let filteredInspections = [];
+let currentSort = 'date-desc';
+
+function openDetails(id){
+    currentTruck = TRUCKS.find(t=>t.id===id);
+    document.getElementById('leftTitle').textContent = `Схема шин — №${currentTruck.number}`;
+    grid.style.display='none';
+    details.style.display='grid';
+    backToGridBtn.style.display='inline-block';
+    
+    // СБРАСЫВАЕМ ВЫДЕЛЕНИЕ ПРИ ОТКРЫТИИ НОВОГО САМОСВАЛА
+    selectedPos = null;
+    selectedPointIdx = null;
+    document.querySelectorAll('.wheel').forEach(w => w.classList.remove('selected'));
+    document.querySelectorAll('.measure-point').forEach(p => p.classList.remove('active'));
+    
+    renderASCard();
+    refreshWheelPT();
+    fillTiresSchematic();
+    
+    // Инициализируем отфильтрованный список как полный список осмотров
+    filteredInspections = [...currentTruck.inspections];
+    renderInspections();
+    showInspectionsList();
+}
+
+backToGridBtn.addEventListener('click',()=>{
+    details.style.display='none';
+    grid.style.display='grid';
+    backToGridBtn.style.display='none';
+    selectedPos=null; 
+    selectedPointIdx=null; 
+    openedInspection=null;
+    const inspectionFormWrap = document.getElementById('inspectionFormWrap');
+    if(inspectionFormWrap) inspectionFormWrap.style.display='none';
+});
+
+function renderASCard(){
+    if(miniInfoTitle) miniInfoTitle.textContent='Параметры А/С';
+    const factWheels = POSITIONS.filter(p=>currentTruck.tires[p]).length;
+    
+    // Фиксированный набор параметров А/С
+    if(miniInfoBody) miniInfoBody.innerHTML = `
+        <div class="kv"><div class="k">Бренд А/С:</div><div class="v">${currentTruck.brandAS}</div></div>
+        <div class="kv"><div class="k">Модель:</div><div class="v">${currentTruck.model}</div></div>
+        <div class="kv"><div class="k">Грузоподъемность:</div><div class="v">${currentTruck.capacity} т</div></div>
+        <div class="kv"><div class="k">Колесная формула:</div><div class="v">2×4</div></div>
+        <div class="kv"><div class="k">Допустимые размеры:</div><div class="v">${currentTruck.allowedSizes}</div></div>
+        <div class="kv"><div class="k">Фирма СКДШ:</div><div class="v">${currentTruck.skdsh}</div></div>
+        <div class="kv"><div class="k">Кол-во ДД в работе:</div><div class="v">план 6, факт ${factWheels}</div></div>
+    `;
+}
+
+function refreshWheelPT(){
+    if(!currentTruck) return;
+    
+    const pressureElements = document.querySelectorAll('[data-p]');
+    const temperatureElements = document.querySelectorAll('[data-t]');
+    
+    pressureElements.forEach(el=>{
+        const pos = el.getAttribute('data-p'); 
+        const t = currentTruck.tires[pos];
+        el.textContent = t ? t.pressure : '—';
+    });
+    
+    temperatureElements.forEach(el=>{
+        const pos = el.getAttribute('data-t'); 
+        const t = currentTruck.tires[pos];
+        el.textContent = t ? (t.temp+'°C') : '—';
+    });
+}
+
+// Получить актуальный пробег для шины из последнего сохраненного осмотра
+function getCurrentMileage() {
+    if(!currentTruck) return 0;
+    
+    // Находим последний сохраненный осмотр с измерениями
+    const lastSavedInspection = currentTruck.inspections.find(ins => 
+        ins.saved && ins.measurements && ins.measurements.mileage
+    );
+    
+    return lastSavedInspection ? lastSavedInspection.measurements.mileage : 0;
+}
+
+function fillTiresSchematic(){
+    // Удаляем старые обработчики перед добавлением новых
+    document.querySelectorAll('.wheel').forEach(node => {
+        const newNode = node.cloneNode(true);
+        node.parentNode.replaceChild(newNode, node);
+    });
+    
+    const tiresNodes = Array.from(document.querySelectorAll('.wheel'));
+    
+    tiresNodes.forEach(node=>{
+        const pos = node.getAttribute('data-pos');
+        node.classList.toggle('selected', selectedPos===pos);
+        
+        // Добавляем обработчик для самой шины
+        node.addEventListener('click', (e)=>{
+            if(e.target.classList.contains('measure-point')) return;
+            
+            // Снимаем выделение со всех шин
+            document.querySelectorAll('.wheel').forEach(w => w.classList.remove('selected'));
+            
+            // Устанавливаем выделение на текущую
+            if(selectedPos === pos) {
+                selectedPos = null;
+                renderASCard();
+            } else {
+                selectedPos = pos;
+                node.classList.add('selected');
+                selectTire(pos);
+            }
+            e.stopPropagation();
+        });
+    });
+    
+    // Обработчики для точек замера - УПРОЩЕННАЯ ВЕРСИЯ
+    document.querySelectorAll('.measure-point').forEach(point => {
+        point.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const pointIdx = +e.target.getAttribute('data-idx');
+            
+            // Находим родительскую шину
+            const wheel = e.target.closest('.wheel');
+            if(wheel) {
+                const pos = wheel.getAttribute('data-pos');
+                
+                // Снимаем выделение со всех шин
+                document.querySelectorAll('.wheel').forEach(w => w.classList.remove('selected'));
+                
+                // Выделяем текущую шину
+                wheel.classList.add('selected');
+                selectedPos = pos;
+                selectTire(pos);
+            }
+            
+            selectPoint(pointIdx);
+        });
+    });
+}
+
+function selectTire(pos){
+    selectedPos = pos;
+    selectedPointIdx = null;
+    
+    // Обновляем выделение на схеме
+    document.querySelectorAll('.wheel').forEach(n => {
+        n.classList.toggle('selected', n.getAttribute('data-pos') === pos);
+    });
+    
+    if(miniInfoTitle) miniInfoTitle.textContent='Параметры шины';
+    
+    const t = currentTruck.tires[pos];
+    const currentMileage = getCurrentMileage();
+    
+    if(miniInfoBody) miniInfoBody.innerHTML = t ? `
+        <div class="kv"><div class="k">Позиция:</div><div class="v">${pos}</div></div>
+        <div class="kv"><div class="k">Размер:</div><div class="v">${t.size}</div></div>
+        <div class="kv"><div class="k">Бренд:</div><div class="v">${t.brand}</div></div>
+        <div class="kv"><div class="k">Модель:</div><div class="v">${t.model}</div></div>
+        <div class="kv"><div class="k">Компаунд:</div><div class="v">${t.compound}</div></div>
+        <div class="kv"><div class="k">Пробег:</div><div class="v">${currentMileage} км</div></div>
+        <div class="kv"><div class="k">ТКВЧ план:</div><div class="v">70</div></div>
+        <div class="kv"><div class="k">Pmin:</div><div class="v">7.0</div></div>
+        <div class="kv"><div class="k">ОГП начальное:</div><div class="v">${t.ogpInit}</div></div>
+        <div class="kv"><div class="k">Нагрузка план:</div><div class="v">33</div></div>
+        <div class="kv"><div class="k">Номер шины:</div><div class="v">BRZ-${1000+currentTruck.id}-${pos}</div></div>
+    ` : `
+        <div class="kv"><div class="k">Позиция:</div><div class="v">${pos}</div></div>
+        <div class="kv"><div class="k">Размер:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Бренд:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Модель:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Компаунд:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Пробег:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">ТКВЧ план:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Pmin:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">ОГП начальное:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Нагрузка план:</div><div class="v">—</div></div>
+        <div class="kv"><div class="k">Номер шины:</div><div class="v">—</div></div>
+    `;
+    
+    // Обновляем точки замера в форме осмотра
+    if (openedInspection) {
+        updateMeasurePoints();
+    }
+}
+
+function selectPoint(idx){
+    selectedPointIdx = idx;
+    document.querySelectorAll('.measure-point').forEach(p=>{
+        p.classList.toggle('active', +p.dataset.idx===idx);
+    });
+    
+    // Автоматически активируем соответствующее поле ввода
+    const fld = document.querySelector(`[data-point="${idx}"]`);
+    if(fld){ 
+        fld.scrollIntoView({behavior:'smooth',block:'center'}); 
+        fld.focus(); 
+    }
+}
+
+/* ======= ОСМОТРЫ ======= */
+const inspectionsList = document.getElementById('inspectionsList');
+const inspectionFormWrap = document.getElementById('inspectionFormWrap');
+const inspectionForm = document.getElementById('inspectionForm');
+const btnSave = document.getElementById('btnSave');
+const btnPhoto = document.getElementById('btnPhoto');
+const btnGallery = document.getElementById('btnGallery');
+const currentMileageDisplay = document.getElementById('currentMileageDisplay');
+
+// НОВЫЕ ЭЛЕМЕНТЫ ДЛЯ ПОИСКА И СОРТИРОВКИ
+const searchInspection = document.getElementById('searchInspection');
+const searchDate = document.getElementById('searchDate');
+const sortInspections = document.getElementById('sortInspections');
+
+function showInspectionsList(){
+    if (inspectionFormWrap) inspectionFormWrap.style.display = 'none';
+    // Показываем список осмотров
+    const inspectionsWrapper = document.getElementById('inspectionsWrapper');
+    if (inspectionsWrapper) inspectionsWrapper.style.display = 'block';
+    renderInspections();
+}
+
+function showInspectionForm(){
+    if (inspectionFormWrap) inspectionFormWrap.style.display = 'block';
+    // Скрываем список осмотров
+    const inspectionsWrapper = document.getElementById('inspectionsWrapper');
+    if (inspectionsWrapper) inspectionsWrapper.style.display = 'none';
+}
+
+// НОВАЯ ФУНКЦИЯ ДЛЯ ПОИСКА ПО ПРОБЕГУ (ближайшие 2 сверху и 2 снизу)
+function searchByMileage(targetMileage) {
+    if (!currentTruck || !targetMileage) return [];
+    
+    // Создаем массив осмотров с пробегом
+    const inspectionsWithMileage = currentTruck.inspections.filter(inspection => {
+        const mileage = inspection.measurements?.mileage || inspection.draft?.mileage;
+        return mileage !== undefined && mileage !== null;
+    });
+    
+    if (inspectionsWithMileage.length === 0) return [];
+    
+    // Сортируем по пробегу
+    inspectionsWithMileage.sort((a, b) => {
+        const mileageA = a.measurements?.mileage || a.draft?.mileage;
+        const mileageB = b.measurements?.mileage || b.draft?.mileage;
+        return mileageA - mileageB;
+    });
+    
+    // Находим индекс, где мог бы находиться targetMileage
+    let lowerIndex = -1;
+    let upperIndex = -1;
+    
+    for (let i = 0; i < inspectionsWithMileage.length; i++) {
+        const mileage = inspectionsWithMileage[i].measurements?.mileage || inspectionsWithMileage[i].draft?.mileage;
+        if (mileage <= targetMileage) {
+            lowerIndex = i;
+        }
+        if (mileage >= targetMileage && upperIndex === -1) {
+            upperIndex = i;
+        }
+    }
+    
+    // Собираем ближайшие осмотры (2 снизу и 2 сверху)
+    const result = [];
+    
+    // Добавляем 2 осмотра снизу (меньшие или равные)
+    if (lowerIndex !== -1) {
+        for (let i = Math.max(0, lowerIndex - 1); i <= lowerIndex && result.length < 4; i++) {
+            if (!result.includes(inspectionsWithMileage[i])) {
+                result.push(inspectionsWithMileage[i]);
+            }
+        }
+    }
+    
+    // Добавляем 2 осмотра сверху (большие или равные)
+    if (upperIndex !== -1) {
+        for (let i = upperIndex; i < Math.min(inspectionsWithMileage.length, upperIndex + 2) && result.length < 4; i++) {
+            if (!result.includes(inspectionsWithMileage[i])) {
+                result.push(inspectionsWithMileage[i]);
+            }
+        }
+    }
+    
+    // Если не набрали 4 осмотра, дополняем с другой стороны
+    if (result.length < 4) {
+        if (lowerIndex === -1 && upperIndex !== -1) {
+            // Все осмотры больше targetMileage, берем первые 4
+            return inspectionsWithMileage.slice(0, 4);
+        } else if (upperIndex === -1 && lowerIndex !== -1) {
+            // Все осмотры меньше targetMileage, берем последние 4
+            return inspectionsWithMileage.slice(-4);
+        }
+    }
+    
+    return result;
+}
+
+// НОВАЯ ФУНКЦИЯ ДЛЯ ПОИСКА ПО ДАТЕ (ближайшие 2 до и 2 после указанной даты)
+function searchByDate(targetDate) {
+    if (!currentTruck || !targetDate) return [];
+    
+    // Получаем только сохраненные осмотры
+    const savedInspections = currentTruck.inspections.filter(inspection => inspection.saved);
+    
+    if (savedInspections.length === 0) return [];
+    
+    // Сортируем осмотры по дате
+    savedInspections.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    // Находим индекс первого осмотра с датой >= targetDate
+    let firstIndexAtOrAfter = -1;
+    for (let i = 0; i < savedInspections.length; i++) {
+        if (savedInspections[i].date >= targetDate) {
+            firstIndexAtOrAfter = i;
+            break;
+        }
+    }
+    
+    // Если все осмотры до targetDate
+    if (firstIndexAtOrAfter === -1) {
+        // Берем последние 4 осмотра (ближайшие к targetDate снизу)
+        return savedInspections.slice(-4);
+    }
+    
+    // Если все осмотры после targetDate
+    if (firstIndexAtOrAfter === 0) {
+        // Берем первые 4 осмотра (ближайшие к targetDate сверху)
+        return savedInspections.slice(0, 4);
+    }
+    
+    // Осмотры до targetDate (ближайшие снизу)
+    const lower = savedInspections.slice(0, firstIndexAtOrAfter);
+    // Осмотры после targetDate (ближайшие сверху), включая первый с датой >= targetDate
+    const upper = savedInspections.slice(firstIndexAtOrAfter);
+    
+    // Берем два последних из lower (ближайшие к targetDate снизу) и два первых из upper (ближайшие сверху)
+    const result = [
+        ...lower.slice(-2),
+        ...upper.slice(0, 2)
+    ];
+    
+    // Ограничиваем 4 элементами
+    return result.slice(0, 4);
+}
+
+// Функция поиска осмотров - ИСПРАВЛЕННАЯ ДЛЯ ФИЛЬТРА ПО ПРОБЕГУ И ДАТЕ
+function searchInspections() {
+    const searchTerm = searchInspection.value.toLowerCase().trim();
+    const dateTerm = searchDate.value;
+    
+    // Проверяем, является ли поисковый запрос числом (пробегом)
+    const isMileageSearch = !isNaN(parseFloat(searchTerm)) && isFinite(searchTerm);
+    
+    if (dateTerm) {
+        // Поиск по дате (только сохраненные осмотры)
+        filteredInspections = searchByDate(dateTerm);
+    } else if (isMileageSearch) {
+        // Поиск по пробегу (ближайшие 2 сверху и 2 снизу)
+        const targetMileage = parseFloat(searchTerm);
+        filteredInspections = searchByMileage(targetMileage);
+    } else if (!searchTerm && !dateTerm) {
+        // Если поиск пустой, показываем все осмотры
+        filteredInspections = [...currentTruck.inspections];
+    } else {
+        // Обычный поиск по тексту и дате
+        filteredInspections = currentTruck.inspections.filter(inspection => {
+            let matchesSearch = true;
+            let matchesDate = true;
+            
+            // Поиск по номеру, пробегу
+            if (searchTerm) {
+                const idMatch = inspection.id.toString().includes(searchTerm);
+                const mileageMatch = inspection.measurements && 
+                    inspection.measurements.mileage && 
+                    inspection.measurements.mileage.toString().includes(searchTerm);
+                const dateMatch = inspection.date.includes(searchTerm);
+                
+                matchesSearch = idMatch || mileageMatch || dateMatch;
+            }
+            
+            // Фильтр по дате
+            if (dateTerm) {
+                matchesDate = inspection.date === dateTerm;
+            }
+            
+            return matchesSearch && matchesDate;
+        });
+    }
+    
+    // Применяем сортировку
+    sortInspectionsList();
+    renderInspections();
+}
+
+// Функция сортировки осмотров
+function sortInspectionsList() {
+    const sortValue = sortInspections.value;
+    
+    filteredInspections.sort((a, b) => {
+        switch (sortValue) {
+            case 'date-desc':
+                return new Date(b.date) - new Date(a.date);
+            case 'date-asc':
+                return new Date(a.date) - new Date(b.date);
+            case 'mileage-desc':
+                return (b.measurements?.mileage || 0) - (a.measurements?.mileage || 0);
+            case 'mileage-asc':
+                return (a.measurements?.mileage || 0) - (b.measurements?.mileage || 0);
+            case 'number-desc':
+                return b.id - a.id;
+            case 'number-asc':
+                return a.id - b.id;
+            default:
+                return 0;
+        }
+    });
+}
+
+// Поиск предыдущего сохранённого для заданного осмотра (по хронологии)
+function findPrevSavedInspection(it){
+    if(!currentTruck) return null;
+    // массив: 0..N (новые -> старые). Предыдущий сохраненный = ближайший правее сохраненный
+    const idx = currentTruck.inspections.findIndex(x=>x.id===it.id);
+    for(let i = idx+1; i < currentTruck.inspections.length; i++){
+        const ins = currentTruck.inspections[i];
+        if(ins.saved && ins.measurements) return ins;
+    }
+    return null;
+}
+
+// Проставляем подсказки "прошл." у полей формы - ИЗМЕНЕНО
+function applyPrevHints(prev){
+    const setPrevValue = (elementId, value) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = value ? `( ${value})` : '';
+        }
+    };
+
+    setPrevValue('manometerPrev', prev?.measurements?.manometer ?? null);
+    setPrevValue('skdshFirmPrev', prev?.measurements?.skdshFirm ?? currentTruck?.skdsh ?? null);
+    setPrevValue('damageClassPrev', prev?.measurements?.damageClass ?? null);
+    setPrevValue('pressureManualPrev', prev?.measurements?.pressureManual ?? null);
+    
+    // Также устанавливаем плейсхолдеры для полей ввода
+    document.getElementById('manometer').placeholder = prev?.measurements?.manometer ?? '';
+    document.getElementById('skdshFirm').placeholder = prev?.measurements?.skdshFirm ?? currentTruck?.skdsh ?? '';
+    document.getElementById('pressureManual').placeholder = prev?.measurements?.pressureManual ?? '';
+}
+
+function renderInspections(){
+    if(!inspectionsList) return;
+    
+    inspectionsList.innerHTML='';
+    filteredInspections.forEach(it=>{
+        const el = document.createElement('div');
+        el.className = 'inspection-item ' + (it.saved?'saved':'unsaved');
+        const mileageInfo = it.measurements?.mileage ? ` • ${it.measurements.mileage} км` : '';
+        el.innerHTML = `
+            <div class="meta">
+                <span class="tag">#${it.id}</span>
+                <strong>${it.date}${mileageInfo}</strong>
+                <span class="tag">${it.saved?'сохранен':'не сохранен'}</span>
+                <span class="muted">прошлый: ${it.prevSavedRef}</span>
+            </div>
+        `;
+        // ИСПРАВЛЕНИЕ: добавляем обработчик клика на элемент осмотра
+        el.addEventListener('click',()=>openInspection(it));
+        inspectionsList.appendChild(el);
+    });
+}
+
+function updateMeasurePoints(){
+    if(!selectedPos || !openedInspection) return;
+    const container = document.getElementById('measurePointsContainer');
+    if(!container) return;
+    const points = POINT_RANGES[selectedPos];
+    if(!points) return;
+
+    // base previous from explicitly found inspection
+    const prevSaved = findPrevSavedInspection(openedInspection);
+    let html = '';
+    for(let i=points[0]; i<=points[1]; i++){
+        const prevValue = prevSaved?.measurements?.ogp ? prevSaved.measurements.ogp[i] : null;
+        const hint = prevValue != null ? `( ${prevValue})` : '';
+        html += `
+            <div class="point-input-wrapper">
+                <div class="point-label-wrapper">
+                    <span class="point-main-label">Точка ${i}</span>
+                    <span class="point-prev-value">${hint}</span>
+                </div>
+                <input type="number" class="compact-input" data-point="${i}" 
+                       placeholder="${prevValue ?? '—'}" 
+                       min="0" max="200" step="1"
+                       ${openedInspection.saved ? 'disabled' : ''}>
+                <div class="error-text" id="pointError${i}" style="display:none">Заполните точку</div>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+
+    // Prefill saved values or draft values
+    const srcMeas = openedInspection.saved ? (openedInspection.measurements?.ogp || {}) : (openedInspection.draft?.ogp || {});
+    document.querySelectorAll('[data-point]').forEach(inp=>{
+        const point = +inp.dataset.point;
+        if(srcMeas[point] != null) inp.value = srcMeas[point];
+    });
+
+    // Attach change listeners to keep draft
+    if(!openedInspection.saved){
+        openedInspection.draft = openedInspection.draft || { ogp:{} };
+        document.querySelectorAll('[data-point]').forEach(inp=>{
+            inp.addEventListener('input', ()=>{
+                const point = +inp.dataset.point;
+                const v = inp.value === '' ? null : +inp.value;
+                if(v==null) delete openedInspection.draft.ogp[point];
+                else openedInspection.draft.ogp[point] = v;
+            });
+        });
+    }
+}
+
+function openInspection(it){
+    showInspectionForm();
+    openedInspection = it;
+    
+    // Обновляем заголовок
+    document.getElementById('inspectionNumber').textContent = it.id;
+    document.getElementById('inspectionDate').textContent = it.date;
+    document.getElementById('inspectionStatus').textContent = it.saved ? 'сохранен' : 'не сохранен';
+    
+    // Обновляем отображение пробега
+    const mileage = it.measurements?.mileage || it.draft?.mileage || 0;
+    currentMileageDisplay.textContent = `${mileage} км`;
+    
+    // Настраиваем навигацию
+    const currentIndex = filteredInspections.findIndex(i => i.id === it.id);
+    document.getElementById('prevInspection').disabled = currentIndex === 0;
+    document.getElementById('nextInspection').disabled = currentIndex === filteredInspections.length - 1;
+    
+    // Заполняем общие поля
+    document.getElementById('manometer').value = it.measurements?.manometer || '';
+    document.getElementById('skdshFirm').value = it.measurements?.skdshFirm || currentTruck.skdsh;
+    document.getElementById('damageClass').value = it.measurements?.damageClass || '';
+    document.getElementById('pressureManual').value = it.measurements?.pressureManual || '';
+    document.getElementById('notesShort').value = it.measurements?.notesShort || '';
+    
+    // Подсказки от предыдущего сохраненного
+    const _prevSavedForHints = findPrevSavedInspection(it);
+    applyPrevHints(_prevSavedForHints);
+
+    // Заполняем черновик (если есть)
+    if(!it.saved && it.draft){
+        document.getElementById('manometer').value = it.draft.manometer ?? document.getElementById('manometer').value;
+        document.getElementById('skdshFirm').value = it.draft.skdshFirm ?? document.getElementById('skdshFirm').value;
+        document.getElementById('damageClass').value = it.draft.damageClass ?? document.getElementById('damageClass').value;
+        document.getElementById('pressureManual').value = it.draft.pressureManual ?? document.getElementById('pressureManual').value;
+        document.getElementById('notesShort').value = it.draft.notesShort ?? document.getElementById('notesShort').value;
+    }
+
+    // Обновляем точки замера если выбрана шина
+    if(selectedPos){
+        updateMeasurePoints();
+    } else {
+        // Очищаем контейнер точек замера
+        const container = document.getElementById('measurePointsContainer');
+        if(container) container.innerHTML = '';
+    }
+    
+    // Блокируем поля если осмотр сохранен
+    const locked = it.saved;
+    ['manometer','skdshFirm','damageClass','pressureManual','notesShort'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.disabled = locked;
+    });
+    
+    if(btnSave) btnSave.style.display = locked ? 'none' : 'inline-block';
+}
+
+// Обработчики навигации
+document.getElementById('prevInspection').addEventListener('click', ()=>{
+    const currentIndex = filteredInspections.findIndex(i => i.id === openedInspection.id);
+    if(currentIndex > 0){
+        openInspection(filteredInspections[currentIndex - 1]);
+    }
+});
+
+document.getElementById('nextInspection').addEventListener('click', ()=>{
+    const currentIndex = filteredInspections.findIndex(i => i.id === openedInspection.id);
+    if(currentIndex < filteredInspections.length - 1){
+        openInspection(filteredInspections[currentIndex + 1]);
+    }
+});
+
+// ИСПРАВЛЕНИЕ: обработчик для кнопки "Новый осмотр"
+if(document.getElementById('newInspection')) {
+    document.getElementById('newInspection').addEventListener('click',()=>{
+        const today = new Date().toISOString().slice(0,10);
+
+        // Рассчитываем новый пробег на основе последнего сохраненного осмотра
+        const lastMileage = getCurrentMileage();
+        const lastInspection = currentTruck.inspections.find(ins => ins.saved);
+        let daysSinceLast = 0;
+        
+        if (lastInspection) {
+            const lastDate = new Date(lastInspection.date);
+            const todayDate = new Date(today);
+            daysSinceLast = Math.floor((todayDate - lastDate) / (1000*60*60*24));
+        } else {
+            daysSinceLast = rand(14,30);
+        }
+        
+        // Пробег в сутки 100-300 км
+        const dailyMileage = rand(100, 300);
+        const newMileage = lastMileage + (daysSinceLast * dailyMileage);
+        
+        // Ограничиваем максимальный пробег 130000 км
+        const finalMileage = newMileage > 130000 ? 130000 : newMileage;
+
+        // создаём запись
+        const topId = currentTruck.inspections[0]?.id || 0;
+        const item = { 
+            id: topId + 1,
+            date: today, 
+            saved: false, 
+            measurements: null, 
+            draft: {
+                mileage: finalMileage
+            },
+            prevSavedRef: (currentTruck.inspections.find(x=>x.saved)?.id ? `#${currentTruck.inspections.find(x=>x.saved).id}` : '—')
+        };
+
+        // добавляем первым (сверху)
+        currentTruck.inspections.unshift(item);
+        // Также добавляем в отфильтрованный список
+        filteredInspections.unshift(item);
+
+        // сразу открыть форму и скрыть список
+        openInspection(item);
+        
+        // Обновляем список осмотров
+        renderInspections();
+    });
+}
+
+// Функция для очистки ошибок валидации
+function clearValidationErrors() {
+    // Очищаем ошибки точек замера
+    document.querySelectorAll('[data-point]').forEach(inp => {
+        inp.classList.remove('input-error');
+        const errorEl = document.getElementById(`pointError${inp.dataset.point}`);
+        if (errorEl) errorEl.style.display = 'none';
+    });
+    
+    // Очищаем ошибки общих полей
+    const fields = ['manometer', 'skdshFirm', 'damageClass', 'pressureManual'];
+    fields.forEach(field => {
+        const el = document.getElementById(field);
+        if (el) el.classList.remove('input-error');
+        const errorEl = document.getElementById(`${field}Error`);
+        if (errorEl) errorEl.style.display = 'none';
+    });
+    
+    // Очищаем общее сообщение об ошибке
+    hideError();
+}
+
+// Функция для показа ошибки поля
+function showFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (field) field.classList.add('input-error');
+    
+    const errorEl = document.getElementById(`${fieldId}Error`);
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+    }
+}
+
+if(btnSave) {
+    btnSave.addEventListener('click',()=>{
+        if(!openedInspection) return;
+        hideError();
+        clearValidationErrors();
+
+        // Нельзя сохранять, если есть более свежий сохраненный слева
+        const idx = currentTruck.inspections.findIndex(x=>x.id===openedInspection.id);
+        if(currentTruck.inspections.slice(0, idx).some(x=>x.saved)){
+            showError('Нельзя сохранить: есть более свечий сохраненный осмотр.');
+            return;
+        }
+
+        // Проверка выбранной шины и 4 точек
+        if(!selectedPos){
+            showError('Выберите шину на схеме и заполните 4 точки замера.');
+            return;
+        }
+        const range = POINT_RANGES[selectedPos];
+        if (!range) {
+            showError('Неверная позиция шины');
+            return;
+        }
+        const ogp = {};
+        let errors = [];
+
+        // Проверка точек замера
+        document.querySelectorAll('[data-point]').forEach(inp=>{
+            const point = +inp.dataset.point;
+            const v = inp.value.trim();
+            if(v===''){
+                errors.push(`Не заполнена точка ${point}`);
+                showFieldError(`pointError${point}`, 'Заполните точку');
+            }else{
+                const num = +v;
+                const prevSaved = findPrevSavedInspection(openedInspection);
+                const prevVal = prevSaved?.measurements?.ogp ? prevSaved.measurements.ogp[point] : null;
+                if(prevVal!=null && num > prevVal){
+                    errors.push(`Точка ${point}: ${num} больше прошлого сохраненного (${prevVal})`);
+                }
+                ogp[point] = num;
+            }
+        });
+
+        // Остальные обязательные поля
+        const manometer = document.getElementById('manometer').value.trim();
+        const skdshFirm = document.getElementById('skdshFirm').value.trim();
+        const damageClass = document.getElementById('damageClass').value.trim();
+        const pressureManualStr = document.getElementById('pressureManual').value.trim();
+        const notesShort = document.getElementById('notesShort').value.trim();
+
+        if(!manometer) {
+            errors.push('Укажите номер манометра');
+            showFieldError('manometer', 'Заполните поле');
+        }
+        if(!skdshFirm) {
+            errors.push('Укажите фирму СКДШ');
+            showFieldError('skdshFirm', 'Заполните поле');
+        }
+        if(!damageClass) {
+            errors.push('Выберите класс повреждения');
+            showFieldError('damageClass', 'Выберите класс');
+        }
+        if(!pressureManualStr) {
+            errors.push('Укажите давление, бар');
+            showFieldError('pressureManual', 'Заполните поле');
+        }
+
+        if(errors.length){
+            showError('Заполните все обязательные поля');
+            // сохранить как черновик
+            openedInspection.draft = openedInspection.draft || { ogp:{} };
+            openedInspection.draft.manometer = manometer;
+            openedInspection.draft.skdshFirm = skdshFirm;
+            openedInspection.draft.damageClass = damageClass;
+            openedInspection.draft.pressureManual = pressureManualStr ? +pressureManualStr : null;
+            openedInspection.draft.notesShort = notesShort;
+            openedInspection.draft.ogp = ogp;
+            return;
+        }
+
+        openedInspection.measurements = {
+            mileage: openedInspection.draft?.mileage || 0,
+            ogp,
+            manometer,
+            skdshFirm,
+            damageClass,
+            pressureManual: +pressureManualStr,
+            notesShort
+        };
+        openedInspection.saved = true;
+        // Обновить список (статус) и оставить форму открытой
+        renderInspections();
+        openInspection(openedInspection);
+        alert('Осмотр сохранен.');
+    });
+}
+
+function showError(message){
+    const errorEl = document.getElementById('errorMessage');
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+    }
+}
+
+function hideError(){
+    const errorEl = document.getElementById('errorMessage');
+    if (errorEl) {
+        errorEl.style.display = 'none';
+    }
+}
+
+if(btnPhoto) btnPhoto.addEventListener('click',()=>{
+    if(!openedInspection){ alert('Сначала откройте осмотр.'); return; }
+    // Имитация камеры
+    const n = (openedInspection.photos?.length || 0) + 1;
+    const name = `photo${n}.png`;
+    openedInspection.photos = openedInspection.photos || [];
+    openedInspection.photos.push(name);
+    alert('Камера открыта... Снимок сохранён как ' + name);
+});
+if(btnGallery) btnGallery.addEventListener('click',()=>{
+    if(!openedInspection){ alert('Сначала откройте осмотр.'); return; }
+    const list = openedInspection.photos && openedInspection.photos.length ? openedInspection.photos.join('\n') : 'Нет фото';
+    alert('Архив фотографий:\n' + list);
+});
+
+/* ======= Модалки ======= */
+function toggleModal(sel,show){
+    const el = document.querySelector(sel);
+    if(!el) return;
+    el.style.display = show ? 'flex' : 'none';
+}
+
+function openSettings(){
+    try{
+        loadSettingsIntoUI();
+        toggleModal('#settingsModal', true);
+    }catch(e){
+        alert('Не удалось открыть окно настроек: '+ e);
+        console.error(e);
+    }
+}
+
+/* ======= Настройки ======= */
+function loadSettingsIntoUI(){
+    const showPressureChk = document.getElementById('showPressureChk');
+    const showTempChk = document.getElementById('showTempChk');
+    const showDamageChk = document.getElementById('showDamageChk');
+    const showDaysChk = document.getElementById('showDaysChk');
+    const pGreenMin = document.getElementById('pGreenMin');
+    const pYellowMin = document.getElementById('pYellowMin');
+    const tGreenMin = document.getElementById('tGreenMin');
+    const tYellowMin = document.getElementById('tYellowMin');
+    const damageC1 = document.getElementById('damageC1');
+    const damageC2 = document.getElementById('damageC2');
+    const damageC3 = document.getElementById('damageC3');
+    const damageC4 = document.getElementById('damageC4');
+    const attnColor = document.getElementById('attnColor');
+    const attnEffect = document.getElementById('attnEffect');
+    const missingColor = document.getElementById('missingColor');
+    const missingBorder = document.getElementById('missingBorder');
+    const viewMode = document.getElementById('viewMode');
+
+    if(showPressureChk) showPressureChk.checked = CFG.show.pressure;
+    if(showTempChk) showTempChk.checked = CFG.show.temperature;
+    if(showDamageChk) showDamageChk.checked = CFG.show.damage;
+    if(showDaysChk) showDaysChk.checked = CFG.show.days;
+    if(pGreenMin) pGreenMin.value = CFG.pressure.green_min;
+    if(pYellowMin) pYellowMin.value = CFG.pressure.yellow_min;
+    if(tGreenMin) tGreenMin.value = CFG.temperature.green_min;
+    if(tYellowMin) tYellowMin.value = CFG.temperature.yellow_min;
+    if(damageC1) damageC1.value = CFG.damageColors['1'];
+    if(damageC2) damageC2.value = CFG.damageColors['2'];
+    if(damageC3) damageC3.value = CFG.damageColors['3'];
+    if(damageC4) damageC4.value = CFG.damageColors['4'];
+    if(attnColor) attnColor.value = CFG.attention.color;
+    if(attnEffect) attnEffect.value = CFG.attention.effect;
+    if(missingColor) missingColor.value = CFG.missing.bg;
+    if(missingBorder) missingBorder.value = CFG.missing.border;
+    if(viewMode) viewMode.value = CFG.view.mode;
+}
+
+function readSettingsFromUI(){
+    /* DRAFT BINDINGS: сохраняем черновик полей формы */
+    ['manometer','skdshFirm','damageClass','pressureManual','notesShort'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.addEventListener('input', ()=>{
+            if(!openedInspection || openedInspection.saved) return;
+            openedInspection.draft = openedInspection.draft || { ogp:{} };
+            const v = (id==='pressureManual') ? (el.value===''?null:+el.value) : (el.value || '');
+            openedInspection.draft[id] = v;
+        });
+    });
+
+    const showPressureChk = document.getElementById('showPressureChk');
+    const showTempChk = document.getElementById('showTempChk');
+    const showDamageChk = document.getElementById('showDamageChk');
+    const showDaysChk = document.getElementById('showDaysChk');
+    const pGreenMin = document.getElementById('pGreenMin');
+    const pYellowMin = document.getElementById('pYellowMin');
+    const tGreenMin = document.getElementById('tGreenMin');
+    const tYellowMin = document.getElementById('tYellowMin');
+    const damageC1 = document.getElementById('damageC1');
+    const damageC2 = document.getElementById('damageC2');
+    const damageC3 = document.getElementById('damageC3');
+    const damageC4 = document.getElementById('damageC4');
+    const attnColor = document.getElementById('attnColor');
+    const attnEffect = document.getElementById('attnEffect');
+    const missingColor = document.getElementById('missingColor');
+    const missingBorder = document.getElementById('missingBorder');
+    const viewMode = document.getElementById('viewMode');
+
+    if(showPressureChk) CFG.show.pressure = showPressureChk.checked;
+    if(showTempChk) CFG.show.temperature = showTempChk.checked;
+    if(showDamageChk) CFG.show.damage = showDamageChk.checked;
+    if(showDaysChk) CFG.show.days = showDaysChk.checked;
+    if(pGreenMin) CFG.pressure.green_min = +pGreenMin.value;
+    if(pYellowMin) CFG.pressure.yellow_min = +pYellowMin.value;
+    if(tGreenMin) CFG.temperature.green_min = +tGreenMin.value;
+    if(tYellowMin) CFG.temperature.yellow_min = +tYellowMin.value;
+    if(damageC1) CFG.damageColors['1'] = damageC1.value;
+    if(damageC2) CFG.damageColors['2'] = damageC2.value;
+    if(damageC3) CFG.damageColors['3'] = damageC3.value;
+    if(damageC4) CFG.damageColors['4'] = damageC4.value;
+    if(attnColor) CFG.attention.color = attnColor.value;
+    if(attnEffect) CFG.attention.effect = attnEffect.value;
+    if(missingColor) CFG.missing.bg = missingColor.value;
+    if(missingBorder) CFG.missing.border = missingBorder.value;
+    if(viewMode) CFG.view.mode = viewMode.value;
+}
+
+/* ======= ИНИЦИАЛИЗАЦИЯ ======= */
+document.addEventListener('DOMContentLoaded',()=>{
+    // Кнопка возврата к списку осмотров
+    (function(){
+        const backToInspectionsBtn = document.getElementById('backToInspections');
+        if (backToInspectionsBtn){
+            backToInspectionsBtn.addEventListener('click', ()=>{
+                showInspectionsList();
+            });
+        }
+    })();
+
     initMenu();
     
-    // Добавляем обработчики для кнопок экспорта, печати и настроек
-    document.getElementById('exportBtn').addEventListener('click', () => {
-        alert('Функция экспорта временно недоступна. Раздел в разработке.');
+    const exportBtn = document.getElementById('exportBtn');
+    const printBtn = document.getElementById('printBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const openGuide = document.getElementById('openGuide');
+    const applySettings = document.getElementById('applySettings');
+    const resetSettings = document.getElementById('resetSettings');
+    
+    if(exportBtn) exportBtn.addEventListener('click',()=>alert('Экспорт в разработке'));
+    if(printBtn) printBtn.addEventListener('click',()=>window.print());
+    if(settingsBtn) settingsBtn.addEventListener('click',openSettings);
+    if(openGuide) openGuide.addEventListener('click',()=>toggleModal('#guideModal',true));
+    
+    if(applySettings) {
+        applySettings.addEventListener('click',()=>{
+            readSettingsFromUI();
+            saveCfg();
+            toggleModal('#settingsModal',false);
+            applyGridModeClass();
+            renderGrid();
+        });
+    }
+    
+    if(resetSettings) {
+        resetSettings.addEventListener('click',()=>{
+            CFG = structuredClone(DEFAULT_CFG);
+            saveCfg();
+            loadSettingsIntoUI();
+            applyGridModeClass();
+            renderGrid();
+        });
+    }
+    
+    document.querySelectorAll('.close-x').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const target = btn.getAttribute('data-close');
+            if(target) toggleModal(target,false);
+        });
     });
     
-    document.getElementById('printBtn').addEventListener('click', () => {
-        alert('Функция печати временно недоступна. Раздел в разработке.');
+    ['#guideModal', '#settingsModal'].forEach(id=>{
+        const modal = document.querySelector(id);
+        if(modal) {
+            modal.addEventListener('click',(e)=>{
+                if(e.target.classList.contains('modal-backdrop')) 
+                    toggleModal(id,false);
+            });
+        }
     });
     
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-        alert('Функция настроек временно недоступна. Раздел в разработке.');
-    });
+    if(showCountSel) {
+        showCountSel.addEventListener('change',()=>{
+            filteredCount=+showCountSel.value; 
+            applyGridModeClass();
+            renderGrid();
+        });
+    }
+    
+    // НОВЫЕ ОБРАБОТЧИКИ ДЛЯ ПОИСКА И СОРТИРОВКИ
+    if(searchInspection) {
+        searchInspection.addEventListener('input', searchInspections);
+    }
+    
+    if(searchDate) {
+        searchDate.addEventListener('change', searchInspections);
+    }
+    
+    if(sortInspections) {
+        sortInspections.addEventListener('change', () => {
+            currentSort = sortInspections.value;
+            sortInspectionsList();
+            renderInspections();
+        });
+    }
+    
+    filteredCount = showCountSel ? +showCountSel.value : 14;
+    applyGridModeClass();
+    renderGrid();
 });
 </script>
 </body>
 </html>
-
