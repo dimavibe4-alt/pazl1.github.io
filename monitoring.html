@@ -509,6 +509,64 @@
             font-size: 0.7rem;
         }
     }
+
+@media print {
+
+    /* убираем шапку, фильтры, меню и прочие кнопки управления */
+    .header,
+    .controls,
+    .menu-button,
+    #menuDropdown,
+    .filters-panel,
+    .update-info,
+    .chart-controls {
+        display: none !important;
+    }
+
+    /* контейнер с двумя колонками превращаем в обычный поток */
+    .monitoring-container {
+        display: block !important;
+        height: auto !important;
+        width: 100% !important;
+    }
+
+    /* левая и правая колонки печатаем последовательно, без обрезки */
+    .monitoring-main,
+    .monitoring-stats {
+        width: 100% !important;
+        flex: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        page-break-inside: avoid;
+        /* чтобы каждая секция не рвалась посередине (как может график) */
+    }
+
+    /* внутренние прокручиваемые области делаем полностью развёрнутыми */
+    .monitoring-table-container,
+    .chart-container {
+        max-height: none !important;
+        height: auto !important;
+        overflow: visible !important;
+        border: 1px solid #000 !important; /* опционально: чтобы таблицы были с рамкой и без теней */
+        box-shadow: none !important;
+    }
+
+    /* на печати фон пусть будет белый, иначе серые области могут уйти */
+    body {
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* sticky-заголовки таблиц не нужны в печати, они могут накладываться */
+    .monitoring-table th {
+        position: static !important;
+        top: auto !important;
+    }
+}
+
+
 </style>
 </head>
 <body>
@@ -2278,7 +2336,7 @@ function initPrintModal() {
     if (!modal || !printBtn) return;
    
     // Обработчики событий
-    printBtn.addEventListener('click', () => modal.classList.add('active'));
+    printBtn.addEventListener('click', () => window.print());
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
    
