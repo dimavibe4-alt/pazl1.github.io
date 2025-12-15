@@ -1,0 +1,46 @@
+{
+  "username": "",
+  "password": "",
+  "created": "2025-11-19T03:41:28.172Z",
+  "users": [
+    {
+      "username": "1",
+      "password": "1",
+      "role": "user",
+      "created": "2025-11-17T08:32:58.917Z"
+    },
+    {
+      "username": "2",
+      "password": "2",
+      "role": "admin",
+      "created": "2025-11-19T03:34:16.400Z"
+    },
+    {
+      "username": "3",
+      "password": "3",
+      "role": "admin",
+      "created": "2025-11-19T03:32:23.943Z"
+    },
+    {
+      "username": "5",
+      "password": "5",
+      "role": "admin",
+      "created": "2025-11-17T08:58:33.864Z"
+    },
+    {
+      "username": "Валя",
+      "password": "Валя",
+      "role": "admin",
+      "created": "2025-11-17T13:09:31.767Z"
+    },
+    {
+      "username": "44",
+      "password": "44",
+      "role": "user",
+      "created": "2025-11-18T15:09:46.030Z"
+    }
+  ],
+  "updated": "2025-11-19T03:41:28.172Z",
+  "initialized": true,
+  "firstSetup": "2025-11-19T03:41:28.172Z"
+}

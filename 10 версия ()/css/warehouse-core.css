@@ -1,0 +1,200 @@
+/* warehouse-core.css - ОСНОВНЫЕ СТИЛИ СИСТЕМЫ СКЛАДА */
+
+.warehouse-system-container {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ПЕРВАЯ СТРОКА - заголовок и управление */
+.warehouse-top-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+    min-height: 50px;
+}
+
+.warehouse-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+}
+
+.warehouse-search {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 120px;
+}
+
+.warehouse-top-btn {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.warehouse-top-btn:hover {
+    background: #e2e8f0;
+}
+
+/* ВТОРАЯ СТРОКА - кнопки складов */
+.warehouse-bottom-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+    min-height: 50px;
+    overflow-x: auto;
+}
+
+.warehouse-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    cursor: pointer;
+    min-width: 80px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    position: relative;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.warehouse-tab:hover {
+    border-color: #93c5fd;
+    background: #f0f9ff;
+}
+
+.warehouse-tab.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.warehouse-tab-name {
+    /* Только название - счетчика больше нет */
+}
+
+.warehouse-tab-count {
+    margin-left: 5px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* КОНТЕНТ */
+.warehouse-content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #ffffff;
+}
+
+/* ЗАГОЛОВОК СКЛАДА */
+.warehouse-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.warehouse-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1e293b;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+/* СОСТОЯНИЯ */
+.warehouse-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.warehouse-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #64748b;
+    text-align: center;
+}
+
+.warehouse-empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.warehouse-empty-state h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: #374151;
+}
+
+.warehouse-empty-state div {
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.warehouse-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #dc2626;
+    text-align: center;
+}
+
+.warehouse-error-state i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}

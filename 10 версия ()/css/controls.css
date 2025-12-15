@@ -1,0 +1,7 @@
+/* controls.css - Стили для кнопок и выпадающих списков управления */
+.controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+select, button { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: .95rem; cursor: pointer; transition: all .2s ease; }
+select:hover, button:hover { border-color: #1a2b47; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+button.export { background: #28a745; color: #fff; border-color: #218838; }
+button.print { background: #17a2b8; color: #fff; border-color: #138496; }
+button.settings { background: #6c757d; color: #fff; border-color: #545b62; }

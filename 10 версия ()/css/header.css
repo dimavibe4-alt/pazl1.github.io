@@ -1,0 +1,12 @@
+/* header.css - Стили для шапки сайта (логотип, заголовок, управление) */
+.header { background: linear-gradient(135deg, #1a2b47, #2c3e50); color: #fff; padding: 1.2rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.header-title { display: flex; align-items: center; gap: 15px; }
+.logo-title-container { display: flex; align-items: center; gap: 15px; }
+.logo { height: 100px; width: auto; cursor: pointer; transition: all .5s ease; border-radius: 8px; filter: brightness(1) drop-shadow(0 2px 4px rgba(0,0,0,.3)); animation: logoEntrance 1s ease-out; }
+.logo:hover { transform: scale(1.1) rotate(5deg); filter: brightness(1.2) drop-shadow(0 5px 15px rgba(0,0,0,.4)); animation: pulse 1.5s infinite; }
+.logo:active { transform: scale(.95) rotate(-5deg); transition: all .1s ease; }
+@keyframes pulse { 0%{transform:scale(1.1) rotate(5deg)} 50%{transform:scale(1.15) rotate(5deg)} 100%{transform:scale(1.1) rotate(5deg)} }
+@keyframes logoEntrance { 0%{opacity:0;transform:scale(.5) rotate(-180deg)} 70%{transform:scale(1.1) rotate(10deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+.title-text { display: flex; flex-direction: column; }
+.header-title h1 { font-size: 1.8rem; margin-bottom: .3rem; }
+.header-title p { font-size: 1rem; opacity: .9; }

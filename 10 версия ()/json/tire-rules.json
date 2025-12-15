@@ -1,0 +1,39 @@
+{
+    "version": "1.0",
+    "lastUpdated": "2024-01-15T10:00:00.000Z",
+    "rules": {
+      "compatibility": {
+        "truckModels": [
+          {
+            "model": "БелАЗ 7513D",
+            "wheelbase": "2*4",
+            "allowedTireSizes": ["33.00x51", "33.00R51", "35.00x51"],
+            "allowedTireBrands": ["GOODYEAR", "MICHELIN", "BRIDGESTONE"],
+            "maxTires": 6,
+            "positions": ["ПЛ", "ПП", "2ЛН", "2ЛВ", "3ЛН", "3ЛВ"]
+          },
+          {
+            "model": "БелАЗ 7555",
+            "wheelbase": "3*3",
+            "allowedTireSizes": ["33.00x51", "35.00x51", "37.00x57"],
+            "allowedTireBrands": ["GOODYEAR", "MICHELIN", "CONTINENTAL"],
+            "maxTires": 8,
+            "positions": ["ПЛ", "ПП", "2ЛН", "2ЛВ", "3ЛН", "3ЛВ", "4ЛН", "4ЛВ"]
+          }
+        ]
+      },
+      "warehouse": {
+        "maxTiresPerSection": 20,
+        "allowMixedSizesInSection": false,
+        "allowMixedBrandsInSection": true,
+        "reservedSections": ["А-1", "А-2"],
+        "repairSection": "Ремонт"
+      },
+      "operations": {
+        "allowDirectTruckToTruck": false,
+        "requireInspectionBeforeInstall": true,
+        "maxTireAgeForInstall": 3650,
+        "minTreadDepthForInstall": 5
+      }
+    }
+  }

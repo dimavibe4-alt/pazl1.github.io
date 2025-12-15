@@ -1,0 +1,95 @@
+{
+  "warehouses": [
+    {
+      "id": "main",
+      "name": "АТУ",
+      "code": "WH001",
+      "description": "Главный склад предприятия с полным ассортиментом",
+      "tires": [
+        {
+          "position": "A",
+          "sector": 1,
+          "row": 19,
+          "size": "33.00-51",
+          "brand": "GOODYEAR",
+          "model": "XDR3",
+          "serial": "SERIAL-WH001-1",
+          "mileage": "38 508 км",
+          "status": "Новая",
+          "depth": "27.0 мм",
+          "date": "01.01.2024",
+          "location": "Позиция 1",
+          "category": "I"
+        },
+        {
+          "position": "B",
+          "sector": 2,
+          "row": 24,
+          "size": "33.00-51",
+          "brand": "MICHELIN",
+          "model": "XDS2",
+          "serial": "SERIAL-WH001-2",
+          "mileage": "83 428 км",
+          "status": "Б/У",
+          "depth": "15.5 мм",
+          "date": "02.02.2024",
+          "location": "Позиция 2",
+          "category": "II"
+        },
+        {
+          "position": "C",
+          "sector": 3,
+          "row": 15,
+          "size": "33.00R51",
+          "brand": "BRIDGESTONE",
+          "model": "VSDL",
+          "serial": "SERIAL-WH001-3",
+          "mileage": "45 123 км",
+          "status": "Новая",
+          "depth": "22.0 мм",
+          "date": "03.03.2024",
+          "location": "Позиция 3",
+          "category": "I"
+        }
+      ]
+    },
+    {
+      "id": "reserve",
+      "name": "Резервный",
+      "code": "WH002",
+      "description": "Резервный склад для хранения сезонных шин",
+      "tires": [
+        {
+          "position": "A",
+          "sector": 1,
+          "row": 10,
+          "size": "35.00-51",
+          "brand": "GOODYEAR",
+          "model": "XDR3",
+          "serial": "SERIAL-WH002-1",
+          "mileage": "12 345 км",
+          "status": "Новая",
+          "depth": "25.0 мм",
+          "date": "01.01.2024",
+          "location": "Позиция 1",
+          "category": "I"
+        },
+        {
+          "position": "B",
+          "sector": 1,
+          "row": 11,
+          "size": "35.00R51",
+          "brand": "MICHELIN",
+          "model": "XDS2",
+          "serial": "SERIAL-WH002-2",
+          "mileage": "67 890 км",
+          "status": "Б/У",
+          "depth": "18.5 мм",
+          "date": "02.02.2024",
+          "location": "Позиция 2",
+          "category": "II"
+        }
+      ]
+    }
+  ]
+}

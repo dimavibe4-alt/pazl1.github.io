@@ -1,0 +1,40 @@
+{
+  "exported": "2025-11-19T03:20:57.291Z",
+  "totalUsers": 6,
+  "system": "PAZL",
+  "version": "1.0",
+  "note": "Экспорт пользователей системы. Пароли хранятся в хэшированном виде.",
+  "users": [
+    {
+      "username": "1",
+      "role": "user",
+      "created": "2025-11-17T08:32:58.917Z"
+    },
+    {
+      "username": "2",
+      "role": "user",
+      "created": "2025-11-17T08:33:07.610Z"
+    },
+    {
+      "username": "5",
+      "role": "admin",
+      "created": "2025-11-17T08:58:33.864Z"
+    },
+    {
+      "username": "3",
+      "role": "manager",
+      "created": "2025-11-17T09:59:14.949Z"
+    },
+    {
+      "username": "Валя",
+      "role": "admin",
+      "created": "2025-11-17T13:09:31.767Z"
+    },
+    {
+      "username": "11",
+      "passwordHash": "17k",
+      "role": "user",
+      "created": "2025-11-19T03:20:41.524Z"
+    }
+  ]
+}

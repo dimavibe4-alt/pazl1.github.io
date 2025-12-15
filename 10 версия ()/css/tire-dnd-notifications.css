@@ -1,0 +1,74 @@
+.tire-dnd-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10001;
+    animation: slideInRight 0.3s ease;
+    max-width: 300px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .tire-dnd-notification.success {
+    background: #10b981;
+    color: white;
+  }
+  
+  .tire-dnd-notification.info {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .tire-dnd-notification.warning {
+    background: #f59e0b;
+    color: white;
+  }
+  
+  .tire-dnd-notification.error {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .tire-dnd-notification.fade-out {
+    animation: slideOutRight 0.3s ease forwards;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+  
+  .tire-drop-success {
+    animation: pulseSuccess 0.5s ease;
+  }
+  
+  @keyframes pulseSuccess {
+    0% {
+      background-color: rgba(16, 185, 129, 0.3);
+    }
+    50% {
+      background-color: rgba(16, 185, 129, 0.6);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
